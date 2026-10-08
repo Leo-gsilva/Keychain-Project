@@ -1,0 +1,53 @@
+# =========================
+# Sistema Operacional
+# =========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Thumbs.db:encrypt
+
+# =========================
+# IDEs e Editores de Código
+# =========================
+
+# VS Code (Muito usado para Angular e Java)
+.vscode/
+*.code-workspace
+.history/
+
+# JetBrains / IntelliJ IDEA / WebStorm (Muito usados para Java e Angular)
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Eclipse (Muito usado para Java)
+.metadata/
+.recommenders/
+.settings/
+.classpath
+.project
+bin/
+
+# NetBeans (Usado para Java)
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# Sublime Text (Alternativa leve para front-end)
+*.sublime-workspace
+*.sublime-project
+
+# =========================
+# Arquivos Temporários
+# =========================
+*.swp
+*~
+*.log
+*.bak
