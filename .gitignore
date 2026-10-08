@@ -13,41 +13,47 @@ Thumbs.db:encrypt
 # =========================
 # IDEs e Editores de Código
 # =========================
-
-# VS Code (Muito usado para Angular e Java)
-.vscode/
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 *.code-workspace
 .history/
 
-# JetBrains / IntelliJ IDEA / WebStorm (Muito usados para Java e Angular)
+# IntelliJ IDEA / WebStorm
 .idea/
 *.iws
 *.iml
 *.ipr
 out/
 
-# Eclipse (Muito usado para Java)
+# Eclipse / STS
 .metadata/
 .recommenders/
 .settings/
 .classpath
 .project
+.factorypath
+.apt_generated
 bin/
 
-# NetBeans (Usado para Java)
+# NetBeans
 nbproject/private/
 nbbuild/
 nbdist/
 .nb-gradle/
 
-# Sublime Text (Alternativa leve para front-end)
+# Sublime Text
 *.sublime-workspace
 *.sublime-project
+.c9/
+*.launch
 
 # =========================
 # Arquivos Temporários
 # =========================
 *.swp
 *~
-*.log
 *.bak
