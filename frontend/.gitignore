@@ -1,0 +1,26 @@
+# =========================
+# Node e Dependências
+# =========================
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# =========================
+# Angular: Build e Cache
+# =========================
+/dist
+/tmp
+/out-tsc
+/bazel-out
+/.angular/cache
+.sass-cache/
+
+# =========================
+# Testes e Logs Específicos
+# =========================
+/coverage
+/connect.lock
+/libpeerconnection.log
+testem.log
+/typings
+__screenshots__/
