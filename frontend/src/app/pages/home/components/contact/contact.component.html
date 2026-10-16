@@ -1,0 +1,36 @@
+<section id="contato" class="section contact">
+  <div class="container contact__content">
+    <div class="contact__invite" appReveal>
+      <span class="section-label section-label--light">Vamos conversar</span>
+      <h2 class="section-title section-title--light contact__title">Sua próxima solução começa aqui.</h2>
+      <p class="text-lead contact__lead">
+        Uma cópia, uma troca ou um imprevisto? Conte o que precisa e prepare as informações para o atendimento.
+      </p>
+
+      <hr class="contact__divider" />
+
+      <ul class="contact__checklist">
+        @for (item of checklist; track item) {
+          <li>
+            <img src="assets/icons/check.svg" alt="" />
+            {{ item }}
+          </li>
+        }
+      </ul>
+
+      <p class="contact__note">Orçamento, prazo e disponibilidade são confirmados antes da execução do serviço.</p>
+    </div>
+
+    <div class="contact__card" [appReveal]="150">
+      <h3>Fale com o Miguel pelo WhatsApp</h3>
+      <p>
+        Envie uma mensagem com a necessidade, o tipo de serviço e a região do imóvel. Vamos alinhar o atendimento pelo
+        WhatsApp.
+      </p>
+      <a class="btn btn-primary" [href]="linkWhatsapp" target="_blank" rel="noopener">
+        WhatsApp
+        <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+      </a>
+    </div>
+  </div>
+</section>

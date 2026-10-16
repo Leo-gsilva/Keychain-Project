@@ -1,0 +1,19 @@
+:host {
+  display: block;
+}
+
+.login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--espaco-lateral);
+
+  &__box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    max-width: 480px;
+  }
+}

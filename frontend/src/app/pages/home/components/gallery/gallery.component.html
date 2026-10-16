@@ -1,0 +1,25 @@
+<section class="section gallery">
+  <div class="container">
+    <header class="gallery__header">
+      <div class="gallery__title" appReveal>
+        <span class="section-label">Por dentro do ofício</span>
+        <h2 class="section-title">Precisão que você pode ver.</h2>
+      </div>
+      <p class="text-body" [appReveal]="150">Entre a bancada e a sua porta, cada etapa pede atenção ao que realmente importa.</p>
+    </header>
+
+    <div class="gallery__grid">
+      @for (trabalho of trabalhos; track trabalho.imagem; let i = $index) {
+        <figure class="gallery__item" [appReveal]="i * 120">
+          <img class="gallery__photo" [src]="'assets/images/' + trabalho.imagem" [alt]="trabalho.alt" loading="lazy" />
+          <figcaption>
+            <strong>{{ trabalho.etapa }}</strong>
+            <span>{{ trabalho.detalhe }}</span>
+          </figcaption>
+        </figure>
+      }
+    </div>
+
+    <p class="gallery__note" appReveal>Imagens ilustrativas do ofício e dos tipos de trabalho apresentados.</p>
+  </div>
+</section>

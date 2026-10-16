@@ -1,0 +1,23 @@
+<section class="emergency">
+  <div class="container emergency__content">
+    <div class="emergency__intro" appReveal>
+      <span class="section-label section-label--light">Quando a porta não abre</span>
+      <h2 class="section-title section-title--light emergency__title">Ficou do lado de fora? Vamos entender a situação.</h2>
+      <p class="text-body emergency__text">
+        Não force a chave nem o mecanismo. Conte o que aconteceu e confirme a disponibilidade de atendimento.
+      </p>
+    </div>
+
+    <div class="emergency__card" [appReveal]="150">
+      <p class="emergency__info">
+        <img class="icon" src="assets/icons/info.svg" alt="" />
+        Informe o tipo de porta, o problema e a região do imóvel.
+      </p>
+      <a class="btn btn-primary" [href]="linkWhatsapp" target="_blank" rel="noopener">
+        Pedir orientação
+        <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+      </a>
+      <small class="emergency__availability">Horários e deslocamento são confirmados no contato.</small>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,21 @@
+<section id="cuidados" class="tips">
+  <div class="container">
+    <header class="tips__header">
+      <div class="tips__title" appReveal>
+        <span class="section-label">Boas práticas</span>
+        <h2 class="section-title tips__heading">Pequenos cuidados evitam imprevistos.</h2>
+      </div>
+      <span class="tips__tag" [appReveal]="150">ORIENTAÇÕES DA OFICINA</span>
+    </header>
+
+    <ul class="tips__grid">
+      @for (dica of dicas; track dica.icone; let i = $index) {
+        <li class="tips__card" [appReveal]="i * 120">
+          <img [src]="'assets/icons/' + dica.icone + '.svg'" alt="" />
+          <h3>{{ dica.titulo }}</h3>
+          <p>{{ dica.descricao }}</p>
+        </li>
+      }
+    </ul>
+  </div>
+</section>

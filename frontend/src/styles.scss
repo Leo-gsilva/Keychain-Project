@@ -1,1 +1,359 @@
-/* You can add global styles to this file, and also import other style files */
+/* =====================================================================
+   ESTILO GLOBAL DO SISTEMA
+   ---------------------------------------------------------------------
+   1. Variáveis (cores, tipografia, layout)
+   2. Reset / base
+   3. Layout (container e seções)
+   4. Tipografia reutilizável
+   5. Botões (.btn)
+   6. Formulários (.form-*)
+   7. Marca (.brand)
+   8. Animações (.reveal)
+
+   Breakpoints usados nos componentes:
+   - 1200px  notebook pequeno
+   - 900px   tablet
+   - 600px   celular
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. VARIÁVEIS
+   Para mudar a identidade visual do sistema, altere só aqui.
+   --------------------------------------------------------------------- */
+:root {
+  /* Cores principais */
+  --cor-principal-1: #b49150; /* dourado: botões, marcadores e ícones */
+  --cor-principal-1-hover: #a07f42;
+  --cor-principal-2: #252a2c; /* grafite: textos fortes e seções escuras */
+
+  /* Cores de fundo */
+  --cor-fundo-1: #f6f4ef; /* creme: fundo padrão das páginas */
+  --cor-fundo-2: #eeeee8; /* cinza claro: seção de serviços */
+  --cor-fundo-3: #ece3d1; /* bege: seção de cuidados */
+  --cor-fundo-4: #ffffff; /* branco: cards e seção de etapas */
+  --cor-fundo-escuro: var(--cor-principal-2);
+
+  /* Cores de texto */
+  --cor-texto-1: #252a2c; /* títulos e textos fortes */
+  --cor-texto-2: #666b6c; /* textos de apoio */
+  --cor-texto-claro-1: #f6f4ef; /* títulos sobre fundo escuro */
+  --cor-texto-claro-2: #b9bfbc; /* textos de apoio sobre fundo escuro */
+
+  /* Cores de borda / divisores */
+  --cor-borda-1: #d8dad5; /* bordas sobre fundo claro */
+  --cor-borda-2: #555a58; /* bordas sobre fundo escuro */
+  --cor-borda-3: #505653; /* divisores sobre fundo escuro */
+
+  /* Tipografia */
+  --fonte-principal: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+
+  /* Layout */
+  --largura-maxima: 1280px;
+  --espaco-lateral: clamp(20px, 5.5vw, 80px);
+  --espaco-secao: clamp(56px, 7vw, 88px);
+  --raio-pequeno: 4px;
+  --raio-medio: 8px;
+}
+
+/* ---------------------------------------------------------------------
+   2. RESET / BASE
+   --------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--fonte-principal);
+  background-color: var(--cor-fundo-1);
+  color: var(--cor-texto-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+}
+
+/* ---------------------------------------------------------------------
+   3. LAYOUT
+   --------------------------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: calc(var(--largura-maxima) + 2 * var(--espaco-lateral));
+  margin-inline: auto;
+  padding-inline: var(--espaco-lateral);
+}
+
+.section {
+  padding-block: var(--espaco-secao);
+}
+
+/* ---------------------------------------------------------------------
+   4. TIPOGRAFIA REUTILIZÁVEL
+   --------------------------------------------------------------------- */
+
+/* Rótulo pequeno com traço dourado que aparece acima dos títulos */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--cor-texto-2);
+
+  &::before {
+    content: '';
+    width: 18px;
+    height: 2px;
+    background-color: var(--cor-principal-1);
+  }
+
+  &--light {
+    color: var(--cor-texto-claro-2);
+  }
+}
+
+.section-title {
+  font-size: clamp(30px, 4vw, 44px);
+  font-weight: 600;
+  line-height: 1.12;
+  color: var(--cor-texto-1);
+
+  &--light {
+    color: var(--cor-texto-claro-1);
+  }
+}
+
+.text-lead {
+  font-size: clamp(16px, 1.6vw, 19px);
+  line-height: 1.65;
+  color: var(--cor-texto-2);
+}
+
+.text-body {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--cor-texto-2);
+}
+
+.text-note {
+  font-size: 12px;
+  color: var(--cor-texto-2);
+}
+
+.icon {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+}
+
+/* ---------------------------------------------------------------------
+   5. BOTÕES
+   Uso: <a class="btn btn-primary">Texto <img class="btn-icon" ...></a>
+   Variações: .btn-primary | .btn-secondary | .btn-block (largura total)
+   --------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  height: 54px;
+  padding-inline: 24px;
+  border: 1px solid transparent;
+  border-radius: var(--raio-pequeno);
+  font-family: var(--fonte-principal);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cor-texto-1);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+
+  &:focus-visible {
+    outline: 2px solid var(--cor-principal-1);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background-color: var(--cor-principal-1);
+
+  &:hover:not(:disabled) {
+    background-color: var(--cor-principal-1-hover);
+  }
+}
+
+.btn-secondary {
+  background-color: var(--cor-fundo-1);
+  border-color: var(--cor-borda-1);
+
+  &:hover:not(:disabled) {
+    border-color: var(--cor-texto-2);
+  }
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------------------------------------------------------------------
+   6. FORMULÁRIOS
+   --------------------------------------------------------------------- */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cor-texto-1);
+}
+
+.form-input {
+  height: 52px;
+  padding-inline: 16px;
+  border: 1px solid var(--cor-borda-1);
+  border-radius: var(--raio-pequeno);
+  background-color: var(--cor-fundo-4);
+  font-family: var(--fonte-principal);
+  font-size: 15px;
+  color: var(--cor-texto-1);
+  transition: border-color 0.2s ease;
+
+  &::placeholder {
+    color: var(--cor-texto-2);
+    opacity: 0.7;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--cor-principal-1);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   7. MARCA (logo "Miguel – Chaveiro & Oficina")
+   Uso: .brand + .brand--light quando estiver sobre fundo escuro
+   --------------------------------------------------------------------- */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--cor-texto-1);
+
+  &__emblem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid var(--cor-principal-1);
+    border-radius: 50%;
+
+    img {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  &__name {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  &__tagline {
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--cor-texto-2);
+  }
+
+  &--light {
+    color: var(--cor-texto-claro-1);
+
+    .brand__tagline {
+      color: var(--cor-texto-claro-2);
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------
+   8. ANIMAÇÕES
+   .reveal é aplicada pela diretiva appReveal (fade-in-up ao entrar na tela)
+   --------------------------------------------------------------------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: var(--reveal-atraso, 0ms);
+
+  &--visivel {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Respeita quem prefere menos movimento (configuração do sistema) */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

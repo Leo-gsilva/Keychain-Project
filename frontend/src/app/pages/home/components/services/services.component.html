@@ -1,0 +1,35 @@
+<section id="servicos" class="section services">
+  <div class="container">
+    <header class="services__header">
+      <div class="services__title" appReveal>
+        <span class="section-label">Soluções para cada necessidade</span>
+        <h2 class="section-title">O serviço certo para o que você precisa.</h2>
+      </div>
+      <p class="text-body" [appReveal]="150">
+        Na oficina ou no seu imóvel, o primeiro passo é entender o problema. Veja como podemos ajudar.
+      </p>
+    </header>
+
+    <ul class="services__grid">
+      @for (servico of servicos; track servico.nome; let i = $index) {
+        <li [appReveal]="(i % 3) * 100">
+          <a class="services__card" [href]="servico.link" target="_blank" rel="noopener">
+            <span class="services__card-top">
+              <img class="services__icon" [src]="'assets/icons/' + servico.icone + '.svg'" alt="" />
+              <img class="services__arrow" src="assets/icons/arrow-up-right-muted.svg" alt="" />
+            </span>
+            <span class="services__info">
+              <strong>{{ servico.nome }}</strong>
+              <span class="text-body">{{ servico.descricao }}</span>
+            </span>
+            <small class="services__scope">{{ servico.escopo }}</small>
+          </a>
+        </li>
+      }
+    </ul>
+
+    <p class="text-note" appReveal>
+      A execução depende da avaliação do mecanismo, da disponibilidade de peças e da confirmação do orçamento.
+    </p>
+  </div>
+</section>

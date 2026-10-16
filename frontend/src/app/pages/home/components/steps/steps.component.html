@@ -1,0 +1,18 @@
+<section id="como-funciona" class="steps">
+  <div class="container">
+    <div class="steps__title" appReveal>
+      <span class="section-label">Do primeiro contato ao último ajuste</span>
+      <h2 class="section-title">Sem complicar. Sem pular etapas.</h2>
+    </div>
+
+    <ol class="steps__list">
+      @for (etapa of etapas; track etapa.numero; let i = $index) {
+        <li class="steps__item" [appReveal]="i * 100">
+          <span class="steps__number">{{ etapa.numero }}</span>
+          <h3>{{ etapa.titulo }}</h3>
+          <p class="text-body">{{ etapa.descricao }}</p>
+        </li>
+      }
+    </ol>
+  </div>
+</section>

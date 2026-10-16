@@ -1,0 +1,29 @@
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <a class="brand brand--light" routerLink="/" aria-label="Miguel, chaveiro e oficina: página inicial">
+        <span class="brand__emblem"><img src="assets/icons/key-round-sm.svg" alt="" /></span>
+        <span class="brand__name">Miguel</span>
+        <span class="brand__tagline">CHAVEIRO<br />&amp; OFICINA</span>
+      </a>
+
+      <nav aria-label="Links do rodapé">
+        <ul class="footer__links">
+          @for (link of links; track link.ancora) {
+            <li>
+              <a routerLink="/" [fragment]="link.ancora">{{ link.texto }}</a>
+            </li>
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer__bottom">
+      <p class="footer__disclaimer">
+        Miguel é uma identidade conceitual. Imagens ilustrativas. Telefone, endereço, horários e área de atendimento devem
+        ser definidos pelo profissional antes da publicação.
+      </p>
+      <p class="footer__signature">PRECISÃO. CUIDADO. ACESSO.</p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,44 @@
+<header class="header">
+  <div class="container header__bar">
+    <a class="brand" routerLink="/" aria-label="Miguel, chaveiro e oficina: página inicial" (click)="fecharMenu()">
+      <span class="brand__emblem"><img src="assets/icons/key-round-sm.svg" alt="" /></span>
+      <span class="brand__name">Miguel</span>
+      <span class="brand__tagline">CHAVEIRO<br />&amp; OFICINA</span>
+    </a>
+
+    <button
+      type="button"
+      class="header__toggle"
+      [class.header__toggle--open]="menuAberto()"
+      [attr.aria-expanded]="menuAberto()"
+      aria-controls="menu-principal"
+      [attr.aria-label]="menuAberto() ? 'Fechar menu' : 'Abrir menu'"
+      (click)="alternarMenu()"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav id="menu-principal" class="header__nav" [class.header__nav--open]="menuAberto()" aria-label="Menu principal">
+      <ul class="header__links">
+        @for (link of links; track link.ancora) {
+          <li>
+            <a class="header__link" routerLink="/" [fragment]="link.ancora" (click)="fecharMenu()">{{ link.texto }}</a>
+          </li>
+        }
+      </ul>
+
+      <div class="header__actions">
+        <a class="btn btn-primary" [href]="linkWhatsapp" target="_blank" rel="noopener">
+          WhatsApp
+          <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+        </a>
+        <a class="btn btn-secondary" routerLink="/login">
+          Área do funcionário
+          <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
