@@ -1,16 +1,392 @@
-<app-header />
+<!-- ===================== HEADER ===================== -->
+<header #header class="header" [class.header--compacto]="compacto()">
+  <div class="container header__bar">
+    <a class="brand" routerLink="/" aria-label="Miguel, chaveiro e oficina: página inicial" (click)="fecharMenu()">
+      <span class="brand__emblem"><img src="assets/icons/key-round-sm.svg" alt="" /></span>
+      <span class="brand__name">Miguel</span>
+      <span class="brand__tagline">CHAVEIRO<br />&amp; OFICINA</span>
+    </a>
+
+    <button
+      type="button"
+      class="header__toggle"
+      [class.header__toggle--open]="menuAberto()"
+      [attr.aria-expanded]="menuAberto()"
+      aria-controls="menu-principal"
+      [attr.aria-label]="menuAberto() ? 'Fechar menu' : 'Abrir menu'"
+      (click)="alternarMenu()"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav id="menu-principal" class="header__nav" [class.header__nav--open]="menuAberto()" aria-label="Menu principal">
+      <ul class="header__links">
+        @for (link of linksMenu; track link.ancora) {
+          <li>
+            <a class="header__link" routerLink="/" [fragment]="link.ancora" (click)="fecharMenu()">{{ link.texto }}</a>
+          </li>
+        }
+      </ul>
+
+      <div class="header__actions">
+        <a class="btn btn-primary" [href]="whatsapp.geral" target="_blank" rel="noopener">
+          WhatsApp
+          <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+        </a>
+        <a class="btn btn-secondary" routerLink="/login">
+          Área do funcionário
+          <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
 
 <main>
-  <app-hero />
-  <app-about />
-  <app-services />
-  <app-emergency />
-  <app-gallery />
-  <app-steps />
-  <app-security />
-  <app-tips />
-  <app-faq />
-  <app-contact />
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="container hero__content">
+      <div class="hero__message">
+        <span class="section-label" appReveal>Precisão que faz parte do seu dia</span>
+
+        <h1 class="hero__title" [appReveal]="100">Pequenos detalhes.<br />Grandes soluções.</h1>
+
+        <p class="text-lead" [appReveal]="200">
+          Chaves, fechaduras e acessos tratados com cuidado. Da cópia do dia a dia à porta que precisa voltar a abrir.
+        </p>
+
+        <div class="hero__actions" [appReveal]="300">
+          <a class="btn btn-primary" [href]="whatsapp.geral" target="_blank" rel="noopener">
+            WhatsApp
+            <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+          </a>
+          <a class="btn btn-secondary" routerLink="/" fragment="servicos">
+            Ver serviços
+            <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+          </a>
+        </div>
+
+        <p class="hero__note" [appReveal]="400">
+          <img src="assets/icons/message-circle.svg" alt="" />
+          Conte o que aconteceu. A solução começa pela conversa.
+        </p>
+      </div>
+
+      <figure class="hero__media" [appReveal]="250">
+        <img
+          class="hero__photo"
+          src="assets/images/oficio-destaque.jpg"
+          alt="Chaveiro cortando uma chave na máquina copiadora da oficina"
+        />
+        <figcaption class="hero__caption">
+          <span>
+            <small>O OFÍCIO EM CADA DETALHE</small>
+            <strong>Mãos que cuidam. Ferramentas que resolvem.</strong>
+          </span>
+          <img src="assets/icons/crosshair.svg" alt="" />
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="hero__principles">
+      <ul class="container hero__principles-list">
+        @for (principio of principios; track principio.icone; let i = $index) {
+          <li [appReveal]="500 + i * 100">
+            <img class="icon" [src]="'assets/icons/' + principio.icone + '.svg'" alt="" />
+            {{ principio.texto }}
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== A OFICINA ===================== -->
+  <section id="oficina" class="section about">
+    <div class="container about__content">
+      <div class="about__intro" appReveal>
+        <span class="section-label">A essência do Miguel</span>
+        <h2 class="section-title">Um trabalho técnico. Um cuidado muito humano.</h2>
+      </div>
+
+      <div class="about__text" [appReveal]="150">
+        <p class="text-lead">
+          Uma chave precisa encaixar. Uma fechadura precisa funcionar. E você precisa entender o que está sendo feito.
+        </p>
+        <p class="text-body">
+          É com essa atenção que o Miguel pensa o trabalho do chaveiro: ouvir a necessidade, examinar o mecanismo e indicar
+          uma solução adequada. Técnica na bancada, respeito na sua porta.
+        </p>
+        <hr class="about__divider" />
+        <p class="about__signature">CUIDADO NO PROCESSO. PRECISÃO NO RESULTADO.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SERVIÇOS ===================== -->
+  <section id="servicos" class="section services">
+    <div class="container">
+      <header class="services__header">
+        <div class="services__title" appReveal>
+          <span class="section-label">Soluções para cada necessidade</span>
+          <h2 class="section-title">O serviço certo para o que você precisa.</h2>
+        </div>
+        <p class="text-body" [appReveal]="150">
+          Na oficina ou no seu imóvel, o primeiro passo é entender o problema. Veja como podemos ajudar.
+        </p>
+      </header>
+
+      <ul class="services__grid">
+        @for (servico of servicos; track servico.nome; let i = $index) {
+          <li [appReveal]="(i % 3) * 100">
+            <a class="services__card" [href]="servico.link" target="_blank" rel="noopener">
+              <span class="services__card-top">
+                <img class="services__icon" [src]="'assets/icons/' + servico.icone + '.svg'" alt="" />
+                <img class="services__arrow" src="assets/icons/arrow-up-right-muted.svg" alt="" />
+              </span>
+              <span class="services__info">
+                <strong>{{ servico.nome }}</strong>
+                <span class="text-body">{{ servico.descricao }}</span>
+              </span>
+              <small class="services__scope">{{ servico.escopo }}</small>
+            </a>
+          </li>
+        }
+      </ul>
+
+      <p class="text-note" appReveal>
+        A execução depende da avaliação do mecanismo, da disponibilidade de peças e da confirmação do orçamento.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== EMERGÊNCIA ===================== -->
+  <section class="emergency">
+    <div class="container emergency__content">
+      <div class="emergency__intro" appReveal>
+        <span class="section-label section-label--light">Quando a porta não abre</span>
+        <h2 class="section-title section-title--light emergency__title">Ficou do lado de fora? Vamos entender a situação.</h2>
+        <p class="text-body emergency__text">
+          Não force a chave nem o mecanismo. Conte o que aconteceu e confirme a disponibilidade de atendimento.
+        </p>
+      </div>
+
+      <div class="emergency__card" [appReveal]="150">
+        <p class="emergency__info">
+          <img class="icon" src="assets/icons/info.svg" alt="" />
+          Informe o tipo de porta, o problema e a região do imóvel.
+        </p>
+        <a class="btn btn-primary" [href]="whatsapp.emergencia" target="_blank" rel="noopener">
+          Pedir orientação
+          <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+        </a>
+        <small class="emergency__availability">Horários e deslocamento são confirmados no contato.</small>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== GALERIA ===================== -->
+  <section class="section gallery">
+    <div class="container">
+      <header class="gallery__header">
+        <div class="gallery__title" appReveal>
+          <span class="section-label">Por dentro do ofício</span>
+          <h2 class="section-title">Precisão que você pode ver.</h2>
+        </div>
+        <p class="text-body" [appReveal]="150">Entre a bancada e a sua porta, cada etapa pede atenção ao que realmente importa.</p>
+      </header>
+
+      <div class="gallery__grid">
+        @for (trabalho of trabalhos; track trabalho.imagem; let i = $index) {
+          <figure class="gallery__item" [appReveal]="i * 120">
+            <img class="gallery__photo" [src]="'assets/images/' + trabalho.imagem" [alt]="trabalho.alt" loading="lazy" />
+            <figcaption>
+              <strong>{{ trabalho.etapa }}</strong>
+              <span>{{ trabalho.detalhe }}</span>
+            </figcaption>
+          </figure>
+        }
+      </div>
+
+      <p class="gallery__note" appReveal>Imagens ilustrativas do ofício e dos tipos de trabalho apresentados.</p>
+    </div>
+  </section>
+
+  <!-- ===================== COMO FUNCIONA ===================== -->
+  <section id="como-funciona" class="steps">
+    <div class="container">
+      <div class="steps__title" appReveal>
+        <span class="section-label">Do primeiro contato ao último ajuste</span>
+        <h2 class="section-title">Sem complicar. Sem pular etapas.</h2>
+      </div>
+
+      <ol class="steps__list">
+        @for (etapa of etapas; track etapa.numero; let i = $index) {
+          <li class="steps__item" [appReveal]="i * 100">
+            <span class="steps__number">{{ etapa.numero }}</span>
+            <h3>{{ etapa.titulo }}</h3>
+            <p class="text-body">{{ etapa.descricao }}</p>
+          </li>
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===================== SEGURANÇA ===================== -->
+  <section class="section security">
+    <div class="container security__content">
+      <figure class="security__media" appReveal>
+        <img
+          src="assets/images/mecanismo-seguranca.jpg"
+          alt="Cilindro de fechadura dourado com a chave encaixada sobre a bancada"
+          loading="lazy"
+        />
+        <figcaption class="security__badge">
+          <img src="assets/icons/shield-check.svg" alt="" />
+          Seu acesso merece cuidado.
+        </figcaption>
+      </figure>
+
+      <div class="security__text">
+        <span class="section-label" [appReveal]="100">Confiança também é procedimento</span>
+        <h2 class="section-title" [appReveal]="150">Abrir uma porta é uma responsabilidade.</h2>
+
+        <ul class="security__list">
+          @for (compromisso of compromissos; track compromisso.titulo; let i = $index) {
+            <li [appReveal]="200 + i * 100">
+              <img src="assets/icons/check.svg" alt="" />
+              <span>
+                <strong>{{ compromisso.titulo }}</strong>
+                <span>{{ compromisso.descricao }}</span>
+              </span>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CUIDADOS ===================== -->
+  <section id="cuidados" class="tips">
+    <div class="container">
+      <header class="tips__header">
+        <div class="tips__title" appReveal>
+          <span class="section-label">Boas práticas</span>
+          <h2 class="section-title tips__heading">Pequenos cuidados evitam imprevistos.</h2>
+        </div>
+        <span class="tips__tag" [appReveal]="150">ORIENTAÇÕES DA OFICINA</span>
+      </header>
+
+      <ul class="tips__grid">
+        @for (dica of dicas; track dica.icone; let i = $index) {
+          <li class="tips__card" [appReveal]="i * 120">
+            <img [src]="'assets/icons/' + dica.icone + '.svg'" alt="" />
+            <h3>{{ dica.titulo }}</h3>
+            <p>{{ dica.descricao }}</p>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== DÚVIDAS ===================== -->
+  <section id="duvidas" class="section faq">
+    <div class="container faq__content">
+      <div class="faq__intro" appReveal>
+        <span class="section-label">Dúvidas frequentes</span>
+        <h2 class="section-title">Antes de chamar, vale saber.</h2>
+        <p class="text-body">Informação clara para você decidir com tranquilidade.</p>
+      </div>
+
+      <ul class="faq__list">
+        @for (item of perguntas; track item.pergunta; let i = $index) {
+          <li class="faq__item" [appReveal]="i * 80">
+            <button
+              type="button"
+              class="faq__question"
+              [attr.aria-expanded]="perguntaAberta() === i"
+              [attr.aria-controls]="'faq-resposta-' + i"
+              (click)="alternarPergunta(i)"
+            >
+              {{ item.pergunta }}
+              <img [src]="perguntaAberta() === i ? 'assets/icons/minus.svg' : 'assets/icons/plus.svg'" alt="" />
+            </button>
+            @if (perguntaAberta() === i) {
+              <p class="faq__answer" [id]="'faq-resposta-' + i">{{ item.resposta }}</p>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== CONTATO ===================== -->
+  <section id="contato" class="section contact">
+    <div class="container contact__content">
+      <div class="contact__invite" appReveal>
+        <span class="section-label section-label--light">Vamos conversar</span>
+        <h2 class="section-title section-title--light contact__title">Sua próxima solução começa aqui.</h2>
+        <p class="text-lead contact__lead">
+          Uma cópia, uma troca ou um imprevisto? Conte o que precisa e prepare as informações para o atendimento.
+        </p>
+
+        <hr class="contact__divider" />
+
+        <ul class="contact__checklist">
+          @for (item of checklist; track item) {
+            <li>
+              <img src="assets/icons/check.svg" alt="" />
+              {{ item }}
+            </li>
+          }
+        </ul>
+
+        <p class="contact__note">Orçamento, prazo e disponibilidade são confirmados antes da execução do serviço.</p>
+      </div>
+
+      <div class="contact__card" [appReveal]="150">
+        <h3>Fale com o Miguel pelo WhatsApp</h3>
+        <p>
+          Envie uma mensagem com a necessidade, o tipo de serviço e a região do imóvel. Vamos alinhar o atendimento pelo
+          WhatsApp.
+        </p>
+        <a class="btn btn-primary" [href]="whatsapp.orcamento" target="_blank" rel="noopener">
+          WhatsApp
+          <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+        </a>
+      </div>
+    </div>
+  </section>
 </main>
 
-<app-footer />
+<!-- ===================== RODAPÉ ===================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <a class="brand brand--light" routerLink="/" aria-label="Miguel, chaveiro e oficina: página inicial">
+        <span class="brand__emblem"><img src="assets/icons/key-round-sm.svg" alt="" /></span>
+        <span class="brand__name">Miguel</span>
+        <span class="brand__tagline">CHAVEIRO<br />&amp; OFICINA</span>
+      </a>
+
+      <nav aria-label="Links do rodapé">
+        <ul class="footer__links">
+          @for (link of linksRodape; track link.ancora) {
+            <li>
+              <a routerLink="/" [fragment]="link.ancora">{{ link.texto }}</a>
+            </li>
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer__bottom">
+      <p class="footer__disclaimer">
+        Miguel é uma identidade conceitual. Imagens ilustrativas. Telefone, endereço, horários e área de atendimento devem
+        ser definidos pelo profissional antes da publicação.
+      </p>
+      <p class="footer__signature">PRECISÃO. CUIDADO. ACESSO.</p>
+    </div>
+  </div>
+</footer>
