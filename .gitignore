@@ -63,3 +63,9 @@ nbdist/
 # =========================
 .claude/
 CLAUDE.local.md
+
+# Env
+.env
+
+# Md
+*.md
