@@ -58,14 +58,10 @@ nbdist/
 *~
 *.bak
 
-# =========================
-# Claude Code
-# =========================
-.claude/
-CLAUDE.local.md
-
 # Env
 .env
-
-# Md
+# Documentações
 *.md
+
+# Claude Code
+.claude/
