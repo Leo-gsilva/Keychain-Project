@@ -1,0 +1,45 @@
+:root {
+  /* Cores principais */
+  --cor-principal-1: #b49150; /* dourado: botões, marcadores e ícones */
+  --cor-principal-1-hover: #a07f42;
+  --cor-principal-2: #252a2c; /* grafite: textos fortes e seções escuras */
+
+  /* Cores de fundo */
+  --cor-fundo-1: #f6f4ef; /* creme: fundo padrão das páginas */
+  --cor-fundo-2: #eeeee8; /* cinza claro: seção de serviços */
+  --cor-fundo-3: #ece3d1; /* bege: seção de cuidados */
+  --cor-fundo-4: #ffffff; /* branco: cards e seção de etapas */
+  --cor-fundo-escuro: var(--cor-principal-2);
+
+  /* Cores de texto */
+  --cor-texto-1: #252a2c; /* títulos e textos fortes */
+  --cor-texto-2: #666b6c; /* textos de apoio */
+  --cor-texto-claro-1: #f6f4ef; /* títulos sobre fundo escuro */
+  --cor-texto-claro-2: #b9bfbc; /* textos de apoio sobre fundo escuro */
+
+  /* Cores de borda / divisores */
+  --cor-borda-1: #d8dad5; /* bordas sobre fundo claro */
+  --cor-borda-2: #555a58; /* bordas sobre fundo escuro */
+  --cor-borda-3: #505653; /* divisores sobre fundo escuro */
+
+   /* Layout */
+  --largura-maxima: 1280px;
+  --espaco-lateral: clamp(20px, 5.5vw, 80px);
+  --espaco-secao: clamp(56px, 7vw, 88px);
+  --raio-pequeno: 4px;
+  --raio-medio: 8px;
+
+  /* ---------------------------------------------------------------------
+   3. LAYOUT
+   --------------------------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: calc(var(--largura-maxima) + 2 * var(--espaco-lateral));
+  margin-inline: auto;
+  padding-inline: var(--espaco-lateral);
+}
+
+.section {
+  padding-block: var(--espaco-secao);
+}
+}

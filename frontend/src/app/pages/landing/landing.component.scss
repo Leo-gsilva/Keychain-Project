@@ -1,0 +1,409 @@
+// Importe o seu _variables global aqui, caso não esteja injetado no angular.json
+// @import '../../styles/variables';
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100px;
+  
+  .nav-links {
+    display: none;
+    gap: 32px;
+    
+    @media (min-width: 992px) { display: flex; }
+    
+    a {
+      text-decoration: none;
+      font-size: 15px;
+      color: var(--cor-texto-1);
+      font-weight: 500;
+      transition: color 0.2s ease;
+      &:hover { color: var(--cor-principal-1); }
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 16px;
+  }
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: center;
+  padding-block: var(--espaco-secao);
+
+  @media (min-width: 992px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .image-placeholder {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background-color: var(--cor-borda-1);
+    border-radius: var(--raio-medio);
+  }
+}
+
+.essence-section {
+  .essence-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    border-top: 1px solid var(--cor-borda-1);
+    padding-top: var(--espaco-secao);
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1.5fr;
+      gap: 80px;
+    }
+  }
+
+  .divider {
+    height: 1px;
+    background-color: var(--cor-borda-1);
+    margin-block: 24px;
+  }
+}
+
+.services-section {
+  background-color: var(--cor-fundo-2);
+  
+  .services-header {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 48px;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+      
+      .text-body { max-width: 400px; text-align: right; }
+    }
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+
+    @media (min-width: 768px) { grid-template-columns: repeat(2, 1fr); }
+    @media (min-width: 1024px) { grid-template-columns: repeat(3, 1fr); }
+
+    .service-card {
+      background-color: var(--cor-fundo-4);
+      padding: 32px;
+      border-radius: var(--raio-pequeno);
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
+
+.emergency-section {
+  background-color: var(--cor-fundo-escuro);
+  
+  .emergency-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+  }
+}
+
+.steps-section {
+  .steps-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+
+    @media (min-width: 600px) { grid-template-columns: repeat(2, 1fr); }
+    @media (min-width: 992px) { grid-template-columns: repeat(4, 1fr); }
+    
+    .divider {
+      height: 1px;
+      background-color: var(--cor-borda-1);
+    }
+  }
+}
+
+.faq-section {
+  background-color: var(--cor-fundo-4);
+  
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 2fr;
+    }
+  }
+
+  .faq-list {
+    border-top: 1px solid var(--cor-borda-1);
+    
+    .faq-item {
+      border-bottom: 1px solid var(--cor-borda-1);
+      cursor: pointer;
+      
+      .faq-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-block: 24px;
+        transition: background-color 0.2s ease;
+      }
+
+      .faq-body {
+        padding-bottom: 24px;
+        padding-right: 40px;
+      }
+      
+      &:hover .faq-header {
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+.footer-section {
+  background-color: var(--cor-fundo-escuro);
+  padding-block: var(--espaco-secao);
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+  }
+
+  .footer-contact-card {
+    background-color: var(--cor-fundo-1); // Creme para o card interno
+    padding: 40px;
+    border-radius: var(--raio-medio);
+  }
+}
+/* ---------------------------------------------------------------------
+   SECÇÃO DE LOCALIZAÇÃO
+   --------------------------------------------------------------------- */
+.location-section {
+  background-color: var(--cor-fundo-1); // Fundo creme padrão
+
+  .location-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+
+    @media (min-width: 992px) {
+      grid-template-columns: 1fr 1.5fr; // O mapa ocupa mais espaço (1.5x) que o card info
+    }
+  }
+
+  .info-card {
+    background-color: var(--cor-fundo-4); // Branco
+    padding: 32px;
+    border-radius: var(--raio-medio);
+    display: flex;
+    flex-direction: column;
+
+    .divider {
+      height: 1px;
+      background-color: var(--cor-borda-1);
+      margin-block: 24px;
+    }
+
+    .features-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 32px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      li {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+    }
+
+    .address-box {
+      background-color: var(--cor-fundo-1);
+      padding: 20px;
+      border-radius: var(--raio-pequeno);
+      margin-top: auto; // Empurra a caixa para o fundo do card
+    }
+  }
+
+  .map-card {
+    background-color: #e7e3d8; // Cor extraída do Figma para a borda do mapa
+    border-radius: var(--raio-medio);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .map-header {
+      background-color: var(--cor-fundo-1);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border-bottom: 1px solid var(--cor-borda-1);
+
+      @media (min-width: 600px) {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .badge {
+        background-color: var(--cor-fundo-4);
+        padding: 8px 16px;
+        border-radius: 40px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--cor-texto-1);
+      }
+    }
+
+    .map-image-placeholder {
+      flex-grow: 1;
+      min-height: 300px;
+      background-color: #e7e3d8;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 32px;
+      position: relative;
+      
+      // Estilização do texto dentro do placeholder do mapa
+      .map-content {
+        max-width: 300px;
+      }
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------
+   FOOTER (VAMOS CONVERSAR)
+   --------------------------------------------------------------------- */
+.footer-section {
+  background-color: var(--cor-fundo-escuro);
+  padding-top: var(--espaco-secao);
+  padding-bottom: 32px;
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+    padding-bottom: 64px;
+
+    @media (min-width: 992px) {
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+    }
+  }
+
+  .checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      
+      .icon {
+        color: var(--cor-principal-1);
+        font-weight: bold;
+      }
+    }
+  }
+
+  .footer-contact-card {
+    background-color: var(--cor-fundo-1); // Fundo Creme
+    padding: 40px;
+    border-radius: var(--raio-medio);
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-bottom: 32px;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      
+      a {
+        color: var(--cor-texto-claro-1);
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 500;
+        transition: color 0.2s ease;
+        
+        &:hover { 
+          color: var(--cor-principal-1); 
+        }
+      }
+    }
+  }
+
+  .footer-disclaimer {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    border-top: 1px solid var(--cor-borda-3);
+    padding-top: 24px;
+
+    @media (min-width: 992px) {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .disclaimer-text {
+      color: var(--cor-texto-claro-2);
+      max-width: 800px;
+    }
+
+    .tag-line {
+      color: var(--cor-principal-1);
+      margin: 0;
+    }
+  }
+}

@@ -1,0 +1,38 @@
+:root{
+/* ---------------------------------------------------------------------
+   6. FORMULÁRIOS
+   --------------------------------------------------------------------- */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cor-texto-1);
+}
+
+.form-input {
+  height: 52px;
+  padding-inline: 16px;
+  border: 1px solid var(--cor-borda-1);
+  border-radius: var(--raio-pequeno);
+  background-color: var(--cor-fundo-4);
+  font-family: var(--fonte-principal);
+  font-size: 15px;
+  color: var(--cor-texto-1);
+  transition: border-color 0.2s ease;
+
+  &::placeholder {
+    color: var(--cor-texto-2);
+    opacity: 0.7;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--cor-principal-1);
+  }
+}
+}
