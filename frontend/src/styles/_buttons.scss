@@ -1,6 +1,5 @@
-:root{
-    /* ---------------------------------------------------------------------
-   5. BOTÕES
+/* ---------------------------------------------------------------------
+   BOTÕES
    Uso: <a class="btn btn-primary">Texto <img class="btn-icon" ...></a>
    Variações: .btn-primary | .btn-secondary | .btn-block (largura total)
    --------------------------------------------------------------------- */
@@ -34,6 +33,7 @@
   }
 }
 
+/* Dourado: ação principal (WhatsApp, enviar) */
 .btn-primary {
   background-color: var(--cor-principal-1);
 
@@ -42,6 +42,7 @@
   }
 }
 
+/* Contorno: ação secundária */
 .btn-secondary {
   background-color: var(--cor-fundo-1);
   border-color: var(--cor-borda-1);
@@ -55,9 +56,9 @@
   width: 100%;
 }
 
+/* Ícone dentro do botão (ex.: seta ↗) */
 .btn-icon {
   flex-shrink: 0;
   width: 18px;
   height: 18px;
-}
 }

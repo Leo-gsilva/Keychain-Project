@@ -1,7 +1,8 @@
-:root{
-    /* ---------------------------------------------------------------------
-   8. ANIMAÇÕES
-   .reveal é aplicada pela diretiva appReveal (fade-in-up ao entrar na tela)
+/* ---------------------------------------------------------------------
+   ANIMAÇÕES
+   .reveal é aplicada pela diretiva appReveal (fade-in-up ao entrar na tela).
+   Não use a classe direto no HTML; use a diretiva:
+   <div appReveal></div>  |  <li [appReveal]="i * 100"></li> (atraso em ms)
    --------------------------------------------------------------------- */
 .reveal {
   opacity: 0;
@@ -28,5 +29,4 @@
     transform: none;
     transition: none;
   }
-}
 }

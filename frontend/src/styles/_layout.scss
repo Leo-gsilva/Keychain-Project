@@ -1,0 +1,29 @@
+/* ---------------------------------------------------------------------
+   LAYOUT
+   .container  centraliza o conteúdo e aplica as margens laterais
+   .section    espaçamento vertical padrão de uma seção
+   .divider    linha horizontal (use .divider--light sobre fundo escuro)
+   Uso: <section class="section"><div class="container">...</div></section>
+   --------------------------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: calc(var(--largura-maxima) + 2 * var(--espaco-lateral));
+  margin-inline: auto;
+  padding-inline: var(--espaco-lateral);
+}
+
+.section {
+  padding-block: var(--espaco-secao);
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  margin: 0;
+  border: 0;
+  background-color: var(--cor-borda-1);
+
+  &--light {
+    background-color: var(--cor-borda-3);
+  }
+}

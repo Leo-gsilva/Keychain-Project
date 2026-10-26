@@ -1,277 +1,451 @@
-<!-- NAV / HEADER -->
-<header class="header container">
-  <div class="logo">
-    <h2 class="text-body" style="color: var(--cor-texto-1); font-weight: bold;">Miguel <span style="color: var(--cor-texto-2); font-size: 12px; font-weight: normal;">CHAVEIRO & OFICINA</span></h2>
-  </div>
-  <nav class="nav-links">
-    <a href="#oficina">A oficina</a>
-    <a href="#servicos">Serviços</a>
-    <a href="#como-funciona">Como funciona</a>
-    <a href="#duvidas">Dúvidas</a>
-  </nav>
-  <div class="header-actions">
-    <button class="btn btn-primary">WhatsApp</button>
-    <button class="btn btn-secondary">Área do funcionário</button>
+<!-- ===================== HEADER ===================== -->
+<header #header class="header" [class.header--compacto]="compacto()">
+  <div class="container header__bar">
+    <a class="brand" routerLink="/" aria-label="Miguel, chaveiro e oficina: página inicial" (click)="fecharMenu()">
+      <span class="brand__emblem"><img src="assets/icons/key-round-sm.svg" alt="" /></span>
+      <span class="brand__name">Miguel</span>
+      <span class="brand__tagline">CHAVEIRO<br />&amp; OFICINA</span>
+    </a>
+
+    <button
+      type="button"
+      class="header__toggle"
+      [class.header__toggle--open]="menuAberto()"
+      [attr.aria-expanded]="menuAberto()"
+      aria-controls="menu-principal"
+      [attr.aria-label]="menuAberto() ? 'Fechar menu' : 'Abrir menu'"
+      (click)="alternarMenu()"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav id="menu-principal" class="header__nav" [class.header__nav--open]="menuAberto()" aria-label="Menu principal">
+      <ul class="header__links">
+        @for (link of linksMenu; track link.ancora) {
+          <li>
+            <a class="header__link" routerLink="/" [fragment]="link.ancora" (click)="fecharMenu()">{{ link.texto }}</a>
+          </li>
+        }
+      </ul>
+
+      <div class="header__actions">
+        <a class="btn btn-primary" [href]="whatsapp.geral" target="_blank" rel="noopener">
+          WhatsApp
+          <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+        </a>
+        <a class="btn btn-secondary" routerLink="/login">
+          Área do funcionário
+          <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+        </a>
+      </div>
+    </nav>
   </div>
 </header>
 
-<!-- HERO E DESTAQUES -->
-<section class="hero-wrapper reveal">
-  <div class="hero container">
-    <!-- Conteúdo da Esquerda -->
-    <div class="hero-content">
-      <div class="section-label">PRECISÃO QUE FAZ PARTE DO SEU DIA</div>
-      
-      <h1 class="hero-title">Pequenos detalhes.<br>Grandes soluções.</h1>
-      
-      <p class="text-lead" style="margin-top: 24px; max-width: 480px;">
-        Chaves, fechaduras e acessos tratados com cuidado. Da cópia do dia a dia à porta que precisa voltar a abrir.
+<main>
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="container hero__content">
+      <div class="hero__message">
+        <span class="section-label" appReveal>Precisão que faz parte do seu dia</span>
+
+        <h1 class="hero__title" [appReveal]="100">Pequenos detalhes.<br />Grandes soluções.</h1>
+
+        <p class="text-lead" [appReveal]="200">
+          Chaves, fechaduras e acessos tratados com cuidado. Da cópia do dia a dia à porta que precisa voltar a abrir.
+        </p>
+
+        <div class="hero__actions" [appReveal]="300">
+          <a class="btn btn-primary" [href]="whatsapp.geral" target="_blank" rel="noopener">
+            WhatsApp
+            <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+          </a>
+          <a class="btn btn-secondary" routerLink="/" fragment="servicos">
+            Ver serviços
+            <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+          </a>
+        </div>
+
+        <p class="hero__note" [appReveal]="400">
+          <img src="assets/icons/message-circle.svg" alt="" />
+          Conte o que aconteceu. A solução começa pela conversa.
+        </p>
+      </div>
+
+      <figure class="hero__media" [appReveal]="250">
+        <img
+          class="hero__photo"
+          src="assets/images/oficio-destaque.jpg"
+          alt="Chaveiro cortando uma chave na máquina copiadora da oficina"
+        />
+        <figcaption class="hero__caption">
+          <span>
+            <small>O OFÍCIO EM CADA DETALHE</small>
+            <strong>Mãos que cuidam. Ferramentas que resolvem.</strong>
+          </span>
+          <img src="assets/icons/crosshair.svg" alt="" />
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="hero__principles">
+      <ul class="container hero__principles-list">
+        @for (principio of principios; track principio.icone; let i = $index) {
+          <li [appReveal]="500 + i * 100">
+            <img class="icon" [src]="'assets/icons/' + principio.icone + '.svg'" alt="" />
+            {{ principio.texto }}
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== A OFICINA ===================== -->
+  <section id="oficina" class="section about">
+    <div class="container about__content">
+      <div class="about__intro" appReveal>
+        <span class="section-label">A essência do Miguel</span>
+        <h2 class="section-title">Um trabalho técnico. Um cuidado muito humano.</h2>
+      </div>
+
+      <div class="about__text" [appReveal]="150">
+        <p class="text-lead">
+          Uma chave precisa encaixar. Uma fechadura precisa funcionar. E você precisa entender o que está sendo feito.
+        </p>
+        <p class="text-body">
+          É com essa atenção que o Miguel pensa o trabalho do chaveiro: ouvir a necessidade, examinar o mecanismo e indicar
+          uma solução adequada. Técnica na bancada, respeito na sua porta.
+        </p>
+        <hr class="divider" />
+        <p class="about__signature">CUIDADO NO PROCESSO. PRECISÃO NO RESULTADO.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SERVIÇOS ===================== -->
+  <section id="servicos" class="section services">
+    <div class="container">
+      <header class="services__header">
+        <div class="services__title" appReveal>
+          <span class="section-label">Soluções para cada necessidade</span>
+          <h2 class="section-title">O serviço certo para o que você precisa.</h2>
+        </div>
+        <p class="text-body" [appReveal]="150">
+          Na oficina ou no seu imóvel, o primeiro passo é entender o problema. Veja como podemos ajudar.
+        </p>
+      </header>
+
+      <ul class="services__grid">
+        @for (servico of servicos; track servico.nome; let i = $index) {
+          <li [appReveal]="(i % 3) * 100">
+            <a class="services__card" [href]="servico.link" target="_blank" rel="noopener">
+              <span class="services__card-top">
+                <img class="services__icon" [src]="'assets/icons/' + servico.icone + '.svg'" alt="" />
+                <img class="services__arrow" src="assets/icons/arrow-up-right-muted.svg" alt="" />
+              </span>
+              <span class="services__info">
+                <strong>{{ servico.nome }}</strong>
+                <span class="text-body">{{ servico.descricao }}</span>
+              </span>
+              <small class="services__scope">{{ servico.escopo }}</small>
+            </a>
+          </li>
+        }
+      </ul>
+
+      <p class="text-note" appReveal>
+        A execução depende da avaliação do mecanismo, da disponibilidade de peças e da confirmação do orçamento.
       </p>
-      
-      <div class="hero-buttons">
-        <button class="btn btn-primary">
-          WhatsApp <span style="font-size: 16px;">↗</span>
-        </button>
-        <button class="btn btn-secondary">
-          Ver serviços <span style="font-size: 16px;">↗</span>
-        </button>
-      </div>
-      
-      <p class="text-note hero-note">
-        <span class="icon">💬</span> Conte o que aconteceu. A solução começa pela conversa.
-      </p>
     </div>
-    
-    <!-- Imagem da Direita -->
-    <div class="hero-image">
-      <img src="public/assets/images/chaveiro_chaveirando.png" alt="Miguel trabalhando no chaveiro">
-      
-      <!-- Mensagem flutuante sobre a imagem -->
-      <div class="floating-card">
-        <div class="floating-card-text">
-          <span class="section-label" style="font-size: 10px;">O OFÍCIO EM CADA DETALHE</span>
-          <p class="text-body" style="font-weight: 600; color: var(--cor-texto-1); margin-top: 4px;">
-            Mãos que cuidam. Ferramentas que resolvem.
-          </p>
+  </section>
+
+  <!-- ===================== EMERGÊNCIA ===================== -->
+  <section class="emergency">
+    <div class="container emergency__content">
+      <div class="emergency__intro" appReveal>
+        <span class="section-label section-label--light">Quando a porta não abre</span>
+        <h2 class="section-title section-title--light emergency__title">Ficou do lado de fora? Vamos entender a situação.</h2>
+        <p class="text-body text-body--light">
+          Não force a chave nem o mecanismo. Conte o que aconteceu e confirme a disponibilidade de atendimento.
+        </p>
+      </div>
+
+      <div class="emergency__card" [appReveal]="150">
+        <p class="emergency__info">
+          <img class="icon" src="assets/icons/info.svg" alt="" />
+          Informe o tipo de porta, o problema e a região do imóvel.
+        </p>
+        <a class="btn btn-primary" [href]="whatsapp.emergencia" target="_blank" rel="noopener">
+          Pedir orientação
+          <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+        </a>
+        <small class="emergency__availability">Horários e deslocamento são confirmados no contato.</small>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== GALERIA ===================== -->
+  <section class="section gallery">
+    <div class="container">
+      <header class="gallery__header">
+        <div class="gallery__title" appReveal>
+          <span class="section-label">Por dentro do ofício</span>
+          <h2 class="section-title">Precisão que você pode ver.</h2>
         </div>
-        <div class="floating-card-icon">
-          <!-- Ícone decorativo (alvo/precisão) -->
-          <span style="color: var(--cor-principal-1); font-size: 24px; line-height: 1;">⌖</span>
-        </div>
+        <p class="text-body" [appReveal]="150">Entre a bancada e a sua porta, cada etapa pede atenção ao que realmente importa.</p>
+      </header>
+
+      <div class="gallery__grid">
+        @for (trabalho of trabalhos; track trabalho.imagem; let i = $index) {
+          <figure class="gallery__item" [appReveal]="i * 120">
+            <img class="gallery__photo" [src]="'assets/images/' + trabalho.imagem" [alt]="trabalho.alt" loading="lazy" />
+            <figcaption>
+              <strong>{{ trabalho.etapa }}</strong>
+              <span>{{ trabalho.detalhe }}</span>
+            </figcaption>
+          </figure>
+        }
       </div>
-    </div>
-  </div>
 
-  <!-- BARRA DE DESTAQUES INFERIOR -->
-  <div class="features-bar container">
-    <div class="feature-item">
-      <span class="feature-icon">🛡️</span> Cuidado com o seu patrimônio
+      <p class="text-note" appReveal>Imagens ilustrativas do ofício e dos tipos de trabalho apresentados.</p>
     </div>
-    <div class="feature-item">
-      <span class="feature-icon">⌖</span> Diagnóstico antes da solução
-    </div>
-    <div class="feature-item">
-      <span class="feature-icon">💬</span> Clareza em cada etapa
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- A ESSÊNCIA DO MIGUEL -->
-<section id="oficina" class="essence-section container section reveal">
-  <div class="essence-grid">
-    <div>
-      <div class="section-label">A ESSÊNCIA DO MIGUEL</div>
-      <h2 class="section-title" style="margin-top: 16px;">Um trabalho técnico.<br>Um cuidado muito humano.</h2>
-    </div>
-    <div>
-      <p class="text-body">Uma chave precisa encaixar. Uma fechadura precisa funcionar. E você precisa entender o que está sendo feito.</p>
-      <p class="text-body" style="margin-top: 16px;">É com essa atenção que o Miguel pensa o trabalho do chaveiro: ouvir a necessidade, examinar o mecanismo e indicar uma solução adequada. Técnica na bancada, respeito na sua porta.</p>
-      <div class="divider"></div>
-      <p class="text-body" style="font-weight: 600; color: var(--cor-texto-1);">CUIDADO NO PROCESSO. PRECISÃO NO RESULTADO.</p>
-    </div>
-  </div>
-</section>
-
-<!-- SERVIÇOS -->
-<section id="servicos" class="services-section section">
-  <div class="container reveal">
-    <div class="services-header">
-      <div>
-        <div class="section-label">SOLUÇÕES PARA CADA NECESSIDADE</div>
-        <h2 class="section-title" style="margin-top: 16px;">O serviço certo para o que você precisa.</h2>
+  <!-- ===================== COMO FUNCIONA ===================== -->
+  <section id="como-funciona" class="steps">
+    <div class="container">
+      <div class="steps__title" appReveal>
+        <span class="section-label">Do primeiro contato ao último ajuste</span>
+        <h2 class="section-title">Sem complicar. Sem pular etapas.</h2>
       </div>
-      <p class="text-body">Na oficina ou no seu imóvel, o primeiro passo é entender o problema. Veja como podemos ajudar.</p>
-    </div>
-    
-    <div class="services-grid">
-      @for (servico of servicos; track servico.titulo) {
-        <div class="service-card">
-          <h3 class="form-label" style="font-size: 18px; margin-bottom: 12px;">{{ servico.titulo }}</h3>
-          <p class="text-body" style="flex-grow: 1;">{{ servico.descricao }}</p>
-          <p class="text-note" style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--cor-borda-1);">{{ servico.rodape }}</p>
-        </div>
-      }
-    </div>
-  </div>
-</section>
 
-<!-- EMERGÊNCIA (DARK) -->
-<section class="emergency-section section">
-  <div class="container emergency-grid reveal">
-    <div>
-      <div class="section-label section-label--light">QUANDO A PORTA NÃO ABRE</div>
-      <h2 class="section-title section-title--light" style="margin-top: 16px;">Ficou do lado de fora? Vamos entender a situação.</h2>
-      <p class="text-body section-title--light" style="opacity: 0.8; margin-top: 16px;">Não force a chave nem o mecanismo. Conte o que aconteceu e confirme a disponibilidade de atendimento.</p>
+      <ol class="steps__list">
+        @for (etapa of etapas; track etapa.numero; let i = $index) {
+          <li class="steps__item" [appReveal]="i * 100">
+            <span class="steps__number">{{ etapa.numero }}</span>
+            <h3>{{ etapa.titulo }}</h3>
+            <p class="text-body">{{ etapa.descricao }}</p>
+          </li>
+        }
+      </ol>
     </div>
-    <div class="emergency-action">
-      <p class="text-body section-title--light" style="margin-bottom: 16px;">Informe o tipo de porta, o problema e a região do imóvel.</p>
-      <button class="btn btn-primary">Pedir orientação</button>
-      <p class="text-note section-title--light" style="opacity: 0.7; margin-top: 16px;">Horários e deslocamento são confirmados no contato.</p>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- COMO FUNCIONA (PASSOS) -->
-<section id="como-funciona" class="steps-section container section reveal">
-  <div class="section-label">DO PRIMEIRO CONTATO AO ÚLTIMO AJUSTE</div>
-  <h2 class="section-title" style="margin-top: 16px; margin-bottom: 48px;">Sem complicar. Sem pular etapas.</h2>
-  
-  <div class="steps-grid">
-    @for (passo of passos; track passo.num) {
-      <div class="step-card">
-        <span class="step-number" style="color: var(--cor-principal-1); font-size: 24px; font-weight: bold;">{{ passo.num }}</span>
-        <div class="divider" style="margin-block: 16px;"></div>
-        <h3 class="form-label" style="font-size: 18px; margin-bottom: 8px;">{{ passo.titulo }}</h3>
-        <p class="text-body">{{ passo.desc }}</p>
-      </div>
-    }
-  </div>
-</section>
+  <!-- ===================== SEGURANÇA ===================== -->
+  <section class="section security">
+    <div class="container security__content">
+      <figure class="security__media" appReveal>
+        <img
+          src="assets/images/mecanismo-seguranca.jpg"
+          alt="Cilindro de fechadura dourado com a chave encaixada sobre a bancada"
+          loading="lazy"
+        />
+        <figcaption class="security__badge">
+          <img src="assets/icons/shield-check.svg" alt="" />
+          Seu acesso merece cuidado.
+        </figcaption>
+      </figure>
 
-<!-- FAQ -->
-<section id="duvidas" class="faq-section section">
-  <div class="container faq-grid reveal">
-    <div>
-      <div class="section-label">DÚVIDAS FREQUENTES</div>
-      <h2 class="section-title" style="margin-top: 16px; margin-bottom: 16px;">Antes de chamar, vale saber.</h2>
-      <p class="text-body">Informação clara para você decidir com tranquilidade.</p>
-    </div>
-    <div class="faq-list">
-      @for (faq of faqs; track faq.pergunta; let i = $index) {
-        <div class="faq-item" [class.open]="faq.aberta" (click)="toggleFaq(i)">
-          <div class="faq-header">
-            <h3 class="form-label" style="font-size: 16px;">{{ faq.pergunta }}</h3>
-            <span class="icon" style="color: var(--cor-principal-1); font-weight: bold; font-size: 20px;">{{ faq.aberta ? '−' : '+' }}</span>
-          </div>
-          @if (faq.aberta) {
-            <div class="faq-body">
-              <p class="text-body">{{ faq.resposta }}</p>
-            </div>
+      <div class="security__text">
+        <span class="section-label" [appReveal]="100">Confiança também é procedimento</span>
+        <h2 class="section-title" [appReveal]="150">Abrir uma porta é uma responsabilidade.</h2>
+
+        <ul class="security__list">
+          @for (compromisso of compromissos; track compromisso.titulo; let i = $index) {
+            <li [appReveal]="200 + i * 100">
+              <img src="assets/icons/check.svg" alt="" />
+              <span>
+                <strong>{{ compromisso.titulo }}</strong>
+                <span>{{ compromisso.descricao }}</span>
+              </span>
+            </li>
           }
-        </div>
-      }
+        </ul>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- LOCALIZAÇÃO -->
-<section id="localizacao" class="location-section section reveal">
-  <div class="container">
-    <div class="section-label">LOCALIZAÇÃO DA LOJA</div>
-    <h2 class="section-title" style="margin-block: 16px 24px;">Atendimento no local do cliente e no estabelecimento.</h2>
-    <p class="text-body" style="max-width: 700px; margin-bottom: 48px;">Atendemos com e sem agendamento, dependendo da disponibilidade. O endereço real da loja ainda precisa ser confirmado.</p>
+  <!-- ===================== CUIDADOS ===================== -->
+  <section id="cuidados" class="tips">
+    <div class="container">
+      <header class="tips__header">
+        <div class="tips__title" appReveal>
+          <span class="section-label">Boas práticas</span>
+          <h2 class="section-title tips__heading">Pequenos cuidados evitam imprevistos.</h2>
+        </div>
+        <span class="tips__tag" [appReveal]="150">ORIENTAÇÕES DA OFICINA</span>
+      </header>
 
-    <div class="location-grid">
-      <!-- Info Card -->
-      <div class="info-card">
-        <div class="section-label">HORÁRIO DE FUNCIONAMENTO</div>
-        <p class="text-lead" style="color: var(--cor-texto-1); font-weight: 600; margin-top: 12px;">9:00h às 18:00h</p>
-        <p class="text-note" style="margin-bottom: 24px;">Confirme disponibilidade e região antes do atendimento.</p>
-        
-        <div class="divider"></div>
-        
-        <ul class="features-list">
-          <li>
-            <span class="icon">📍</span>
-            <p class="text-body">Atendimento no local do cliente</p>
+      <ul class="tips__grid">
+        @for (dica of dicas; track dica.icone; let i = $index) {
+          <li class="tips__card" [appReveal]="i * 120">
+            <img [src]="'assets/icons/' + dica.icone + '.svg'" alt="" />
+            <h3>{{ dica.titulo }}</h3>
+            <p>{{ dica.descricao }}</p>
           </li>
-          <li>
-            <span class="icon">🏢</span>
-            <p class="text-body">Atendimento no estabelecimento</p>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== DÚVIDAS ===================== -->
+  <section id="duvidas" class="section faq">
+    <div class="container faq__content">
+      <div class="faq__intro" appReveal>
+        <span class="section-label">Dúvidas frequentes</span>
+        <h2 class="section-title">Antes de chamar, vale saber.</h2>
+        <p class="text-body">Informação clara para você decidir com tranquilidade.</p>
+      </div>
+
+      <ul class="faq__list">
+        @for (item of perguntas; track item.pergunta; let i = $index) {
+          <li class="faq__item" [appReveal]="i * 80">
+            <button
+              type="button"
+              class="faq__question"
+              [attr.aria-expanded]="perguntaAberta() === i"
+              [attr.aria-controls]="'faq-resposta-' + i"
+              (click)="alternarPergunta(i)"
+            >
+              {{ item.pergunta }}
+              <img [src]="perguntaAberta() === i ? 'assets/icons/minus.svg' : 'assets/icons/plus.svg'" alt="" />
+            </button>
+            @if (perguntaAberta() === i) {
+              <p class="faq__answer" [id]="'faq-resposta-' + i">{{ item.resposta }}</p>
+            }
           </li>
-          <li>
-            <span class="icon">📅</span>
-            <p class="text-body">Com e sem agendamento, conforme disponibilidade</p>
-          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== LOCALIZAÇÃO ===================== -->
+  <section id="localizacao" class="section location">
+    <div class="container">
+      <header class="location__header" appReveal>
+        <span class="section-label">Localização da loja</span>
+        <h2 class="section-title">Atendimento no local do cliente e no estabelecimento.</h2>
+        <p class="text-body">Atendemos com e sem agendamento, dependendo da disponibilidade.</p>
+      </header>
+
+      <div class="location__grid">
+        <div class="location__info" [appReveal]="100">
+          <span class="section-label">Horário de funcionamento</span>
+          <p class="location__hours">9:00h às 18:00h</p>
+          <p class="text-note">Confirme disponibilidade e região antes do atendimento.</p>
+
+          <hr class="divider" />
+
+          <ul class="location__modes">
+            @for (modo of modosAtendimento; track modo.texto) {
+              <li>
+                <img class="icon" [src]="'assets/icons/' + modo.icone + '.svg'" alt="" />
+                {{ modo.texto }}
+              </li>
+            }
+          </ul>
+
+          <div class="location__address">
+            <strong>ENDEREÇO DA LOJA</strong>
+            <p class="text-note">{{ endereco.rua }}<br />{{ endereco.bairro }}<br />CEP {{ endereco.cep }}</p>
+          </div>
+        </div>
+
+        <div class="location__map" [appReveal]="200">
+          <div class="location__map-header">
+            <span>
+              <span class="section-label">Onde estamos</span>
+              <strong>{{ endereco.rua }} — {{ endereco.bairro }}</strong>
+            </span>
+            <a class="location__badge" [href]="endereco.rota" target="_blank" rel="noopener">
+              Como chegar
+              <img src="assets/icons/arrow-up-right.svg" alt="" />
+            </a>
+          </div>
+
+          <iframe
+            class="location__map-frame"
+            [src]="endereco.mapa"
+            [title]="'Mapa do Google com a localização da loja: ' + endereco.rua"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CONTATO ===================== -->
+  <section id="contato" class="section contact">
+    <div class="container contact__content">
+      <div class="contact__invite" appReveal>
+        <span class="section-label section-label--light">Vamos conversar</span>
+        <h2 class="section-title section-title--light contact__title">Sua próxima solução começa aqui.</h2>
+        <p class="text-lead text-lead--light">
+          Uma cópia, uma troca ou um imprevisto? Conte o que precisa e prepare as informações para o atendimento.
+        </p>
+
+        <hr class="divider divider--light" />
+
+        <ul class="contact__checklist">
+          @for (item of checklist; track item) {
+            <li>
+              <img src="assets/icons/check.svg" alt="" />
+              {{ item }}
+            </li>
+          }
         </ul>
 
-        <div class="address-box">
-          <p class="text-note" style="font-weight: 600; color: var(--cor-texto-1); margin-bottom: 8px;">ENDEREÇO A CONFIRMAR</p>
-          <p class="text-note">O endereço real da loja ainda será confirmado. O mapa ao lado ilustra a região da Rua 25 de Março, Centro de São Paulo — SP, apenas para fins de exemplo.</p>
-        </div>
+        <p class="text-note text-note--light">
+          Orçamento, prazo e disponibilidade são confirmados antes da execução do serviço.
+        </p>
       </div>
 
-      <!-- Map Card -->
-      <div class="map-card">
-        <div class="map-header">
-          <div>
-            <p class="section-label">LOCALIZAÇÃO ILUSTRATIVA</p>
-            <p class="text-body" style="font-weight: 600; color: var(--cor-texto-1); margin-top: 8px;">Rua 25 de Março, Centro de São Paulo — SP</p>
-          </div>
-          <span class="badge">Exemplo ilustrativo</span>
-        </div>
-        <div class="map-image-placeholder">
-          <div class="map-content">
-            <h3 class="text-body" style="color: var(--cor-texto-1); font-weight: 600;">Mapa ilustrativo da região da Rua 25 de Março</h3>
-            <p class="text-note" style="margin-top: 8px;">A localização real da loja será exibida aqui assim que o endereço for confirmado.</p>
-          </div>
-        </div>
+      <div class="contact__card" [appReveal]="150">
+        <h3>Fale com o Miguel pelo WhatsApp</h3>
+        <p>
+          Envie uma mensagem com a necessidade, o tipo de serviço e a região do imóvel. Vamos alinhar o atendimento pelo
+          WhatsApp.
+        </p>
+        <a class="btn btn-primary" [href]="whatsapp.orcamento" target="_blank" rel="noopener">
+          WhatsApp
+          <img class="btn-icon" src="assets/icons/arrow-up-right.svg" alt="" />
+        </a>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+</main>
 
-<!-- FOOTER / CONTATO -->
-<footer id="contato" class="footer-section reveal">
-  <div class="container footer-grid">
-    <div class="footer-info">
-      <div class="section-label section-label--light">VAMOS CONVERSAR</div>
-      <h2 class="section-title section-title--light" style="margin-block: 16px;">Sua próxima solução começa aqui.</h2>
-      <p class="text-body section-title--light" style="opacity: 0.8; margin-bottom: 32px; max-width: 450px;">Uma cópia, uma troca ou um imprevisto? Conte o que precisa e prepare as informações para o atendimento.</p>
-      
-      <ul class="checklist text-body section-title--light">
-        <li><span class="icon">✓</span> Tipo de chave, fechadura ou porta</li>
-        <li><span class="icon">✓</span> O que aconteceu e quando começou</li>
-        <li><span class="icon">✓</span> Região do imóvel, se houver visita</li>
-      </ul>
-      
-      <p class="text-note section-title--light" style="opacity: 0.7; margin-top: 32px;">Orçamento, prazo e disponibilidade são confirmados antes da execução do serviço.</p>
-    </div>
-    
-    <div class="footer-contact-card">
-      <h3 class="section-title" style="font-size: 24px; margin-bottom: 16px;">Fale com o Miguel pelo WhatsApp</h3>
-      <p class="text-body" style="margin-bottom: 32px;">Envie uma mensagem com a necessidade, o tipo de serviço e a região do imóvel. Vamos alinhar o atendimento pelo WhatsApp.</p>
-      <button class="btn btn-primary btn-block">WhatsApp</button>
-    </div>
-  </div>
+<!-- ===================== RODAPÉ ===================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <a class="brand brand--light" routerLink="/" aria-label="Miguel, chaveiro e oficina: página inicial">
+        <span class="brand__emblem"><img src="assets/icons/key-round-sm.svg" alt="" /></span>
+        <span class="brand__name">Miguel</span>
+        <span class="brand__tagline">CHAVEIRO<br />&amp; OFICINA</span>
+      </a>
 
-  <div class="footer-bottom container">
-    <div class="footer-brand">
-      <h2 class="text-body" style="color: var(--cor-texto-claro-1); font-weight: bold; font-size: 24px; line-height: 1;">
-        Miguel <br>
-        <span style="color: var(--cor-texto-claro-2); font-size: 11px; font-weight: normal; letter-spacing: 0.05em;">CHAVEIRO & OFICINA</span>
-      </h2>
+      <nav aria-label="Links do rodapé">
+        <ul class="footer__links">
+          @for (link of linksRodape; track link.ancora) {
+            <li>
+              <a routerLink="/" [fragment]="link.ancora">{{ link.texto }}</a>
+            </li>
+          }
+        </ul>
+      </nav>
     </div>
-    <div class="footer-links">
-      <a href="#oficina">A oficina</a>
-      <a href="#servicos">Serviços</a>
-      <a href="#cuidados">Cuidados</a>
-      <a href="#contato">Contato</a>
+
+    <div class="footer__bottom">
+      <p class="footer__disclaimer">
+        Miguel é uma identidade conceitual. Imagens ilustrativas. Telefone, endereço, horários e área de atendimento devem
+        ser definidos pelo profissional antes da publicação.
+      </p>
+      <p class="footer__signature">PRECISÃO. CUIDADO. ACESSO.</p>
     </div>
-  </div>
-  
-  <div class="footer-disclaimer container">
-    <p class="text-note disclaimer-text">Miguel é uma identidade conceitual. Imagens ilustrativas. Telefone, endereço e área de atendimento devem ser definidos pelo profissional antes da publicação.</p>
-    <p class="section-label section-label--light tag-line">PRECISÃO. CUIDADO. ACESSO.</p>
   </div>
 </footer>

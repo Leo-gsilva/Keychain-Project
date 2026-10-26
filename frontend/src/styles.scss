@@ -1,133 +1,29 @@
 /* =====================================================================
    ESTILO GLOBAL DO SISTEMA
    ---------------------------------------------------------------------
-   1. Variáveis (cores, tipografia, layout)
-   2. Reset / base
-   3. Layout (container e seções)
-   4. Tipografia reutilizável
-   5. Botões (.btn)
-   6. Formulários (.form-*)
-   7. Marca (.brand)
-   8. Animações (.reveal)
+   Este arquivo só importa os parciais de src/styles, na ordem abaixo.
+   Cada parcial tem um comentário explicando o que contém e como usar.
 
-   Breakpoints usados nos componentes:
+   1. _variables   cores, tipografia e medidas (variáveis CSS em :root)
+   2. _base        reset e estilos padrão das tags HTML
+   3. _layout      .container, .section e .divider
+   4. _typography  .section-label, .section-title, .text-* e .icon
+   5. _buttons     .btn e variações
+   6. _forms       .form-field, .form-label e .form-input
+   7. _brand       logo "Miguel – Chaveiro & Oficina" (.brand)
+   8. _animations  .reveal (diretiva appReveal)
+
+   Breakpoints usados nos componentes (max-width):
    - 1200px  notebook pequeno
    - 900px   tablet
    - 600px   celular
    ===================================================================== */
 
-/* ---------------------------------------------------------------------
-   1. VARIÁVEIS
-   Para mudar a identidade visual do sistema, altere só aqui.
-   --------------------------------------------------------------------- */
-
 @use 'styles/variables';
+@use 'styles/base';
+@use 'styles/layout';
 @use 'styles/typography';
 @use 'styles/buttons';
 @use 'styles/forms';
+@use 'styles/brand';
 @use 'styles/animations';
-/* ---------------------------------------------------------------------
-   2. RESET / BASE
-   --------------------------------------------------------------------- */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  font-family: var(--fonte-principal);
-  background-color: var(--cor-fundo-1);
-  color: var(--cor-texto-1);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-h1,
-h2,
-h3,
-h4,
-p,
-ul {
-  margin: 0;
-}
-
-ul {
-  padding: 0;
-  list-style: none;
-}
-
-img {
-  display: block;
-  max-width: 100%;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button {
-  font: inherit;
-}
-
-
-
-
-
-
-
-
-/* ---------------------------------------------------------------------
-   7. MARCA (logo "Miguel – Chaveiro & Oficina")
-   Uso: .brand + .brand--light quando estiver sobre fundo escuro
-   --------------------------------------------------------------------- */
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--cor-texto-1);
-
-  &__emblem {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border: 1.5px solid var(--cor-principal-1);
-    border-radius: 50%;
-
-    img {
-      width: 22px;
-      height: 22px;
-    }
-  }
-
-  &__name {
-    font-size: 32px;
-    font-weight: 700;
-    line-height: 1;
-  }
-
-  &__tagline {
-    font-size: 10px;
-    font-weight: 500;
-    line-height: 1.4;
-    color: var(--cor-texto-2);
-  }
-
-  &--light {
-    color: var(--cor-texto-claro-1);
-
-    .brand__tagline {
-      color: var(--cor-texto-claro-2);
-    }
-  }
-}
-
-

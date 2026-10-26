@@ -1,0 +1,52 @@
+/* ---------------------------------------------------------------------
+   MARCA (logo "Miguel – Chaveiro & Oficina")
+   Uso:
+   <a class="brand">
+     <span class="brand__emblem"><img src="assets/icons/key-round-sm.svg" alt="" /></span>
+     <span class="brand__name">Miguel</span>
+     <span class="brand__tagline">CHAVEIRO<br />&amp; OFICINA</span>
+   </a>
+   Adicione .brand--light quando estiver sobre fundo escuro.
+   --------------------------------------------------------------------- */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--cor-texto-1);
+
+  &__emblem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid var(--cor-principal-1);
+    border-radius: 50%;
+
+    img {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  &__name {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  &__tagline {
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--cor-texto-2);
+  }
+
+  &--light {
+    color: var(--cor-texto-claro-1);
+
+    .brand__tagline {
+      color: var(--cor-texto-claro-2);
+    }
+  }
+}

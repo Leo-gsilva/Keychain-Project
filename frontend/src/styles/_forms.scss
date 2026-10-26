@@ -1,6 +1,10 @@
-:root{
 /* ---------------------------------------------------------------------
-   6. FORMULÁRIOS
+   FORMULÁRIOS
+   Uso:
+   <label class="form-field">
+     <span class="form-label">E-mail</span>
+     <input class="form-input" type="email" />
+   </label>
    --------------------------------------------------------------------- */
 .form-field {
   display: flex;
@@ -34,5 +38,4 @@
     outline: none;
     border-color: var(--cor-principal-1);
   }
-}
 }
