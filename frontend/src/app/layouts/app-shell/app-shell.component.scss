@@ -1,0 +1,216 @@
+$largura-menu: 248px;
+
+.area {
+  display: grid;
+  grid-template-columns: $largura-menu 1fr;
+  min-height: 100vh;
+  background-color: var(--cor-fundo-1);
+}
+
+/* ---------- Menu lateral ---------- */
+.menu {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 24px;
+  background-color: var(--cor-fundo-escuro);
+  color: var(--cor-texto-claro-1);
+
+  &__marca {
+    margin-bottom: 36px;
+
+    .brand__name {
+      font-size: 28px;
+    }
+    .brand__emblem {
+      width: 36px;
+      height: 36px;
+    }
+  }
+
+  &__grupo {
+    margin-bottom: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--cor-texto-claro-2);
+  }
+
+  &__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    padding-inline: 16px;
+    border-radius: var(--raio-pequeno);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--cor-texto-claro-2);
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+
+    &:hover {
+      color: var(--cor-texto-claro-1);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--cor-principal-1);
+      outline-offset: 2px;
+    }
+
+    &--ativo {
+      background-color: var(--cor-principal-1);
+      color: var(--cor-principal-2);
+      font-weight: 600;
+    }
+  }
+
+  &__rodape {
+    margin-top: auto;
+  }
+
+  &__aviso {
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--cor-borda-3);
+    font-size: 12px;
+    color: var(--cor-texto-claro-2);
+  }
+
+  &__usuario {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 20px;
+  }
+
+  &__avatar {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--raio-pequeno);
+    background-color: var(--cor-borda-3);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  &__nome {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  &__perfil {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--cor-texto-claro-2);
+  }
+}
+
+/* ---------- Topo ---------- */
+.principal {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 76px;
+  padding-inline: 32px;
+  border-bottom: 1px solid var(--cor-borda-1);
+  background-color: var(--cor-fundo-4);
+  font-size: 13px;
+  color: var(--cor-texto-2);
+
+  &__trilha {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__atual {
+    font-weight: 600;
+    color: var(--cor-texto-1);
+  }
+
+  &__data {
+    white-space: nowrap;
+  }
+}
+
+.conteudo {
+  flex: 1;
+  padding: 40px 32px 32px;
+}
+
+.rodape {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 32px 32px;
+  font-size: 11px;
+  color: var(--cor-texto-2);
+
+  &__lema {
+    color: var(--cor-principal-1-hover);
+  }
+}
+
+/* ---------- Celular e tablet ---------- */
+@media (max-width: 900px) {
+  .area {
+    grid-template-columns: 1fr;
+  }
+
+  .menu {
+    position: static;
+    height: auto;
+    padding: 16px 20px;
+
+    &__marca {
+      margin-bottom: 16px;
+    }
+    &__grupo,
+    &__rodape {
+      display: none;
+    }
+    &__lista {
+      flex-direction: row;
+      overflow-x: auto;
+    }
+    &__link {
+      white-space: nowrap;
+    }
+  }
+
+  .topo {
+    height: auto;
+    padding: 16px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .conteudo {
+    padding: 28px 20px;
+  }
+
+  .rodape {
+    flex-direction: column;
+    padding-inline: 20px;
+  }
+}

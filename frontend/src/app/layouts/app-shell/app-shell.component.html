@@ -1,0 +1,61 @@
+<div class="area">
+  <aside class="menu">
+    <a class="brand brand--light menu__marca" routerLink="/" aria-label="Miguel, chaveiro e oficina">
+      <span class="brand__emblem"><img src="assets/icons/key-round-sm.svg" alt="" /></span>
+      <span class="brand__name">Miguel</span>
+      <span class="brand__tagline">CHAVEIRO<br />&amp; OFICINA</span>
+    </a>
+
+    <p class="menu__grupo">{{ rotuloMenu }}</p>
+
+    <nav aria-label="Menu principal">
+      <ul class="menu__lista">
+        @for (item of menu; track item.id) {
+          <li>
+            <a
+              class="menu__link"
+              [class.menu__link--ativo]="secaoAtiva() === item.id"
+              [attr.aria-current]="secaoAtiva() === item.id ? 'page' : null"
+              [routerLink]="item.rota"
+            >
+              {{ item.rotulo }}
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <div class="menu__rodape">
+      <p class="menu__aviso">Uso interno da equipe</p>
+      <div class="menu__usuario">
+        <span class="menu__avatar" aria-hidden="true">{{ iniciais }}</span>
+        <span>
+          <strong class="menu__nome">{{ usuario.nome }}</strong>
+          <span class="menu__perfil">{{ usuario.rotuloPerfil }}</span>
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="principal">
+    <header class="topo">
+      <nav class="topo__trilha" aria-label="Você está em">
+        <span>{{ rotuloArea }}</span>
+        @for (item of trilha(); track item; let ultimo = $last; let primeiro = $first) {
+          <span aria-hidden="true">›</span>
+          <span [class.topo__atual]="primeiro && !ultimo" [attr.aria-current]="ultimo ? 'page' : null">{{ item }}</span>
+        }
+      </nav>
+      <p class="topo__data">{{ dataHoje }}</p>
+    </header>
+
+    <main class="conteudo">
+      <router-outlet />
+    </main>
+
+    <footer class="rodape">
+      <span>Miguel · Gestão da oficina</span>
+      <span class="rodape__lema">CUIDADO NO PROCESSO. PRECISÃO NO RESULTADO.</span>
+    </footer>
+  </div>
+</div>

@@ -1,0 +1,119 @@
+<a class="voltar" routerLink="/funcionario/estoque">← Voltar para estoque</a>
+
+<h1 class="titulo">Cadastrar item</h1>
+<p class="subtitulo">Inclua um material no estoque e defina os parâmetros de reposição.</p>
+
+<form class="cartao" [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+  <!-- ===== Identificação ===== -->
+  <section class="secao" aria-labelledby="sec-identificacao">
+    <h2 class="secao__titulo" id="sec-identificacao">Identificação do item</h2>
+    <p class="secao__texto">Organize os materiais por código, categoria e fabricante.</p>
+
+    <div class="grade grade--3">
+      <label class="form-field">
+        <span class="form-label">Nome do item *</span>
+        <input class="form-input" type="text" formControlName="name" placeholder="Ex.: Chave de fenda achatada"
+               [class.form-input--erro]="invalido('name')" [attr.aria-invalid]="invalido('name')" />
+        @if (invalido('name')) { <span class="erro-campo" role="alert">{{ mensagem('name') }}</span> }
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Código de identificação *</span>
+        <input class="form-input" type="text" formControlName="idCode" placeholder="Ex.: CH-120" autocomplete="off"
+               [class.form-input--erro]="invalido('idCode')" [attr.aria-invalid]="invalido('idCode')" />
+        @if (invalido('idCode')) { <span class="erro-campo" role="alert">{{ mensagem('idCode') }}</span> }
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Categoria *</span>
+        <select class="form-input form-select" formControlName="category"
+                [class.form-input--erro]="invalido('category')" [attr.aria-invalid]="invalido('category')">
+          <option value="" disabled>Selecione a categoria</option>
+          @for (c of categorias; track c.valor) { <option [value]="c.valor">{{ c.nome }}</option> }
+        </select>
+        @if (invalido('category')) { <span class="erro-campo" role="alert">{{ mensagem('category') }}</span> }
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Fabricante / Marca</span>
+        <input class="form-input" type="text" formControlName="brand" placeholder="Ex.: Tramontina" />
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Unidade *</span>
+        <select class="form-input form-select" formControlName="unit"
+                [class.form-input--erro]="invalido('unit')" [attr.aria-invalid]="invalido('unit')">
+          @for (u of unidades; track u.valor) { <option [value]="u.valor">{{ u.nome }}</option> }
+        </select>
+        @if (invalido('unit')) { <span class="erro-campo" role="alert">{{ mensagem('unit') }}</span> }
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Valor unitário *</span>
+        <input class="form-input" type="text" inputmode="decimal" formControlName="unitValue" placeholder="R$ 0,00"
+               (blur)="formatarDinheiro('unitValue')"
+               [class.form-input--erro]="invalido('unitValue')" [attr.aria-invalid]="invalido('unitValue')" />
+        @if (invalido('unitValue')) { <span class="erro-campo" role="alert">{{ mensagem('unitValue') }}</span> }
+      </label>
+    </div>
+  </section>
+
+  <!-- ===== Preços e estoque ===== -->
+  <section class="secao" aria-labelledby="sec-precos">
+    <h2 class="secao__titulo" id="sec-precos">Preços e estoque</h2>
+    <p class="secao__texto">Defina os valores de compra e venda, além do estoque atual e do ponto de aviso.</p>
+
+    <div class="grade grade--3">
+      <label class="form-field">
+        <span class="form-label">Preço de custo *</span>
+        <input class="form-input" type="text" inputmode="decimal" formControlName="costPrice" placeholder="R$ 0,00"
+               (blur)="formatarDinheiro('costPrice')"
+               [class.form-input--erro]="invalido('costPrice')" [attr.aria-invalid]="invalido('costPrice')" />
+        @if (invalido('costPrice')) { <span class="erro-campo" role="alert">{{ mensagem('costPrice') }}</span> }
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Preço de venda *</span>
+        <input class="form-input" type="text" inputmode="decimal" formControlName="sellPrice" placeholder="R$ 0,00"
+               (blur)="formatarDinheiro('sellPrice')"
+               [class.form-input--erro]="invalido('sellPrice')" [attr.aria-invalid]="invalido('sellPrice')" />
+        @if (invalido('sellPrice')) { <span class="erro-campo" role="alert">{{ mensagem('sellPrice') }}</span> }
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Quantidade de estoque *</span>
+        <input class="form-input" type="number" min="0" step="1" inputmode="numeric" formControlName="stock"
+               [class.form-input--erro]="invalido('stock')" [attr.aria-invalid]="invalido('stock')" />
+        @if (invalido('stock')) { <span class="erro-campo" role="alert">{{ mensagem('stock') }}</span> }
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Quantidade de aviso de estoque *</span>
+        <input class="form-input" type="number" min="0" step="1" inputmode="numeric" formControlName="minStock"
+               [class.form-input--erro]="invalido('minStock')" [attr.aria-invalid]="invalido('minStock')" />
+        @if (invalido('minStock')) { <span class="erro-campo" role="alert">{{ mensagem('minStock') }}</span> }
+      </label>
+
+      <label class="form-field grade__largo">
+        <span class="form-label">Descrição</span>
+        <textarea class="form-input form-textarea" rows="3" formControlName="description"
+                  placeholder="Informe marca, modelo, compatibilidade ou outras especificações do item."></textarea>
+      </label>
+    </div>
+  </section>
+
+  @if (erro()) {
+    <p class="aviso-erro" role="alert">{{ erro() }}</p>
+  }
+
+  <!-- ===== Ações ===== -->
+  <footer class="acoes">
+    <span class="text-note">* Campos obrigatórios</span>
+    <div class="acoes__botoes">
+      <a class="btn btn-secondary" routerLink="/funcionario/estoque">Cancelar</a>
+      <button class="btn btn-primary" type="submit" [disabled]="enviando()">
+        {{ enviando() ? 'Salvando...' : 'Salvar item' }}
+      </button>
+    </div>
+  </footer>
+</form>
