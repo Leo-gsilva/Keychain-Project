@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { LandingComponent } from './pages/landing/landing.component';
 import { AppShellComponent, Perfil } from './layouts/app-shell/app-shell.component';
+import { FuncionarioEstoqueComponent } from './pages/funcionario/funcionario-estoque/funcionario-estoque.component';
 import { FuncionarioCadastroItemComponent } from './pages/funcionario/funcionario-cadastro-item/funcionario-cadastro-item.component';
 
 // TODO: quando o login existir, adicionar canActivate aqui
@@ -15,8 +16,8 @@ function area(perfil: Perfil, children: Routes) {
 }
 
 export const routes: Routes = [
-  // TESTE: abre direto na tela de cadastro. Depois voltar para o LandingComponent em path ''.
-  { path: '', pathMatch: 'full', redirectTo: 'funcionario/cadastro-item' },
+  // TESTE: abre direto na área do funcionário. Depois voltar para o LandingComponent em path ''.
+  { path: '', pathMatch: 'full', redirectTo: 'funcionario/estoque' },
 
   {
     path: 'landing',
@@ -25,7 +26,13 @@ export const routes: Routes = [
   },
 
   area('funcionario', [
-    { path: '', pathMatch: 'full', redirectTo: 'cadastro-item' },
+    { path: '', pathMatch: 'full', redirectTo: 'estoque' },
+    {
+      path: 'estoque',
+      title: 'Estoque | Miguel',
+      data: { breadcrumb: ['Estoque'], secao: 'estoque' },
+      component: FuncionarioEstoqueComponent
+    },
     {
       path: 'cadastro-item',
       title: 'Cadastrar item | Miguel',
@@ -34,5 +41,5 @@ export const routes: Routes = [
     }
   ]),
 
-  { path: '**', redirectTo: 'funcionario/cadastro-item' }
+  { path: '**', redirectTo: 'funcionario/estoque' }
 ];
