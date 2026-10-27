@@ -27,6 +27,16 @@ public class AccountService {
         // Força a role a ser EMPLOYEE, ignorando o que vem do JSON
         account.setRole(Role.EMPLOYEE);
         account.setPassword(BCrypt.hash(account.getPassword()));
+
+        // Guarda o CPF só com números, pra "123.456.789-09" e "12345678909" serem o mesmo
+        account.setCpf(account.getCpf().replaceAll("\\D", ""));
+
+        if (repoA.findByCpf(account.getCpf()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "CPF already registered");
+        }
+        if (repoA.findByEmail(account.getEmail()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "E-mail already registered");
+        }
         return repoA.save(account);
     }
 
@@ -53,7 +63,24 @@ public class AccountService {
 
         // Regras Condicionais: Só atualiza se o utilizador enviou um valor válido
         if (data.getEmail() != null && !data.getEmail().isBlank()) {
+            // Bloqueia se o e-mail já pertence a OUTRA conta (manter o próprio e-mail é permitido)
+            repoA.findByEmail(data.getEmail())
+                    .filter(other -> !other.getId().equals(account.getId()))
+                    .ifPresent(other -> {
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, "E-mail already registered");
+                    });
             account.setEmail(data.getEmail());
+        }
+
+        if (data.getCpf() != null && !data.getCpf().isBlank()) {
+            String cpf = data.getCpf().replaceAll("\\D", "");
+            // Bloqueia se o CPF já pertence a OUTRA conta
+            repoA.findByCpf(cpf)
+                    .filter(other -> !other.getId().equals(account.getId()))
+                    .ifPresent(other -> {
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, "CPF already registered");
+                    });
+            account.setCpf(cpf);
         }
 
         if (data.getPassword() != null && !data.getPassword().isBlank()) {
