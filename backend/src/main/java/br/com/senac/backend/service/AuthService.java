@@ -1,5 +1,6 @@
 package br.com.senac.backend.service;
 
+import br.com.senac.backend.utils.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,12 +17,13 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 
     private final AccountRepository repositoryAccount;
+    private final JwtUtil jwtUtil;
 
     public LoginResponse login(LoginRequest req) {
         Account account = repositoryAccount.findByEmail(req.getEmail())
                 .filter(c -> BCrypt.checkPassword(req.getPassword(), c.getPassword()))
                 .orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "E-mail or password is invalid"));
-        return new LoginResponse("trocarPeloJWT");
+        return new LoginResponse(jwtUtil.generateToken(account.getId(), account.getEmail(), account.getRole().name()));
     }
 }

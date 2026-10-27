@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.senac.backend.models.request.LoginRequest;
 import br.com.senac.backend.models.response.LoginResponse;
 import br.com.senac.backend.service.AuthService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Login", description = "Login para ADMINISTRADOR e FUNCIONÁRIOS")
 public class AuthController {
 
     private final AuthService service;
