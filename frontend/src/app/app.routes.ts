@@ -4,6 +4,7 @@ import { LandingComponent } from './pages/landing/landing.component';
 import { AppShellComponent, Perfil } from './layouts/app-shell/app-shell.component';
 import { FuncionarioEstoqueComponent } from './pages/funcionario/funcionario-estoque/funcionario-estoque.component';
 import { FuncionarioCadastroItemComponent } from './pages/funcionario/funcionario-cadastro-item/funcionario-cadastro-item.component';
+import { CadastrarFuncionarioComponent } from './pages/cadastrar-funcionario/cadastrar-funcionario.component';
 
 // TODO: quando o login existir, adicionar canActivate aqui
 function area(perfil: Perfil, children: Routes) {
@@ -38,6 +39,12 @@ export const routes: Routes = [
       title: 'Cadastrar item | Miguel',
       data: { breadcrumb: ['Estoque', 'Cadastrar item'], secao: 'estoque' },
       component: FuncionarioCadastroItemComponent
+    },
+    {
+      path: 'cadastrar-funcionario',
+      title: 'Cadastrar funcionário | Miguel',
+      data: { breadcrumb: ['Funcionários', 'Cadastrar funcionário'], secao: 'funcionarios' },
+      component: CadastrarFuncionarioComponent
     }
   ]),
 
