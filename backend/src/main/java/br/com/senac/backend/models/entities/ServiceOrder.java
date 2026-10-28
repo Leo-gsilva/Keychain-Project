@@ -23,26 +23,26 @@ public class ServiceOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Client name is required")
+    @NotBlank(message = "Client name is mandatory")
     @Column(nullable = false)
     private String clientName;
 
-    @NotBlank(message = "Phone number is required")
+    @NotBlank(message = "Phone number is mandatory")
     @Column(nullable = false)
     private String clientPhone;
 
     private String clientCpfCnpj;
 
-    @NotNull(message = "Service type is required")
+    @NotNull(message = "Service type is mandatory")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ServiceType serviceType;
 
-    @NotNull(message = "Hiring date is required")
+    @NotNull(message = "Hiring date is mandatory")
     @Column(nullable = false)
     private LocalDate hiringDate;
 
-    @NotNull(message = "Status is required")
+    @NotNull(message = "Status is mandatory")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ServiceStatus status;
@@ -50,24 +50,24 @@ public class ServiceOrder {
     @Column(columnDefinition = "TEXT")
     private String observations;
 
-    @NotNull(message = "Service location is required")
+    @NotNull(message = "Service location is mandatory")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ServiceLocation location;
 
     private String address;
 
-    @NotNull(message = "Service value is required")
+    @NotNull(message = "Service value is mandatory")
     @PositiveOrZero(message = "Service value cannot be negative")
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal serviceValue;
 
-    @NotNull(message = "Paid value is required")
+    @NotNull(message = "Paid value is mandatory")
     @PositiveOrZero(message = "Paid value cannot be negative")
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal paidValue;
 
-    @NotNull(message = "Payment method is required")
+    @NotNull(message = "Payment method is mandatory")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentMethod paymentMethod;
