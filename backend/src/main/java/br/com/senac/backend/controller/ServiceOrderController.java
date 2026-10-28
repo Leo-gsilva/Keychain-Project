@@ -41,15 +41,6 @@ public class ServiceOrderController {
         return service.saveService(data);
     }
 
-    //Create with Base64
-
-    @Operation(summary = "Cadastrar serviço com imagem em Base64")
-    @PostMapping("/with-base64")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ServiceResponse createWithBase64(@Valid @RequestBody ServiceRequest data) {
-        return service.saveWithImageBase64(data);
-    }
-
     @Operation(summary = "Listar serviços",
             description = "Devolve todos os serviços. Filtros e buscas são feitos pelo front.")
     @ApiResponses({

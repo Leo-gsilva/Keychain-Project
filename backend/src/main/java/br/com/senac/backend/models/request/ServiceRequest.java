@@ -53,6 +53,4 @@ public class ServiceRequest {
 
     @NotNull(message = "Payment method is mandatory")
     private PaymentMethod paymentMethod;
-
-    private String imageBase64;
 }

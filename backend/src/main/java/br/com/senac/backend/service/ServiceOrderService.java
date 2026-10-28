@@ -5,21 +5,26 @@ import br.com.senac.backend.models.ServiceStatus;
 import br.com.senac.backend.models.entities.ServiceOrder;
 import br.com.senac.backend.models.request.ServiceRequest;
 import br.com.senac.backend.models.response.ServiceResponse;
+import br.com.senac.backend.repository.ServiceAttachmentRepository;
 import br.com.senac.backend.repository.ServiceOrderRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Base64;
 import java.util.List;
 
 @Service
 public class ServiceOrderService {
     private final ServiceOrderRepository repoS;
+    private final ServiceAttachmentRepository repoA;
+    private final ServiceAttachmentService attachments;
 
-    public ServiceOrderService(ServiceOrderRepository repoS) {
+    public ServiceOrderService(ServiceOrderRepository repoS, ServiceAttachmentRepository repoA,
+                               ServiceAttachmentService attachments) {
         this.repoS = repoS;
+        this.repoA = repoA;
+        this.attachments = attachments;
     }
 
     public ServiceResponse saveService(ServiceRequest data) {
@@ -29,32 +34,6 @@ public class ServiceOrderService {
 
         // Todo serviço nasce PENDING; o status só muda pelo endpoint de status
         order.setStatus(ServiceStatus.PENDING);
-
-        return toResponse(repoS.save(order));
-    }
-
-    // Save with image
-
-    @Transactional
-    public ServiceResponse saveWithImageBase64(ServiceRequest data) {
-        ServiceOrder order = new ServiceOrder();
-        applyData(order, data);
-        order.setStatus(ServiceStatus.PENDING);
-
-        if (data.getImageBase64() != null && !data.getImageBase64().isBlank()) {
-            String base64Data = data.getImageBase64();
-
-            // Se a string contiver o prefixo "data:image/png;base64,", removemos antes de decodificar
-            if (base64Data.contains(",")) {
-                base64Data = base64Data.split(",")[1];
-            }
-
-            // Converte a String de texto Base64 em um array de bytes
-            byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
-
-            //Finaliza atribuindo os bytes à entidade e grava no BD
-            order.setImageData(decodedBytes);
-        }
 
         return toResponse(repoS.save(order));
     }
@@ -87,9 +66,15 @@ public class ServiceOrderService {
         return toResponse(repoS.save(order));
     }
 
+    // Apaga os anexos antes, senão a chave estrangeira impede excluir o serviço.
+    // Os arquivos no Storage só são apagados depois que o banco confirmar
+    @Transactional
     public void delete(Long id) {
         ServiceOrder order = findEntityById(id);
+        List<String> paths = repoA.findStoragePathsByServiceId(id);
+        repoA.deleteAllByServiceId(id);
         repoS.delete(order);
+        attachments.deleteFilesAfterCommit(paths);
     }
 
     private ServiceOrder findEntityById(Long id) {

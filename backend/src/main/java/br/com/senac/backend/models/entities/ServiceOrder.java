@@ -71,7 +71,4 @@ public class ServiceOrder {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentMethod paymentMethod;
-
-    @Lob
-    private byte[] imageData;
 }
