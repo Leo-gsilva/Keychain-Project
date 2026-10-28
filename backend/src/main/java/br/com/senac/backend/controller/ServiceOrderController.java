@@ -23,6 +23,7 @@ import java.util.List;
 @Tag(name = "Serviços", description = "Cadastro e acompanhamento dos serviços realizados. Qualquer usuário logado tem acesso.")
 @PreAuthorize("isAuthenticated()")
 public class ServiceOrderController {
+
     private final ServiceOrderService service;
 
     @Operation(summary = "Cadastrar serviço",
@@ -36,8 +37,17 @@ public class ServiceOrderController {
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ServiceResponse create(@Valid @RequestBody ServiceRequest data) {
+    public ServiceResponse create(@Valid @org.springframework.web.bind.annotation.RequestBody ServiceRequest data) {
         return service.saveService(data);
+    }
+
+    //Create with Base64
+
+    @Operation(summary = "Cadastrar serviço com imagem em Base64")
+    @PostMapping("/with-base64")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ServiceResponse createWithBase64(@Valid @RequestBody ServiceRequest data) {
+        return service.saveWithImageBase64(data);
     }
 
     @Operation(summary = "Listar serviços",
@@ -72,7 +82,7 @@ public class ServiceOrderController {
             @ApiResponse(responseCode = "404", description = "Serviço não encontrado", content = @Content)
     })
     @PutMapping("/{id}")
-    public ServiceResponse update(@PathVariable Long id, @Valid @RequestBody ServiceRequest data) {
+    public ServiceResponse update(@PathVariable Long id, @Valid @org.springframework.web.bind.annotation.RequestBody ServiceRequest data) {
         return service.update(id, data);
     }
 
@@ -85,7 +95,7 @@ public class ServiceOrderController {
             @ApiResponse(responseCode = "404", description = "Serviço não encontrado", content = @Content)
     })
     @PatchMapping("/{id}/status")
-    public ServiceResponse updateStatus(@PathVariable Long id, @Valid @RequestBody ServiceStatusRequest data) {
+    public ServiceResponse updateStatus(@PathVariable Long id, @Valid @org.springframework.web.bind.annotation.RequestBody ServiceStatusRequest data) {
         return service.updateStatus(id, data.getStatus());
     }
 

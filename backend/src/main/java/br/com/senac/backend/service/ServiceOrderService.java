@@ -8,8 +8,10 @@ import br.com.senac.backend.models.response.ServiceResponse;
 import br.com.senac.backend.repository.ServiceOrderRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -27,6 +29,32 @@ public class ServiceOrderService {
 
         // Todo serviço nasce PENDING; o status só muda pelo endpoint de status
         order.setStatus(ServiceStatus.PENDING);
+
+        return toResponse(repoS.save(order));
+    }
+
+    // Save with image
+
+    @Transactional
+    public ServiceResponse saveWithImageBase64(ServiceRequest data) {
+        ServiceOrder order = new ServiceOrder();
+        applyData(order, data);
+        order.setStatus(ServiceStatus.PENDING);
+
+        if (data.getImageBase64() != null && !data.getImageBase64().isBlank()) {
+            String base64Data = data.getImageBase64();
+
+            // Se a string contiver o prefixo "data:image/png;base64,", removemos antes de decodificar
+            if (base64Data.contains(",")) {
+                base64Data = base64Data.split(",")[1];
+            }
+
+            // Converte a String de texto Base64 em um array de bytes
+            byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
+
+            //Finaliza atribuindo os bytes à entidade e grava no BD
+            order.setImageData(decodedBytes);
+        }
 
         return toResponse(repoS.save(order));
     }
