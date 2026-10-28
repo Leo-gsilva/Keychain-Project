@@ -16,7 +16,6 @@ export interface NovoFuncionario {
   /** Data no formato ISO (AAAA-MM-DD). */
   birthDate: string;
   gender: Genero;
-  role?: 'EMPLOYEE' | 'ADMINISTRATOR';
 }
 
 /** Funcionário como a API devolve (a senha nunca vem na resposta). */

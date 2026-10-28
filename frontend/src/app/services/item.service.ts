@@ -30,4 +30,8 @@ export class ItemService {
   cadastrar(item: ItemRequest): Observable<Item> {
     return this.http.post<Item>(this.url, item);
   }
+
+  listar(): Observable<Item[]> {
+    return this.http.get<Item[]>(this.url);
+  }
 }

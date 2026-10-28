@@ -1,0 +1,308 @@
+<a class="voltar" routerLink="/funcionario/vendas">← Voltar para vendas</a>
+
+<h1 class="titulo">Nova venda</h1>
+<p class="subtitulo">Informe o pagamento, adicione os itens vendidos e finalize. O estoque é baixado automaticamente.</p>
+
+<form class="cartao" [formGroup]="form" (ngSubmit)="finalizar()" novalidate>
+  <!-- ===== Cliente e pagamento ===== -->
+  <section class="secao" aria-labelledby="sec-cliente">
+    <h2 class="secao__titulo" id="sec-cliente">Cliente e pagamento</h2>
+    <p class="secao__texto">Cliente é opcional — deixe em branco para venda de balcão.</p>
+
+    <div class="grade grade--3">
+      <label class="form-field">
+        <span class="form-label">Cliente</span>
+        <input class="form-input" type="text" formControlName="clientName" placeholder="Ex.: Ana Martins" />
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Telefone do cliente</span>
+        <input class="form-input" type="tel" formControlName="clientPhone" placeholder="(11) 90000-0000"
+               [class.form-input--erro]="invalido('clientPhone')" [attr.aria-invalid]="invalido('clientPhone')" />
+        @if (invalido('clientPhone')) { <span class="erro-campo" role="alert">{{ mensagem('clientPhone') }}</span> }
+      </label>
+
+      <div class="form-field">
+        <span class="form-label" id="rotulo-pagamento">Forma de pagamento *</span>
+        <div class="dropdown">
+          <button type="button" class="form-input dropdown__gatilho"
+                  [class.form-input--erro]="invalido('paymentMethod')"
+                  [class.dropdown__gatilho--aberto]="pagamentoAberto()"
+                  role="combobox" aria-haspopup="listbox" aria-controls="lista-pagamento"
+                  aria-labelledby="rotulo-pagamento"
+                  [attr.aria-expanded]="pagamentoAberto()"
+                  [attr.aria-invalid]="invalido('paymentMethod')"
+                  (click)="alternarPagamento()" (keydown)="teclaPagamento($event)">
+            <span [class.dropdown__vazio]="!pagamentoAtual">{{ pagamentoAtual?.nome ?? 'Selecione a forma de pagamento' }}</span>
+          </button>
+
+          @if (pagamentoAberto()) {
+            <ul class="painel" id="lista-pagamento" role="listbox" aria-labelledby="rotulo-pagamento">
+              @for (opcao of formasPagamento; track opcao.valor; let i = $index) {
+                <li class="painel__opcao"
+                    role="option"
+                    [class.painel__opcao--destaque]="destaquePagamento() === i"
+                    [class.painel__opcao--selecionada]="form.controls.paymentMethod.value === opcao.valor"
+                    [attr.aria-selected]="form.controls.paymentMethod.value === opcao.valor"
+                    (mouseenter)="destaquePagamento.set(i)"
+                    (click)="escolherPagamento(opcao)">
+                  <span class="painel__texto">
+                    <span class="painel__nome">{{ opcao.nome }}</span>
+                    @if (opcao.dica) { <span class="painel__dica">{{ opcao.dica }}</span> }
+                  </span>
+                  @if (form.controls.paymentMethod.value === opcao.valor) {
+                    <img class="painel__check" src="assets/icons/check.svg" alt="" />
+                  }
+                </li>
+              }
+            </ul>
+          }
+        </div>
+        @if (invalido('paymentMethod')) { <span class="erro-campo" role="alert">{{ mensagem('paymentMethod') }}</span> }
+      </div>
+
+      <label class="form-field">
+        <span class="form-label">CPF na nota</span>
+        <input class="form-input" type="text" inputmode="numeric" formControlName="clientCpf" placeholder="000.000.000-00"
+               [class.form-input--erro]="invalido('clientCpf')" [attr.aria-invalid]="invalido('clientCpf')" />
+        @if (invalido('clientCpf')) { <span class="erro-campo" role="alert">{{ mensagem('clientCpf') }}</span> }
+      </label>
+
+      @if (ehCredito) {
+        <label class="form-field">
+          <span class="form-label">Parcelas</span>
+          <select class="form-input form-select" formControlName="installments">
+            @for (n of opcoesParcelas; track n) {
+              <option [ngValue]="n">{{ n === 1 ? 'À vista' : n + 'x de ' + dinheiro(total / n) }}</option>
+            }
+          </select>
+        </label>
+      }
+
+      @if (ehDinheiro) {
+        <label class="form-field">
+          <span class="form-label">Valor recebido</span>
+          <input class="form-input" type="text" inputmode="decimal" formControlName="received" placeholder="R$ 0,00"
+                 (blur)="formatarDinheiro('received')"
+                 [class.form-input--erro]="invalido('received')" [attr.aria-invalid]="invalido('received')" />
+          @if (invalido('received')) { <span class="erro-campo" role="alert">{{ mensagem('received') }}</span> }
+        </label>
+      }
+
+      <label class="form-field">
+        <span class="form-label">Vendedor</span>
+        <input class="form-input form-input--leitura" type="text" value="Você (usuário logado)" readonly tabindex="-1" />
+      </label>
+    </div>
+  </section>
+
+  <!-- ===== Itens da venda ===== -->
+  <section class="secao" aria-labelledby="sec-itens">
+    <h2 class="secao__titulo" id="sec-itens">Itens da venda</h2>
+    <p class="secao__texto">Busque o item no estoque, informe a quantidade e adicione. A venda precisa de pelo menos 1 item.</p>
+
+    @if (erroEstoque()) {
+      <p class="aviso-erro aviso-erro--inline" role="alert">
+        {{ erroEstoque() }}
+        <button type="button" class="link" (click)="carregarEstoque()">Tentar de novo</button>
+      </p>
+    }
+
+    <div class="adicionar">
+      <div class="form-field adicionar__busca">
+        <label class="form-label" for="campo-busca">Item do estoque *</label>
+        <div class="busca">
+          <svg class="busca__icone" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+            <path d="m21 21-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          <input #campoBusca id="campo-busca" class="form-input busca__campo" type="text" autocomplete="off"
+                 [class.form-input--erro]="semItens()"
+                 [placeholder]="carregandoEstoque() ? 'Carregando estoque...' : 'Buscar por nome ou código (ex.: Blank Yale, BL-Y01)'"
+                 [disabled]="carregandoEstoque()"
+                 [value]="busca()"
+                 role="combobox" aria-autocomplete="list" aria-controls="lista-busca"
+                 [attr.aria-expanded]="buscaAberta()"
+                 [attr.aria-activedescendant]="buscaAberta() && resultados().length ? 'resultado-' + destaqueBusca() : null"
+                 (input)="aoDigitarBusca($any($event.target).value)"
+                 (focus)="buscaAberta.set(busca().trim() !== '' && !itemSelecionado())"
+                 (keydown)="teclaBusca($event)" />
+
+          @if (buscaAberta()) {
+            <div class="painel painel--busca" id="lista-busca" role="listbox">
+              <p class="painel__cabecalho">
+                {{ resultados().length === 0 ? 'Nenhum item encontrado' : resultados().length === 1 ? '1 resultado' : resultados().length + ' resultados' }}
+                para "{{ busca().trim() }}"
+              </p>
+
+              @for (item of resultados(); track item.id; let i = $index) {
+                <div class="painel__opcao painel__opcao--item"
+                     role="option"
+                     [id]="'resultado-' + i"
+                     [class.painel__opcao--destaque]="destaqueBusca() === i"
+                     [class.painel__opcao--desabilitada]="disponivel(item) <= 0"
+                     [attr.aria-disabled]="disponivel(item) <= 0"
+                     [attr.aria-selected]="destaqueBusca() === i"
+                     (mouseenter)="disponivel(item) > 0 && destaqueBusca.set(i)"
+                     (click)="escolherResultado(item)">
+                  <span class="painel__texto">
+                    <span class="painel__nome">
+                      @for (parte of partesNome(item.name); track $index) {
+                        @if (parte.destaque) { <strong>{{ parte.texto }}</strong> } @else { {{ parte.texto }} }
+                      }
+                    </span>
+                    <span class="painel__dica">{{ item.idCode }}{{ item.brand ? ' · ' + item.brand : '' }}</span>
+                  </span>
+
+                  @if (item.stock <= 0) {
+                    <span class="selo selo--erro">Sem estoque</span>
+                  } @else if (quantidadeNaVenda(item) > 0) {
+                    <span class="selo">{{ disponivel(item) <= 0 ? 'Todo o estoque já adicionado' : 'Já adicionado (' + quantidadeNaVenda(item) + ' un.)' }}</span>
+                  }
+
+                  <span class="painel__valores">
+                    <span class="painel__preco">{{ dinheiro(item.sellPrice) }}</span>
+                    <span class="painel__dica" [class.painel__dica--alerta]="item.stock > 0 && item.stock <= item.minStock">
+                      Em estoque: {{ item.stock }} un.
+                    </span>
+                  </span>
+                </div>
+              }
+
+              <p class="painel__rodape">↑ ↓ para navegar · Enter para adicionar · Esc para fechar</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <label class="form-field adicionar__qtd">
+        <span class="form-label">Quantidade *</span>
+        <input #campoQuantidade class="form-input" type="number" min="1" step="1" inputmode="numeric"
+               [value]="quantidade()"
+               (input)="aoMudarQuantidade($any($event.target).value)"
+               (keydown.enter)="$event.preventDefault(); adicionar()" />
+      </label>
+
+      <label class="form-field adicionar__valor">
+        <span class="form-label">Valor unitário</span>
+        <input class="form-input form-input--leitura" type="text" readonly tabindex="-1"
+               [value]="dinheiro(itemSelecionado()?.sellPrice ?? 0)" />
+      </label>
+
+      <button type="button" class="btn btn-primary adicionar__botao" (click)="adicionar()">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+          <path d="M3.75 9h10.5M9 3.75v10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
+        Adicionar item
+      </button>
+    </div>
+    @if (erroAdicionar()) { <span class="erro-campo" role="alert">{{ erroAdicionar() }}</span> }
+
+    @if (linhas().length > 0) {
+      <div class="tabela" role="table" aria-label="Itens adicionados">
+        <div class="tabela__linha tabela__linha--cabecalho" role="row">
+          <span role="columnheader">Item</span>
+          <span role="columnheader">Código</span>
+          <span role="columnheader">Quantidade</span>
+          <span role="columnheader" class="direita">Valor unit.</span>
+          <span role="columnheader" class="direita">Subtotal</span>
+          <span role="columnheader"><span class="sr-only">Remover</span></span>
+        </div>
+
+        @for (linha of linhas(); track linha.item.id) {
+          <div class="tabela__linha" role="row">
+            <span role="cell" class="tabela__item">
+              <strong>{{ linha.item.name }}</strong>
+              <small>Em estoque: {{ linha.item.stock }} un.</small>
+            </span>
+            <span role="cell" class="tabela__codigo">{{ linha.item.idCode }}</span>
+            <span role="cell">
+              <span class="passo">
+                <button type="button" aria-label="Diminuir quantidade" [disabled]="linha.quantidade <= 1"
+                        (click)="alterarQuantidade(linha, -1)">−</button>
+                <span aria-live="polite">{{ linha.quantidade }}</span>
+                <button type="button" aria-label="Aumentar quantidade" [disabled]="linha.quantidade >= linha.item.stock"
+                        (click)="alterarQuantidade(linha, 1)">+</button>
+              </span>
+            </span>
+            <span role="cell" class="direita">{{ dinheiro(linha.item.sellPrice) }}</span>
+            <span role="cell" class="direita"><strong>{{ dinheiro(linha.item.sellPrice * linha.quantidade) }}</strong></span>
+            <span role="cell" class="direita">
+              <button type="button" class="remover" [attr.aria-label]="'Remover ' + linha.item.name" (click)="remover(linha)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </span>
+          </div>
+        }
+
+        <div class="tabela__rodape">
+          <span>{{ linhas().length }} {{ linhas().length === 1 ? 'item' : 'itens' }} · {{ totalUnidades() }} {{ totalUnidades() === 1 ? 'unidade' : 'unidades' }}</span>
+          <span>Subtotal dos itens <strong>{{ dinheiro(subtotal()) }}</strong></span>
+        </div>
+      </div>
+    } @else {
+      <p class="vazio" [class.vazio--erro]="semItens()">Nenhum item adicionado ainda.</p>
+    }
+  </section>
+
+  <!-- ===== Fechamento ===== -->
+  <section class="secao" aria-labelledby="sec-fechamento">
+    <h2 class="secao__titulo" id="sec-fechamento">Fechamento</h2>
+    <p class="secao__texto">Aplique um desconto, se houver, e confira o total antes de finalizar.</p>
+
+    <div class="fechamento">
+      <label class="form-field fechamento__desconto">
+        <span class="form-label">Desconto (R$)</span>
+        <input class="form-input" type="text" inputmode="decimal" formControlName="discount" placeholder="R$ 0,00"
+               (blur)="formatarDinheiro('discount')"
+               [class.form-input--erro]="invalido('discount') || descontoMaiorQueSubtotal"
+               [attr.aria-invalid]="invalido('discount') || descontoMaiorQueSubtotal" />
+        @if (invalido('discount')) {
+          <span class="erro-campo" role="alert">{{ mensagem('discount') }}</span>
+        } @else if (descontoMaiorQueSubtotal) {
+          <span class="erro-campo" role="alert">Maior que o subtotal dos itens.</span>
+        }
+      </label>
+
+      <label class="form-field fechamento__obs">
+        <span class="form-label">Observações</span>
+        <textarea class="form-input form-textarea" rows="3" formControlName="observations"
+                  placeholder="Ex.: cliente levou cópia extra, troca combinada, etc."></textarea>
+      </label>
+
+      <div class="total" aria-live="polite">
+        <p class="total__linha"><span>Subtotal ({{ totalUnidades() }} un.)</span><span>{{ dinheiro(subtotal()) }}</span></p>
+        <p class="total__linha"><span>Desconto</span><span class="total__desconto">− {{ dinheiro(desconto) }}</span></p>
+        <hr class="total__divisor" />
+        <p class="total__linha total__linha--final"><span>Total</span><strong>{{ dinheiro(total) }}</strong></p>
+        @if (ehDinheiro && troco !== null) {
+          <p class="total__linha" [class.total__linha--alerta]="troco < 0">
+            <span>{{ troco < 0 ? 'Falta receber' : 'Troco' }}</span><span>{{ dinheiro(troco < 0 ? -troco : troco) }}</span>
+          </p>
+        }
+        <p class="total__pagamento">{{ resumoPagamento }}</p>
+      </div>
+    </div>
+  </section>
+
+  @if (erro()) {
+    <p class="aviso-erro" role="alert">{{ erro() }}</p>
+  }
+
+  <!-- ===== Ações ===== -->
+  <footer class="acoes">
+    <span class="text-note">* Campos obrigatórios · adicione pelo menos 1 item para finalizar</span>
+    <div class="acoes__botoes">
+      <a class="btn btn-secondary" routerLink="/funcionario/vendas">Cancelar</a>
+      <button class="btn btn-primary" type="submit" [disabled]="enviando()">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M16.666 5 7.5 14.166 3.334 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        {{ enviando() ? 'Finalizando...' : 'Finalizar venda' }}
+      </button>
+    </div>
+  </footer>
+</form>

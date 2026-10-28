@@ -37,6 +37,7 @@ export class AppShellComponent {
       { id: 'home', rotulo: 'Home', rota: 'home' },
       { id: 'estoque', rotulo: 'Estoque', rota: 'estoque' },
       { id: 'servicos', rotulo: 'Serviços', rota: 'servicos' },
+      { id: 'vendas', rotulo: 'Vendas', rota: 'vendas' },
       { id: 'funcionarios', rotulo: 'Funcionários', rota: 'funcionarios', somenteAdmin: true }
     ] as ItemMenu[]
   )

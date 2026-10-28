@@ -88,7 +88,7 @@ export class CadastrarFuncionarioComponent {
 
   readonly employeeForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(120)]],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
     password: ['', [Validators.required, Validators.pattern(PASSWORD_REGEX)]],
     cpf: ['', [Validators.required, validateCpf]],
     birthDate: ['', [Validators.required, validateBirthDate]],
@@ -126,7 +126,7 @@ export class CadastrarFuncionarioComponent {
     }
 
     if (field === 'email') {
-      return 'Informe um e-mail válido.';
+      return control.hasError('maxlength') ? 'O e-mail pode ter no máximo 100 caracteres.' : 'Informe um e-mail válido.';
     }
     if (field === 'password') {
       return 'Use 8+ caracteres, com maiúscula, minúscula, número e símbolo (@#$%^&+=).';
@@ -160,8 +160,7 @@ export class CadastrarFuncionarioComponent {
         password: values.password,
         cpf: values.cpf.replace(/\D/g, ''),
         birthDate: values.birthDate,
-        gender: values.gender as Genero,
-        role: 'EMPLOYEE'
+        gender: values.gender as Genero
       })
       .subscribe({
         next: () => {

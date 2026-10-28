@@ -5,6 +5,8 @@ import { AppShellComponent, Perfil } from './layouts/app-shell/app-shell.compone
 import { FuncionarioEstoqueComponent } from './pages/funcionario/funcionario-estoque/funcionario-estoque.component';
 import { FuncionarioCadastroItemComponent } from './pages/funcionario/funcionario-cadastro-item/funcionario-cadastro-item.component';
 import { CadastrarFuncionarioComponent } from './pages/cadastrar-funcionario/cadastrar-funcionario.component';
+import { VendasComponent } from './pages/vendas/vendas/vendas.component';
+import { NovaVendaComponent } from './pages/vendas/nova-venda/nova-venda.component';
 
 // TODO: quando o login existir, adicionar canActivate aqui
 function area(perfil: Perfil, children: Routes) {
@@ -39,6 +41,18 @@ export const routes: Routes = [
       title: 'Cadastrar item | Miguel',
       data: { breadcrumb: ['Estoque', 'Cadastrar item'], secao: 'estoque' },
       component: FuncionarioCadastroItemComponent
+    },
+    {
+      path: 'vendas',
+      title: 'Vendas | Miguel',
+      data: { breadcrumb: ['Vendas'], secao: 'vendas' },
+      component: VendasComponent
+    },
+    {
+      path: 'vendas/nova',
+      title: 'Nova venda | Miguel',
+      data: { breadcrumb: ['Vendas', 'Nova venda'], secao: 'vendas' },
+      component: NovaVendaComponent
     },
     {
       path: 'cadastrar-funcionario',

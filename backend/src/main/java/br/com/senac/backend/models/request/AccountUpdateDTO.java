@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.validator.constraints.br.CPF;
 import java.util.Date;
@@ -24,6 +25,7 @@ public class AccountUpdateDTO {
             message = "the password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character")
     private String password;
     @Email
+    @Size(max = 100, message = "E-mail must be at most 100 characters")
     private String email;
     @CPF
     private String cpf;
