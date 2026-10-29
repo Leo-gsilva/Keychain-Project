@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -71,4 +74,16 @@ public class ServiceOrder {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentMethod paymentMethod;
+
+    // Previsão de atendimento/entrega (opcional)
+    private LocalDateTime scheduledAt;
+
+    // Nulos nos serviços cadastrados antes dessas colunas existirem
+    private LocalDateTime createdAt;
+
+    private LocalDateTime statusChangedAt;
+
+    // Peças e materiais do estoque usados no serviço
+    @OneToMany(mappedBy = "serviceOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ServiceItem> items = new ArrayList<>();
 }

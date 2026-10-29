@@ -63,7 +63,7 @@ public class SaleService {
 
             BigDecimal lineTotal = item.getSellPrice().multiply(BigDecimal.valueOf(quantity));
             sale.getItems().add(new SaleItem(null, sale, item.getId(), item.getIdCode(), item.getName(),
-                    quantity, item.getSellPrice(), lineTotal));
+                    quantity, item.getSellPrice(), lineTotal, item.getCostPrice()));
             subtotal = subtotal.add(lineTotal);
         }
 

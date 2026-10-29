@@ -48,4 +48,10 @@ public class SaleItem {
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
+
+    // Preço de custo do item no momento da venda (usado no lucro estimado).
+    // Nulo nas vendas feitas antes da coluna existir; aí as métricas usam o custo atual do item
+    @JsonIgnore
+    @Column(precision = 10, scale = 2)
+    private BigDecimal unitCost;
 }

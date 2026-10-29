@@ -3,6 +3,8 @@ package br.com.senac.backend.models.request;
 import br.com.senac.backend.models.PaymentMethod;
 import br.com.senac.backend.models.ServiceLocation;
 import br.com.senac.backend.models.ServiceType;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -11,6 +13,8 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 // O que o front envia para cadastrar ou editar um serviço.
 // Não tem id (vem pela URL) nem status (nasce PENDING e só muda por PATCH /services/{id}/status).
@@ -53,4 +57,21 @@ public class ServiceRequest {
 
     @NotNull(message = "Payment method is mandatory")
     private PaymentMethod paymentMethod;
+
+    // Opcional: previsão de atendimento/entrega
+    private LocalDateTime scheduledAt;
+
+    // Opcional: peças e materiais do estoque usados no serviço.
+    // Na edição: ausente = mantém as peças atuais; enviada (mesmo vazia) = substitui a lista anterior
+    private List<@Valid ServiceItemRequest> items;
+
+    @Data
+    public static class ServiceItemRequest {
+        @NotNull(message = "Item id is mandatory")
+        private Long itemId;
+
+        @NotNull(message = "Quantity is mandatory")
+        @Min(value = 1, message = "Quantity must be at least 1")
+        private Integer quantity;
+    }
 }
