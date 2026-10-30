@@ -11,6 +11,11 @@ interface ItemMenu {
   somenteAdmin?: boolean;
 }
 
+interface ItemTrilha {
+  rotulo: string;
+  rota?: string;
+}
+
 @Component({
   selector: 'app-shell',
   imports: [RouterOutlet, RouterLink],
@@ -53,11 +58,10 @@ export class AppShellComponent {
 
   readonly dataHoje = this.formatarData(new Date());
 
-  readonly trilha = signal<string[]>([]);
+  readonly trilha = signal<ItemTrilha[]>([]);
   readonly secaoAtiva = signal<string>('');
 
   constructor() {
-
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe(() => this.atualizar());
@@ -66,7 +70,7 @@ export class AppShellComponent {
   private atualizar(): void {
     let atual = this.rota;
     while (atual.firstChild) atual = atual.firstChild;
-    this.trilha.set((atual.snapshot?.data['breadcrumb'] as string[] | undefined) ?? []);
+    this.trilha.set((atual.snapshot?.data['breadcrumb'] as ItemTrilha[] | undefined) ?? []);
     this.secaoAtiva.set((atual.snapshot?.data['secao'] as string | undefined) ?? '');
   }
 

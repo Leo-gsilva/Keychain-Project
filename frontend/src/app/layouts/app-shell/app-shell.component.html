@@ -39,11 +39,17 @@
 
   <div class="principal">
     <header class="topo">
-      <nav class="topo__trilha" aria-label="Você está em">
+            <nav class="topo__trilha" aria-label="Você está em">
         <span>{{ rotuloArea }}</span>
-        @for (item of trilha(); track item; let ultimo = $last; let primeiro = $first) {
+        @for (item of trilha(); track item.rotulo; let ultimo = $last) {
           <span aria-hidden="true">›</span>
-          <span [class.topo__atual]="primeiro && !ultimo" [attr.aria-current]="ultimo ? 'page' : null">{{ item }}</span>
+          @if (ultimo) {
+            <span class="topo__atual" aria-current="page">{{ item.rotulo }}</span>
+          } @else if (item.rota) {
+            <a class="topo__link" [routerLink]="item.rota">{{ item.rotulo }}</a>
+          } @else {
+            <span>{{ item.rotulo }}</span>
+          }
         }
       </nav>
       <p class="topo__data">{{ dataHoje }}</p>

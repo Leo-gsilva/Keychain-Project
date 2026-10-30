@@ -11,3 +11,157 @@
     Adicionar
   </a>
 </div>
+
+<section class="resumo" aria-label="Resumo do estoque">
+  <article class="indicador">
+    <p class="indicador__rotulo">Itens cadastrados</p>
+    <p class="indicador__valor">{{ total() }}</p>
+    <p class="indicador__texto">Todos os itens do estoque da oficina</p>
+  </article>
+
+  <article class="indicador">
+    <p class="indicador__rotulo">Abaixo do mínimo</p>
+    <p class="indicador__valor">{{ itensAbaixo().length }}</p>
+    <p class="indicador__texto">{{ nomesAbaixo() || 'Nenhum item abaixo do mínimo' }}</p>
+  </article>
+
+  <article class="indicador">
+    <p class="indicador__rotulo">Estoque regular</p>
+    <p class="indicador__valor">{{ regulares() }}</p>
+    <p class="indicador__texto">Itens acima do estoque mínimo</p>
+  </article>
+</section>
+
+<section class="cartao" aria-labelledby="titulo-itens">
+  <header class="cartao__topo">
+    <h2 class="cartao__titulo" id="titulo-itens">Itens da oficina</h2>
+    @if (itensAbaixo().length > 0) {
+      <span class="selo">
+        {{ itensAbaixo().length }} {{ itensAbaixo().length === 1 ? 'item' : 'itens' }} para reposição
+      </span>
+    }
+  </header>
+
+  <div class="filtros">
+    <label class="busca">
+      <svg class="busca__icone" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6" />
+        <path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+      </svg>
+      <input
+        class="form-input busca__campo"
+        type="search"
+        placeholder="Pesquisar por nome do item, código ou categoria"
+        aria-label="Pesquisar itens"
+        [value]="busca()"
+        (input)="aoBuscar($event)"
+      />
+    </label>
+
+    <select
+      class="form-input form-select filtro-categoria"
+      aria-label="Filtrar por categoria"
+      (change)="aoMudarCategoria($event)"
+    >
+      <option value="">Todas as categorias</option>
+      @for (c of categorias; track c.valor) {
+        <option [value]="c.valor">{{ c.nome }}</option>
+      }
+    </select>
+  </div>
+
+  @if (erro()) {
+    <p class="aviso-erro" role="alert">{{ erro() }}</p>
+  }
+
+  <div class="tabela-rolagem">
+    <table class="tabela">
+      <thead>
+        <tr>
+          <th scope="col">Nome do item</th>
+          <th scope="col">Código</th>
+          <th scope="col">Categoria</th>
+          <th scope="col">Qtd. atual</th>
+          <th scope="col">Est. mínimo</th>
+          <th scope="col">Valor unitário</th>
+          <th scope="col">Status</th>
+          <th scope="col">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of visiveis(); track item.id) {
+          <tr>
+            <td class="tabela__nome">{{ item.name }}</td>
+            <td>{{ item.idCode }}</td>
+            <td>{{ nomeCategoria(item.category) }}</td>
+            <td class="tabela__qtd" [class.tabela__qtd--alerta]="abaixo(item)">{{ item.stock }} un.</td>
+            <td>{{ item.minStock }} un.</td>
+            <td>{{ moeda(item.sellPrice) }}</td>
+            <td>
+              <span class="status" [class.status--alerta]="abaixo(item)">{{ rotuloStatus(item) }}</span>
+            </td>
+            <td>
+              <div class="acoes">
+                <!-- Editar e Visualizar ficam desativados até essas telas existirem -->
+                <button type="button" class="acao" disabled title="Disponível em breve">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+                  </svg>
+                  Editar
+                </button>
+                <button type="button" class="acao" disabled title="Disponível em breve">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6" />
+                  </svg>
+                  Visualizar
+                </button>
+                <button type="button" class="acao acao--excluir" (click)="excluir(item)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  Excluir
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td class="tabela__vazio" colspan="8">{{ mensagemVazia() }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <footer class="paginacao">
+    <p class="paginacao__info">Mostrando {{ inicio() }}–{{ fim() }} de {{ filtrados().length }} registros</p>
+
+    <nav class="paginacao__nav" aria-label="Paginação">
+      <button type="button" class="botao-pagina" [disabled]="paginaAtual() === 1" (click)="irPara(paginaAtual() - 1)">
+        Anterior
+      </button>
+
+      @for (p of paginas(); track p) {
+        <button
+          type="button"
+          class="numero"
+          [class.numero--ativo]="p === paginaAtual()"
+          [attr.aria-current]="p === paginaAtual() ? 'page' : null"
+          (click)="irPara(p)"
+        >
+          {{ p }}
+        </button>
+      }
+
+      <button
+        type="button"
+        class="botao-pagina"
+        [disabled]="paginaAtual() === totalPaginas()"
+        (click)="irPara(paginaAtual() + 1)"
+      >
+        Próxima
+      </button>
+    </nav>
+  </footer>
+</section>
