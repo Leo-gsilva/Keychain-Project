@@ -6,6 +6,7 @@ import { FuncionarioEstoqueComponent } from './pages/funcionario/funcionario-est
 import { FuncionarioCadastroItemComponent } from './pages/funcionario/funcionario-cadastro-item/funcionario-cadastro-item.component';
 import { CadastrarFuncionarioComponent } from './pages/cadastrar-funcionario/cadastrar-funcionario.component';
 import { ServicosComponent } from './pages/servicos/servicos/servicos.component';
+import { CadastrarServicoComponent } from './pages/funcionario/funcionario-cadastrar-servico/cadastrar-servico.component';
 import { VendasComponent } from './pages/vendas/vendas/vendas.component';
 import { NovaVendaComponent } from './pages/vendas/nova-venda/nova-venda.component';
 
@@ -54,6 +55,23 @@ export const routes: Routes = [
       title: 'Serviços | Miguel',
       data: { breadcrumb: [{ rotulo: 'Serviços' }], secao: 'servicos' },
       component: ServicosComponent
+    },
+    {
+      path: 'servicos/novo',
+      title: 'Cadastrar serviço | Miguel',
+      data: {
+        breadcrumb: [
+          { rotulo: 'Serviços', rota: '/funcionario/servicos' },
+          { rotulo: 'Cadastrar serviço' }
+        ],
+        secao: 'servicos'
+      },
+      component: CadastrarServicoComponent
+    },
+    {
+      path: 'servicos/cadastrar',
+      redirectTo: 'servicos/novo',
+      pathMatch: 'full'
     },
     {
       path: 'vendas',
