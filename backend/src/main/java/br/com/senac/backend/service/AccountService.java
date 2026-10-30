@@ -5,15 +5,12 @@ import br.com.senac.backend.models.entities.Account;
 import br.com.senac.backend.models.request.AccountUpdateDTO;
 import br.com.senac.backend.repository.AccountRepository;
 import br.com.senac.backend.utils.BCrypt;
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
-
 
 @Service
 public class AccountService {
@@ -22,13 +19,15 @@ public class AccountService {
     public AccountService(AccountRepository repoA) {
         this.repoA = repoA;
     }
+
     public Account saveEmployeeAccount(Account account) {
         account.setId(null);
         // Força a role a ser EMPLOYEE, ignorando o que vem do JSON
         account.setRole(Role.EMPLOYEE);
         account.setPassword(BCrypt.hash(account.getPassword()));
 
-        // Guarda o CPF só com números, pra "123.456.789-09" e "12345678909" serem o mesmo
+        // Guarda o CPF só com números, pra "123.456.789-09" e "12345678909" serem o
+        // mesmo
         account.setCpf(account.getCpf().replaceAll("\\D", ""));
 
         if (repoA.findByCpf(account.getCpf()).isPresent()) {
@@ -43,10 +42,12 @@ public class AccountService {
     public List<Account> findAll() {
         return repoA.findAll();
     }
+
     public Account findById(Integer id) {
-        return repoA.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found: " + id));
+        return repoA.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found: " + id));
     }
+
     public Account update(Integer id, AccountUpdateDTO data) {
         // Busca a conta que já existe na base de dados
         Account account = findById(id);
@@ -63,7 +64,8 @@ public class AccountService {
 
         // Regras Condicionais: Só atualiza se o utilizador enviou um valor válido
         if (data.getEmail() != null && !data.getEmail().isBlank()) {
-            // Bloqueia se o e-mail já pertence a OUTRA conta (manter o próprio e-mail é permitido)
+            // Bloqueia se o e-mail já pertence a OUTRA conta (manter o próprio e-mail é
+            // permitido)
             repoA.findByEmail(data.getEmail())
                     .filter(other -> !other.getId().equals(account.getId()))
                     .ifPresent(other -> {

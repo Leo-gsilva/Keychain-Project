@@ -1,0 +1,340 @@
+<a class="voltar" routerLink="/funcionario/servicos">← Voltar para serviços</a>
+
+<h1 class="titulo">Cadastrar serviço</h1>
+<p class="subtitulo">Registre o atendimento, identifique o cliente e informe o pagamento.</p>
+
+<form class="cartao" [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+  <!-- ===== Identificação do cliente ===== -->
+  <section class="secao" aria-labelledby="sec-cliente">
+    <h2 class="secao__titulo" id="sec-cliente">Identificação do cliente</h2>
+    <p class="secao__texto">Dados para contato e identificação na ordem de serviço.</p>
+
+    <div class="grade grade--3">
+      <label class="form-field">
+        <span class="form-label">Nome completo <span class="obrigatorio">*</span></span>
+        <input class="form-input" type="text" formControlName="clientName" placeholder="Informe o nome do cliente"
+               autocomplete="name"
+               [class.form-input--erro]="invalido('clientName')" [attr.aria-invalid]="invalido('clientName')" />
+        @if (invalido('clientName')) { <span class="erro-campo" role="alert">{{ mensagem('clientName') }}</span> }
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Telefone <span class="obrigatorio">*</span></span>
+        <input class="form-input" type="tel" inputmode="tel" formControlName="clientPhone"
+               placeholder="(00) 00000-0000" maxlength="15"
+               (input)="formatarTelefone($event)"
+               [class.form-input--erro]="invalido('clientPhone')" [attr.aria-invalid]="invalido('clientPhone')" />
+        @if (invalido('clientPhone')) { <span class="erro-campo" role="alert">{{ mensagem('clientPhone') }}</span> }
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">CPF ou CNPJ</span>
+        <input class="form-input" type="text" inputmode="numeric" formControlName="clientCpfCnpj"
+               placeholder="Informe o documento" maxlength="18"
+               (input)="formatarDocumento($event)"
+               [class.form-input--erro]="invalido('clientCpfCnpj')" [attr.aria-invalid]="invalido('clientCpfCnpj')" />
+        @if (invalido('clientCpfCnpj')) { <span class="erro-campo" role="alert">{{ mensagem('clientCpfCnpj') }}</span> }
+      </label>
+    </div>
+  </section>
+
+  <!-- ===== Detalhes do serviço ===== -->
+  <section class="secao" aria-labelledby="sec-detalhes">
+    <h2 class="secao__titulo secao__titulo--direto" id="sec-detalhes">Detalhes do serviço</h2>
+
+    <div class="grade grade--3">
+      <label class="form-field">
+        <span class="form-label">Tipo de serviço <span class="obrigatorio">*</span></span>
+        <select class="form-input form-select" formControlName="serviceType"
+                [class.form-select--vazio]="!form.controls.serviceType.value"
+                [class.form-input--erro]="invalido('serviceType')" [attr.aria-invalid]="invalido('serviceType')">
+          <option value="" disabled>Selecione o tipo de serviço</option>
+          @for (t of tiposServico; track t.valor) {
+            <option [value]="t.valor">{{ t.nome }}</option>
+          }
+        </select>
+        @if (invalido('serviceType')) { <span class="erro-campo" role="alert">{{ mensagem('serviceType') }}</span> }
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Data de contratação <span class="obrigatorio">*</span></span>
+        <input class="form-input form-input--data" type="date" formControlName="hiringDate"
+               [class.form-input--erro]="invalido('hiringDate')" [attr.aria-invalid]="invalido('hiringDate')" />
+        @if (invalido('hiringDate')) { <span class="erro-campo" role="alert">{{ mensagem('hiringDate') }}</span> }
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Status <span class="obrigatorio">*</span></span>
+        <select class="form-input form-select" formControlName="status"
+                [class.form-input--erro]="invalido('status')" [attr.aria-invalid]="invalido('status')">
+          @for (s of statusOpcoes; track s.valor) {
+            <option [value]="s.valor">{{ s.nome }}</option>
+          }
+        </select>
+        @if (invalido('status')) { <span class="erro-campo" role="alert">{{ mensagem('status') }}</span> }
+      </label>
+    </div>
+
+    <label class="form-field campo-observacoes">
+      <span class="form-label">Observações</span>
+      <textarea class="form-input form-textarea" rows="3" formControlName="observations"
+                placeholder="Descreva a solicitação, o modelo da fechadura ou detalhes do atendimento."></textarea>
+    </label>
+  </section>
+
+  <!-- ===== Local do atendimento ===== -->
+  <section class="secao" aria-labelledby="sec-local">
+    <h2 class="secao__titulo" id="sec-local">Local do atendimento</h2>
+    <p class="secao__texto">Informe onde o serviço foi realizado e inclua o endereço quando o atendimento for externo.</p>
+
+    <div class="grade grade--2">
+      <label class="form-field">
+        <span class="form-label">Local do atendimento <span class="obrigatorio">*</span></span>
+        <select class="form-input form-select" formControlName="location"
+                [class.form-select--vazio]="!form.controls.location.value"
+                [class.form-input--erro]="invalido('location')" [attr.aria-invalid]="invalido('location')">
+          <option value="" disabled>Selecione o local do atendimento</option>
+          @for (l of locaisAtendimento; track l.valor) {
+            <option [value]="l.valor">{{ l.nome }}</option>
+          }
+        </select>
+        @if (invalido('location')) { <span class="erro-campo" role="alert">{{ mensagem('location') }}</span> }
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">
+          Endereço (quando externo)
+          @if (ehAtendimentoExterno) { <span class="obrigatorio">*</span> }
+        </span>
+        <input class="form-input" type="text" formControlName="address"
+               placeholder="Informe rua, número, bairro e cidade"
+               [class.form-input--erro]="invalido('address')" [attr.aria-invalid]="invalido('address')" />
+        @if (invalido('address')) { <span class="erro-campo" role="alert">{{ mensagem('address') }}</span> }
+      </label>
+    </div>
+  </section>
+
+  <!-- ===== Valores e pagamento ===== -->
+  <section class="secao" aria-labelledby="sec-valores">
+    <h2 class="secao__titulo" id="sec-valores">Valores e pagamento</h2>
+    <p class="secao__texto">Informe o valor acordado e a situação de cobrança do cliente.</p>
+
+    <div class="grade grade--3">
+      <label class="form-field">
+        <span class="form-label">Valor do serviço <span class="obrigatorio">*</span></span>
+        <input class="form-input" type="text" inputmode="decimal" formControlName="serviceValue"
+               placeholder="R$ 0,00" (blur)="formatarDinheiro('serviceValue')"
+               [class.form-input--erro]="invalido('serviceValue')" [attr.aria-invalid]="invalido('serviceValue')" />
+        @if (invalido('serviceValue')) { <span class="erro-campo" role="alert">{{ mensagem('serviceValue') }}</span> }
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Valor pago <span class="obrigatorio">*</span></span>
+        <input class="form-input" type="text" inputmode="decimal" formControlName="paidValue"
+               placeholder="R$ 0,00" (blur)="formatarDinheiro('paidValue')"
+               [class.form-input--erro]="invalido('paidValue')" [attr.aria-invalid]="invalido('paidValue')" />
+        @if (invalido('paidValue')) { <span class="erro-campo" role="alert">{{ mensagem('paidValue') }}</span> }
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Forma de pagamento <span class="obrigatorio">*</span></span>
+        <select class="form-input form-select" formControlName="paymentMethod"
+                [class.form-select--vazio]="!form.controls.paymentMethod.value"
+                [class.form-input--erro]="invalido('paymentMethod')" [attr.aria-invalid]="invalido('paymentMethod')">
+          <option value="" disabled>Selecione a forma de pagamento</option>
+          @for (f of formasPagamento; track f.valor) {
+            <option [value]="f.valor">{{ f.nome }}</option>
+          }
+        </select>
+        @if (invalido('paymentMethod')) { <span class="erro-campo" role="alert">{{ mensagem('paymentMethod') }}</span> }
+      </label>
+    </div>
+
+    <p class="faixa-info">Se o pagamento ainda não foi realizado, mantenha o valor pago em R$ 0,00.</p>
+  </section>
+
+  <!-- ===== Anexos do serviço ===== -->
+  <section class="secao" aria-labelledby="sec-anexos">
+    <h2 class="secao__titulo" id="sec-anexos">Anexos do serviço</h2>
+    <p class="secao__texto">
+      Adicione fotos do atendimento e documentos complementares para registro interno e acompanhamento do cliente.
+    </p>
+
+    <input #inputFotos class="sr-only" type="file" multiple
+           accept=".png,.jpg,.jpeg,.webp,.heic,image/png,image/jpeg,image/webp,image/heic"
+           (change)="aoSelecionarFotos($event)" />
+
+    <input #inputDocumentos class="sr-only" type="file" multiple
+           accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,application/pdf"
+           (change)="aoSelecionarDocumentos($event)" />
+
+    <div class="anexos-grade">
+      <!-- Coluna: Fotos do atendimento -->
+      <div class="anexos-coluna"
+           (dragover)="aoArrastarSobre($event, 'foto')"
+           (dragleave)="aoSairArraste($event, 'foto')"
+           (drop)="aoSoltarArquivos($event, 'foto')">
+        @if (fotos().length === 0) {
+          <span class="form-label">Fotos do atendimento</span>
+          <div class="dropzone" [class.dropzone--ativo]="arrastandoFoto()">
+            <span class="dropzone__icone" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.8" />
+                <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" />
+                <path d="m21 15-5-5L5 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+            <strong class="dropzone__titulo">Arraste fotos aqui</strong>
+            <span class="dropzone__detalhe">PNG, JPG ou WEBP • até 20 MB por arquivo</span>
+            <button type="button" class="btn btn-secondary dropzone__botao" (click)="inputFotos.click()">
+              Selecionar fotos
+            </button>
+          </div>
+        } @else {
+          <div class="anexos-coluna__topo">
+            <span class="form-label">Fotos do atendimento</span>
+            <button type="button" class="btn btn-secondary btn-anexo-topo" (click)="inputFotos.click()">
+              + Adicionar fotos
+            </button>
+          </div>
+
+          <div class="fotos-grade" [class.fotos-grade--ativo]="arrastandoFoto()">
+            @for (foto of fotos(); track foto.id) {
+              <article class="foto-card">
+                <div class="foto-card__imagem">
+                  <img [src]="foto.previewUrl" [alt]="foto.nome" />
+                </div>
+                <div class="foto-card__corpo">
+                  <strong class="foto-card__nome" [title]="foto.nome">{{ foto.nome }}</strong>
+                  <span class="foto-card__meta">
+                    {{ formatarTamanho(foto.tamanho) }} • {{ foto.extensao }} • Upload concluído
+                  </span>
+                  <button type="button" class="acao-remover" (click)="removerFoto(foto.id)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Remover foto
+                  </button>
+                </div>
+              </article>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Coluna: Documentos -->
+      <div class="anexos-coluna"
+           (dragover)="aoArrastarSobre($event, 'documento')"
+           (dragleave)="aoSairArraste($event, 'documento')"
+           (drop)="aoSoltarArquivos($event, 'documento')">
+        @if (documentos().length === 0) {
+          <span class="form-label">Documentos</span>
+          <div class="dropzone" [class.dropzone--ativo]="arrastandoDocumento()">
+            <span class="dropzone__icone" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"
+                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+            <strong class="dropzone__titulo">Arraste documentos aqui</strong>
+            <span class="dropzone__detalhe">PDF, DOCX ou XLSX • até 20 MB por arquivo</span>
+            <button type="button" class="btn btn-secondary dropzone__botao" (click)="inputDocumentos.click()">
+              Selecionar documentos
+            </button>
+          </div>
+        } @else {
+          <div class="anexos-coluna__topo">
+            <span class="form-label">Documentos</span>
+            <button type="button" class="btn btn-secondary btn-anexo-topo" (click)="inputDocumentos.click()">
+              + Adicionar documento
+            </button>
+          </div>
+
+          <div class="documentos-lista" [class.documentos-lista--ativo]="arrastandoDocumento()">
+            @for (doc of documentos(); track doc.id) {
+              <article class="doc-card">
+                <div class="doc-card__topo">
+                  <span class="doc-card__icone" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M14 2v6h6M16 13H8M16 17H8"
+                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                  <div class="doc-card__info">
+                    <strong class="doc-card__nome" [title]="doc.nome">{{ doc.nome }}</strong>
+                    <span class="doc-card__meta">
+                      {{ formatarTamanho(doc.tamanho) }} • {{ doc.extensao }} • Upload concluído
+                    </span>
+                  </div>
+                </div>
+
+                <div class="doc-card__acoes">
+                  <button type="button" class="btn btn-secondary btn-doc-baixar" (click)="baixarDocumentoLocal(doc)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Baixar documento
+                  </button>
+
+                  <button type="button" class="acao-remover" (click)="removerDocumento(doc.id)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Remover
+                  </button>
+                </div>
+              </article>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (erroAnexo()) {
+      <span class="erro-campo erro-anexo" role="alert">{{ erroAnexo() }}</span>
+    }
+
+    @if (totalAnexos() === 0) {
+      <p class="faixa-info">
+        Nenhum arquivo adicionado. Você pode incluir fotos e documentos agora ou editar o serviço posteriormente.
+      </p>
+    } @else {
+      <p class="faixa-info faixa-info--com-icone">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+          <path d="m8.5 12.5 2.3 2.3 4.7-4.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span>
+          {{ totalAnexos() }} {{ totalAnexos() === 1 ? 'arquivo vinculado' : 'arquivos vinculados' }} a este serviço •
+          {{ formatarTamanho(tamanhoTotalAnexos()) }} utilizados do limite de 20 MB.
+        </span>
+      </p>
+    }
+  </section>
+
+  @if (erro()) {
+    <p class="aviso-erro" role="alert">{{ erro() }}</p>
+  }
+
+  <!-- ===== Ações ===== -->
+  <footer class="acoes">
+    <span class="text-note">* Campos obrigatórios</span>
+    <div class="acoes__botoes">
+      <a class="btn btn-secondary" routerLink="/funcionario/servicos">Cancelar</a>
+      <button class="btn btn-primary" type="submit" [disabled]="enviando()">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M16.666 5 7.5 14.166 3.334 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        {{ enviando() ? 'Salvando...' : 'Salvar serviço' }}
+      </button>
+    </div>
+  </footer>
+</form>
+

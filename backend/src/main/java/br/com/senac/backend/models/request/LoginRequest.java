@@ -3,7 +3,6 @@ package br.com.senac.backend.models.request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.ToString;
 
 @Data
 public class LoginRequest {

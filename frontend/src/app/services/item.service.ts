@@ -20,6 +20,8 @@ export interface ItemRequest {
 
 export interface Item extends ItemRequest {
   id: number;
+  // O backend ainda não devolve a categoria; quando devolver, a tela de estoque já usa.
+  category?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -33,5 +35,9 @@ export class ItemService {
 
   listar(): Observable<Item[]> {
     return this.http.get<Item[]>(this.url);
+  }
+
+  excluir(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${id}`);
   }
 }
