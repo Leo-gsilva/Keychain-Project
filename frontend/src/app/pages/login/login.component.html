@@ -1,0 +1,126 @@
+<div class="login-layout">
+  <!-- Top Bar -->
+  <header class="login-header">
+    <a routerLink="/" class="brand">
+      <span class="brand-icon">
+        <img src="assets/icons/key-rounded.svg" alt="Ícone chave">
+      </span>
+      <h2 class="brand-name">Miguel</h2>
+      <span class="brand-tagline">CHAVEIRO<br>& OFICINA</span>
+    </a>
+
+    <!-- Ação do cabeçalho à direita -->
+    <div class="header-action">
+      <img src="assets/icons/lock-keyhole.svg" alt="Cadeado" class="header-icon">
+      <span class="text-note">ÁREA INTERNA</span>
+    </div>
+  </header>
+
+  <!-- Main Content Split -->
+  <main class="login-container">
+    
+    <!-- Imagem e Branding (Esquerda) -->
+    <section class="login-banner">
+      <img src="assets/images/oficio-destaque.jpg" alt="Chaveiro trabalhando na bancada" class="banner-image">
+      <div class="banner-content">
+        <span class="section-label section-label--light">PRECISÃO EM CADA ETAPA</span>
+        <h1 class="banner-title">Cuidado na bancada.<br>Clareza na gestão.</h1>
+        <p class="banner-text">O mesmo rigor do nosso ofício, agora na organização do dia a dia da oficina.</p>
+      </div>
+    </section>
+
+    <!-- Formulário de Login (Direita) -->
+    <section class="login-form-wrapper">
+      <div class="login-form-content">
+        <span class="section-label">ACESSO DA EQUIPE</span>
+        <h2 class="section-title welcome-title">Bem-vindo à oficina.</h2>
+        <p class="text-body welcome-text">
+          Entre com suas credenciais para acessar os serviços e o estoque da Miguel.
+        </p>
+
+        <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+          
+          <!-- Mensagem de Erro Geral -->
+          @if (errorMessage) {
+            <div class="error-banner">
+              {{ errorMessage }}
+            </div>
+          }
+          
+          <div class="form-field">
+            <label class="form-label" for="email">Identificação</label>
+            <div class="input-wrapper">
+              <img src="assets/icons/user-round.svg" alt="Usuário" class="input-icon">
+              <input 
+                type="text" 
+                id="email" 
+                formControlName="email"
+                class="form-input" 
+                [class.has-error]="hasError('email')"
+                placeholder="Seu usuário ou e-mail" 
+              >
+            </div>
+            @if (hasError('email')) {
+              <span class="error-message">Campo obrigatório</span>
+            }
+          </div>
+
+          <div class="form-field password-field">
+            <label class="form-label" for="password">Senha</label>
+            <div class="input-wrapper">
+              <img src="assets/icons/lock-keyhole-password.svg" alt="Cadeado" class="input-icon">
+              <input 
+                [type]="showPassword ? 'text' : 'password'" 
+                id="password" 
+                formControlName="password"
+                class="form-input" 
+                [class.has-error]="hasError('password')"
+                placeholder="Digite sua senha" 
+              >
+              <button 
+                type="button" 
+                class="btn-icon password-toggle" 
+                (click)="togglePassword()" 
+                [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'"
+              >
+                @if (showPassword) {
+                  <img src="assets/icons/eye.svg" alt="Mostrar senha" class="toggle-icon">
+                } @else {
+                  <img src="assets/icons/eye-off.svg" alt="Ocultar senha" class="toggle-icon">
+                }
+              </button>
+            </div>
+            @if (hasError('password')) {
+              <span class="error-message">A senha é obrigatória</span>
+            }
+          </div>
+
+          <button 
+            type="submit" 
+            class="btn btn-primary btn-block submit-button" 
+            [disabled]="submitting"
+          >
+            {{ submitting ? 'Entrando...' : 'Logar' }} <span>→</span>
+          </button>
+        </form>
+
+        <div class="support-info">
+          <div class="support-header">
+            <img src="assets/icons/shield-check.svg" alt="Check" class="support-icon">
+            <span class="text-body support-title">Acesso exclusivo da equipe</span>
+          </div>
+          <p class="text-note support-text">
+            Precisa de acesso ou esqueceu sua senha? Fale com o responsável pela oficina.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="login-footer">
+    <span class="text-note">Miguel · Chaveiro & oficina</span>
+    <span class="section-label">PRECISÃO. CUIDADO. ACESSO.</span>
+  </footer>
+</div>

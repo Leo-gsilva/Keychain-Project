@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
 
 import { LandingComponent } from './pages/landing/landing.component';
-import { AppShellComponent, Perfil } from './layouts/app-shell/app-shell.component';
+import { AppShellComponent} from './layouts/app-shell/app-shell.component';
+import { Role } from './services/account.service';
 import { FuncionarioEstoqueComponent } from './pages/funcionario/funcionario-estoque/funcionario-estoque.component';
 import { FuncionarioCadastroItemComponent } from './pages/funcionario/funcionario-cadastro-item/funcionario-cadastro-item.component';
 import { CadastrarFuncionarioComponent } from './pages/cadastrar-funcionario/cadastrar-funcionario.component';
@@ -9,97 +10,51 @@ import { ServicosComponent } from './pages/servicos/servicos/servicos.component'
 import { CadastrarServicoComponent } from './pages/funcionario/funcionario-cadastrar-servico/cadastrar-servico.component';
 import { VendasComponent } from './pages/vendas/vendas/vendas.component';
 import { NovaVendaComponent } from './pages/vendas/nova-venda/nova-venda.component';
+import { LoginComponent } from './pages/login/login.component';
 
-// TODO: quando o login existir, adicionar canActivate aqui
-function area(perfil: Perfil, children: Routes) {
+function area(path: string, role: Role, children: Routes): Routes[0] {
   return {
-    path: perfil,
+    path,
     component: AppShellComponent,
-    data: { perfil },
+    data: { role }, 
     children
   };
 }
 
 export const routes: Routes = [
-  // TESTE: abre direto na área do funcionário. Depois voltar para o LandingComponent em path ''.
-  { path: '', pathMatch: 'full', redirectTo: 'funcionario/estoque' },
+  { path: '', title: 'Miguel | Chaveiro & Oficina', component: LandingComponent},
+  { path: 'login', title: 'Login', component: LoginComponent},
 
-  {
-    path: 'landing',
-    title: 'Miguel | Chaveiro & Oficina',
-    component: LandingComponent
-  },
-
-  area('funcionario', [
+  // ÁREA DO FUNCIONÁRIO
+  area('funcionario', 'EMPLOYEE', [
+    // TODO: trocar para a home quando existir
     { path: '', pathMatch: 'full', redirectTo: 'estoque' },
-    {
-      path: 'estoque',
-      title: 'Estoque | Miguel',
-      data: { breadcrumb: [{ rotulo: 'Estoque' }], secao: 'estoque' },
-      component: FuncionarioEstoqueComponent
-    },
-    {
-      path: 'cadastro-item',
-      title: 'Cadastrar item | Miguel',
-      data: {
-        breadcrumb: [
-          { rotulo: 'Estoque', rota: '/funcionario/estoque' },
-          { rotulo: 'Cadastrar item' }
-        ],
-        secao: 'estoque'
-      },
-      component: FuncionarioCadastroItemComponent
-    },
-    {
-      path: 'servicos',
-      title: 'Serviços | Miguel',
-      data: { breadcrumb: [{ rotulo: 'Serviços' }], secao: 'servicos' },
-      component: ServicosComponent
-    },
-    {
-      path: 'servicos/novo',
-      title: 'Cadastrar serviço | Miguel',
-      data: {
-        breadcrumb: [
-          { rotulo: 'Serviços', rota: '/funcionario/servicos' },
-          { rotulo: 'Cadastrar serviço' }
-        ],
-        secao: 'servicos'
-      },
-      component: CadastrarServicoComponent
-    },
-    {
-      path: 'servicos/cadastrar',
-      redirectTo: 'servicos/novo',
-      pathMatch: 'full'
-    },
-    {
-      path: 'vendas',
-      title: 'Vendas | Miguel',
-      data: { breadcrumb: [{ rotulo: 'Vendas' }], secao: 'vendas' },
-      component: VendasComponent
-    },
-    {
-      path: 'vendas/nova',
-      title: 'Nova venda | Miguel',
-      data: {
-        breadcrumb: [
-          { rotulo: 'Vendas', rota: '/funcionario/vendas' },
-          { rotulo: 'Nova venda' }
-        ],
-        secao: 'vendas'
-      },
-      component: NovaVendaComponent
-    },
-    {
-      path: 'cadastrar-funcionario',
-      title: 'Cadastrar funcionário | Miguel',
-      data: {
-        breadcrumb: [{ rotulo: 'Funcionários' }, { rotulo: 'Cadastrar funcionário' }],
-        secao: 'funcionarios'
-      },
-      component: CadastrarFuncionarioComponent
-    }
+    
+    { path: 'estoque', title: 'Estoque | Miguel', component: FuncionarioEstoqueComponent },
+    { path: 'estoque/novo', title: 'Cadastrar item | Miguel', component: FuncionarioCadastroItemComponent },
+    
+    { path: 'servicos', title: 'Serviços | Miguel', component: ServicosComponent },
+    { path: 'servicos/novo', title: 'Cadastrar serviço | Miguel', component: CadastrarServicoComponent },
+    
+    { path: 'vendas', title: 'Vendas | Miguel', component: VendasComponent },
+    { path: 'vendas/nova', title: 'Nova venda | Miguel', component: NovaVendaComponent },
+  ]),
+
+  // ÁREA DO ADMINISTRADOR
+  area('administrador', 'ADMINISTRATOR', [
+    // TODO: trocar para a home quando existir
+    { path: '', pathMatch: 'full', redirectTo: 'estoque' },
+    
+    { path: 'estoque', title: 'Estoque | Miguel', component: FuncionarioEstoqueComponent },
+    { path: 'estoque/novo', title: 'Cadastrar item | Miguel', component: FuncionarioCadastroItemComponent },
+    
+    { path: 'servicos', title: 'Serviços | Miguel', component: ServicosComponent },
+    { path: 'servicos/novo', title: 'Cadastrar serviço | Miguel', component: CadastrarServicoComponent },
+    
+    { path: 'vendas', title: 'Vendas | Miguel', component: VendasComponent },
+    { path: 'vendas/nova', title: 'Nova venda | Miguel', component: NovaVendaComponent },
+    
+    { path: 'funcionarios/novo', title: 'Cadastrar funcionário | Miguel', component: CadastrarFuncionarioComponent }
   ]),
 
   { path: '**', redirectTo: 'funcionario/estoque' }

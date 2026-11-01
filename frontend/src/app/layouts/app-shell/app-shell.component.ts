@@ -1,81 +1,88 @@
-import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { filter } from 'rxjs';
-
-export type Perfil = 'funcionario' | 'administrador';
+import { Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { filter, map } from 'rxjs';
+import { SessionService } from '../../services/session.service';
 
 interface ItemMenu {
   id: string;
-  rotulo: string;
-  rota: string;
-  somenteAdmin?: boolean;
-}
-
-interface ItemTrilha {
-  rotulo: string;
-  rota?: string;
+  label: string;
+  path: string;
 }
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, RouterLink],
+  standalone: true,
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss'
 })
 export class AppShellComponent {
+  private session = inject(SessionService);
   private readonly router = inject(Router);
-  private readonly rota = inject(ActivatedRoute);
 
-  readonly perfil: Perfil = this.rota.snapshot.data['perfil'] ?? 'funcionario';
-  readonly ehAdministrador = this.perfil === 'administrador';
+  // 1. O utilizador logado vem direto do SessionService
+  readonly user = this.session.user;
 
-  // TODO: trocar por dados reais quando o login existir
-  readonly usuario = this.ehAdministrador
-    ? { nome: 'Miguel Costa', rotuloPerfil: 'Administrador' }
-    : { nome: 'Lucas Silva', rotuloPerfil: 'Funcionário' };
+  // 2. Reatividade Total: Tudo se baseia no utilizador real em memória (Signal Computed)
+  readonly ehAdministrador = computed(() => this.user()?.role === 'ADMINISTRATOR');
+  
+  readonly rotuloMenu = computed(() => this.ehAdministrador() ? 'Gestão da oficina' : 'Operação da oficina');
+  readonly rotuloArea = computed(() => this.ehAdministrador() ? 'Painel administrativo' : 'Área operacional');
 
-  readonly rotuloMenu = this.ehAdministrador ? 'Gestão da oficina' : 'Operação da oficina';
-  readonly rotuloArea = this.ehAdministrador ? 'Painel administrativo' : 'Área operacional';
+  // 3. Monta o menu dinamicamente observando o perfil
+  readonly menu = computed<ItemMenu[]>(() => {
+    const admin = this.ehAdministrador();
+    const basePath = admin ? 'administrador' : 'funcionario';
+    
+    const itens: ItemMenu[] = [
+      { id: 'home', label: 'Home', path: 'home' },
+      { id: 'estoque', label: 'Estoque', path: 'estoque' },
+      { id: 'servicos', label: 'Serviços', path: 'servicos' },
+      { id: 'vendas', label: 'Vendas', path: 'vendas' },
+    ];
 
-  readonly menu: ItemMenu[] = (
-    [
-      { id: 'home', rotulo: 'Home', rota: 'home' },
-      { id: 'estoque', rotulo: 'Estoque', rota: 'estoque' },
-      { id: 'servicos', rotulo: 'Serviços', rota: 'servicos' },
-      { id: 'vendas', rotulo: 'Vendas', rota: 'vendas' },
-      { id: 'funcionarios', rotulo: 'Funcionários', rota: 'funcionarios', somenteAdmin: true }
-    ] as ItemMenu[]
-  )
-    .filter((item) => !item.somenteAdmin || this.ehAdministrador)
-    .map((item) => ({ ...item, rota: `/${this.perfil}/${item.rota}` }));
+    if (admin) {
+      itens.push({ id: 'funcionarios/novo', label: 'Funcionários', path: 'funcionarios/novo' });
+    }
 
-  readonly iniciais = this.usuario.nome
-    .split(' ')
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
+    return itens.map(item => ({ ...item, path: `/${basePath}/${item.path}` }));
+  });
+
+  readonly iniciais = computed(() => {
+    const nome = this.user()?.name;
+    if (!nome) return '';
+    return nome.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
+  });
 
   readonly dataHoje = this.formatarData(new Date());
 
-  readonly trilha = signal<ItemTrilha[]>([]);
-  readonly secaoAtiva = signal<string>('');
+  // Lê a URL do navegador automaticamente
+  private url = toSignal(
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      map(() => this.router.url)
+    ),
+    { initialValue: this.router.url }
+  );
 
-  constructor() {
-    this.router.events
-      .pipe(filter((e) => e instanceof NavigationEnd))
-      .subscribe(() => this.atualizar());
-  }
+  // Monta o Breadcrumb (título no cabeçalho)
+  readonly currentLabel = computed(() => {
+    const partes = this.url().split('/');
+    const secao = partes[2]?.split(/[?#]/)[0] ?? 'home'; 
+    const itemMenu = this.menu().find(item => item.id === secao);
+    const label = itemMenu ? itemMenu.label : '';
 
-  private atualizar(): void {
-    let atual = this.rota;
-    while (atual.firstChild) atual = atual.firstChild;
-    this.trilha.set((atual.snapshot?.data['breadcrumb'] as ItemTrilha[] | undefined) ?? []);
-    this.secaoAtiva.set((atual.snapshot?.data['secao'] as string | undefined) ?? '');
-  }
+    const subRota = partes[3]?.split(/[?#]/)[0];
+    return subRota ? `${label} / Detalhes` : label;
+  });
 
   private formatarData(data: Date): string {
     const texto = data.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
     return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
+  
+  constructor() {
+    this.session.load().subscribe();
   }
 }
