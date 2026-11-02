@@ -1,0 +1,213 @@
+<a class="voltar" [routerLink]="linkListagem">← Voltar para serviços</a>
+
+<header class="cabecalho">
+  <div>
+    <h1 class="titulo">Visualizar serviço {{ numero }}</h1>
+    <p class="subtitulo">Consulte os dados do atendimento, o pagamento e os anexos da ordem.</p>
+  </div>
+
+  @if (servico(); as s) {
+  <span class="selo" [attr.data-status]="s.status">{{ nomeStatus(s.status) }}</span>
+  }
+</header>
+
+@if (servico(); as s) {
+<section class="cartao" [attr.aria-label]="'Dados do serviço ' + numero">
+  <!-- ===== Identificação do cliente ===== -->
+  <section class="secao" aria-labelledby="sec-cliente">
+    <h2 class="secao__titulo" id="sec-cliente">Identificação do cliente</h2>
+    <p class="secao__texto">Dados para contato e identificação na ordem de serviço.</p>
+
+    <dl class="grade grade--3">
+      <div class="dado">
+        <dt class="dado__rotulo">Nome completo</dt>
+        <dd class="dado__valor">{{ s.clientName }}</dd>
+      </div>
+      <div class="dado">
+        <dt class="dado__rotulo">Telefone</dt>
+        <dd class="dado__valor">{{ s.clientPhone }}</dd>
+      </div>
+      <div class="dado">
+        <dt class="dado__rotulo">CPF ou CNPJ</dt>
+        <dd class="dado__valor">{{ documentoFormatado(s.clientCpfCnpj) }}</dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- ===== Detalhes do serviço ===== -->
+  <section class="secao" aria-labelledby="sec-detalhes">
+    <h2 class="secao__titulo secao__titulo--direto" id="sec-detalhes">Detalhes do serviço</h2>
+
+    <dl class="grade grade--3">
+      <div class="dado">
+        <dt class="dado__rotulo">Tipo de serviço</dt>
+        <dd class="dado__valor">{{ nomeTipo(s.serviceType) }}</dd>
+      </div>
+      <div class="dado">
+        <dt class="dado__rotulo">Data de contratação</dt>
+        <dd class="dado__valor">{{ data(s.hiringDate) }}</dd>
+      </div>
+      <div class="dado">
+        <dt class="dado__rotulo">Status</dt>
+        <dd class="dado__valor">{{ nomeStatus(s.status) }}</dd>
+      </div>
+    </dl>
+
+    <dl class="dado dado--observacoes">
+      <dt class="dado__rotulo">Observações</dt>
+      <dd class="dado__valor">{{ s.observations || 'Nenhuma observação registrada.' }}</dd>
+    </dl>
+  </section>
+
+  <!-- ===== Local do atendimento ===== -->
+  <section class="secao" aria-labelledby="sec-local">
+    <h2 class="secao__titulo" id="sec-local">Local do atendimento</h2>
+    <p class="secao__texto">Informe onde o serviço foi realizado e inclua o endereço quando o atendimento for
+      externo.</p>
+
+    <dl class="grade grade--2">
+      <div class="dado">
+        <dt class="dado__rotulo">Local do atendimento</dt>
+        <dd class="dado__valor">{{ nomeLocal(s.location) }}</dd>
+      </div>
+      <div class="dado">
+        <dt class="dado__rotulo">Endereço (quando externo)</dt>
+        <dd class="dado__valor">{{ s.address || '—' }}</dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- ===== Valores e pagamento ===== -->
+  <section class="secao" aria-labelledby="sec-valores">
+    <h2 class="secao__titulo" id="sec-valores">Valores e pagamento</h2>
+    <p class="secao__texto">Informe o valor acordado e o total já recebido do cliente.</p>
+
+    <dl class="grade grade--3">
+      <div class="dado">
+        <dt class="dado__rotulo">Valor do serviço</dt>
+        <dd class="dado__valor">{{ moeda(s.serviceValue) }}</dd>
+      </div>
+      <div class="dado">
+        <dt class="dado__rotulo">Valor pago</dt>
+        <dd class="dado__valor">{{ moeda(s.paidValue) }}</dd>
+      </div>
+      <div class="dado">
+        <dt class="dado__rotulo">Forma de pagamento</dt>
+        <dd class="dado__valor">{{ nomeFormaPagamento(s.paymentMethod) }}</dd>
+      </div>
+    </dl>
+
+    <p class="faixa-info">{{ avisoPagamento() }}</p>
+  </section>
+
+  <!-- ===== Anexos do serviço ===== -->
+  <section class="secao secao--anexos" aria-labelledby="sec-anexos">
+    <h2 class="secao__titulo" id="sec-anexos">Anexos do serviço</h2>
+    <p class="secao__texto">
+      Adicione fotos do atendimento e documentos complementares para registro interno e acompanhamento do cliente.
+    </p>
+
+    <div class="anexos-grade">
+      <!-- Coluna: Fotos do atendimento -->
+      <div class="anexos-coluna">
+        <span class="form-label">Fotos do atendimento</span>
+
+        @if (fotos().length === 0) {
+        <p class="vazio">Nenhuma foto anexada a esta ordem.</p>
+        } @else {
+        <div class="fotos-grade">
+          @for (foto of fotos(); track foto.id) {
+          <article class="foto-card">
+            <div class="foto-card__imagem">
+              @if (foto.previewUrl) {
+              <img [src]="foto.previewUrl" [alt]="foto.fileName"/>
+              }
+            </div>
+            <div class="foto-card__corpo">
+              <strong class="foto-card__nome" [title]="foto.fileName">{{ foto.fileName }}</strong>
+              <span class="foto-card__meta">{{ tamanho(foto.size) }} · Upload concluído</span>
+            </div>
+          </article>
+          }
+        </div>
+        }
+      </div>
+
+      <!-- Coluna: Documentos -->
+      <div class="anexos-coluna">
+        <span class="form-label">Documentos</span>
+
+        @if (documentos().length === 0) {
+        <p class="vazio">Nenhum documento anexado a esta ordem.</p>
+        } @else {
+        <div class="documentos-lista">
+          @for (doc of documentos(); track doc.id) {
+          <article class="doc-card">
+            <div class="doc-card__topo">
+                    <span class="doc-card__icone" aria-hidden="true">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 2v6h6M16 13H8M16 17H8"
+                              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+              <div class="doc-card__info">
+                <strong class="doc-card__nome" [title]="doc.fileName">{{ doc.fileName }}</strong>
+                <span class="doc-card__meta">{{ tamanho(doc.size) }} · {{ doc.extensao }} · Upload concluído</span>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-secondary btn-doc-baixar"
+                    [disabled]="baixandoId() === doc.id" (click)="baixarDocumento(doc)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              {{ baixandoId() === doc.id ? 'Baixando...' : 'Baixar documento' }}
+            </button>
+          </article>
+          }
+        </div>
+        }
+      </div>
+    </div>
+
+    @if (erro()) {
+    <span class="erro-campo erro-anexo" role="alert">{{ erro() }}</span>
+    }
+
+    @if (anexos().length > 0) {
+    <p class="faixa-info faixa-info--com-icone">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+        <path d="m8.5 12.5 2.3 2.3 4.7-4.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round"/>
+      </svg>
+      <span>Arquivos enviados com sucesso e vinculados à ordem {{ numero }}.</span>
+    </p>
+    } @else {
+    <p class="faixa-info">Nenhum arquivo vinculado a esta ordem. Use Editar para adicionar fotos e documentos.</p>
+    }
+  </section>
+
+  <!-- ===== Ações ===== -->
+  <footer class="acoes">
+    <span class="text-note">Informações da ordem de serviço {{ numero }}</span>
+    <div class="acoes__botoes">
+      <a class="btn btn-secondary" [routerLink]="linkListagem">Voltar</a>
+      <a class="btn btn-primary" [routerLink]="linkEdicao">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z" stroke="currentColor" stroke-width="1.8"
+                stroke-linejoin="round"/>
+        </svg>
+        Editar
+      </a>
+    </div>
+  </footer>
+</section>
+} @else if (carregando()) {
+<p class="faixa-info">Carregando serviço…</p>
+} @else {
+<p class="aviso-erro" role="alert">{{ erro() }}</p>
+}

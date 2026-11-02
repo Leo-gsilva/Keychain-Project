@@ -1,8 +1,8 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
-import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { Observable, of, switchMap } from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Component, OnDestroy, computed, inject, signal} from '@angular/core';
+import {AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators} from '@angular/forms';
+import {Router, RouterLink} from '@angular/router';
+import {Observable, of, switchMap} from 'rxjs';
 
 import {
   FormaPagamentoServico,
@@ -13,7 +13,7 @@ import {
   StatusServico,
   TipoServico
 } from '../../../services/servico.service';
-import { numeroParaTexto, textoParaNumero } from '../../../utils/dinheiro';
+import {numeroParaTexto, textoParaNumero} from '../../../utils/dinheiro';
 
 const EXTENSOES_FOTO = new Set(['jpg', 'jpeg', 'png', 'webp', 'heic']);
 const EXTENSOES_DOCUMENTO = new Set(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt']);
@@ -33,22 +33,22 @@ function dinheiroValido(controle: AbstractControl): ValidationErrors | null {
   const texto = String(controle.value ?? '').trim();
   if (texto === '') return null;
   const numero = textoParaNumero(texto);
-  if (numero === null) return { dinheiro: true };
-  return numero < 0 ? { negativo: true } : null;
+  if (numero === null) return {dinheiro: true};
+  return numero < 0 ? {negativo: true} : null;
 }
 
 /** Telefone obrigatório no formato (00) 0000-0000 ou (00) 90000-0000 exigido pelo backend. */
 function telefoneValido(controle: AbstractControl): ValidationErrors | null {
   const texto = String(controle.value ?? '').trim();
   if (texto === '') return null;
-  return /^\([0-9]{2}\) 9?[0-9]{4}-[0-9]{4}$/.test(texto) ? null : { telefone: true };
+  return /^\([0-9]{2}\) 9?[0-9]{4}-[0-9]{4}$/.test(texto) ? null : {telefone: true};
 }
 
 /** Opcional, mas se preenchido deve ter 11 (CPF) ou 14 (CNPJ) dígitos. */
 function cpfOuCnpjValido(controle: AbstractControl): ValidationErrors | null {
   const numeros = String(controle.value ?? '').replace(/\D/g, '');
   if (numeros === '') return null;
-  return numeros.length === 11 || numeros.length === 14 ? null : { documento: true };
+  return numeros.length === 11 || numeros.length === 14 ? null : {documento: true};
 }
 
 @Component({
@@ -63,34 +63,34 @@ export class CadastrarServicoComponent implements OnDestroy {
   private readonly router = inject(Router);
 
   readonly tiposServico: { valor: TipoServico; nome: string }[] = [
-    { valor: 'KEY_COPY', nome: 'Cópia de chaves' },
-    { valor: 'KEY_MAKING', nome: 'Confecção de chaves' },
-    { valor: 'UNLOCK_DOOR_VEHICLE_SAFE', nome: 'Abertura de portas, veículos ou cofres' },
-    { valor: 'REPLACE_INSTALL_LOCK_CYLINDER', nome: 'Troca de cilindro / instalação de fechaduras' },
-    { valor: 'LOCK_REPAIR', nome: 'Conserto de fechaduras' },
-    { valor: 'AUTOMOTIVE_KEY_PROGRAMMING', nome: 'Cópia ou programação de chaves automotivas' },
-    { valor: 'DIGITAL_LOCK_INSTALLATION_MAINTENANCE', nome: 'Instalação e manutenção de fechaduras digitais' },
-    { valor: 'OTHER', nome: 'Outro' }
+    {valor: 'KEY_COPY', nome: 'Cópia de chaves'},
+    {valor: 'KEY_MAKING', nome: 'Confecção de chaves'},
+    {valor: 'UNLOCK_DOOR_VEHICLE_SAFE', nome: 'Abertura de portas, veículos ou cofres'},
+    {valor: 'REPLACE_INSTALL_LOCK_CYLINDER', nome: 'Troca de cilindro / instalação de fechaduras'},
+    {valor: 'LOCK_REPAIR', nome: 'Conserto de fechaduras'},
+    {valor: 'AUTOMOTIVE_KEY_PROGRAMMING', nome: 'Cópia ou programação de chaves automotivas'},
+    {valor: 'DIGITAL_LOCK_INSTALLATION_MAINTENANCE', nome: 'Instalação e manutenção de fechaduras digitais'},
+    {valor: 'OTHER', nome: 'Outro'}
   ];
 
   readonly statusOpcoes: { valor: StatusServico; nome: string }[] = [
-    { valor: 'PENDING', nome: 'Aguardando' },
-    { valor: 'IN_PROGRESS', nome: 'Em execução' },
-    { valor: 'COMPLETED', nome: 'Concluído' },
-    { valor: 'CANCELED', nome: 'Cancelado' }
+    {valor: 'PENDING', nome: 'Aguardando'},
+    {valor: 'IN_PROGRESS', nome: 'Em execução'},
+    {valor: 'COMPLETED', nome: 'Concluído'},
+    {valor: 'CANCELED', nome: 'Cancelado'}
   ];
 
   readonly locaisAtendimento: { valor: LocalServico; nome: string }[] = [
-    { valor: 'STORE', nome: 'Oficina / Balcão' },
-    { valor: 'ON_SITE', nome: 'Atendimento externo' }
+    {valor: 'STORE', nome: 'Oficina / Balcão'},
+    {valor: 'ON_SITE', nome: 'Atendimento externo'}
   ];
 
   readonly formasPagamento: { valor: FormaPagamentoServico; nome: string }[] = [
-    { valor: 'TO_BE_DEFINED', nome: 'A definir' },
-    { valor: 'PIX', nome: 'Pix' },
-    { valor: 'CASH', nome: 'Dinheiro' },
-    { valor: 'DEBIT_CARD', nome: 'Cartão de débito' },
-    { valor: 'CREDIT_CARD', nome: 'Cartão de crédito' }
+    {valor: 'TO_BE_DEFINED', nome: 'A definir'},
+    {valor: 'PIX', nome: 'Pix'},
+    {valor: 'CASH', nome: 'Dinheiro'},
+    {valor: 'DEBIT_CARD', nome: 'Cartão de débito'},
+    {valor: 'CREDIT_CARD', nome: 'Cartão de crédito'}
   ];
 
   readonly form = this.fb.nonNullable.group({
@@ -182,7 +182,7 @@ export class CadastrarServicoComponent implements OnDestroy {
       }
     }
 
-    this.form.controls.clientPhone.setValue(formatado, { emitEvent: false });
+    this.form.controls.clientPhone.setValue(formatado, {emitEvent: false});
     input.value = formatado;
   }
 
@@ -211,7 +211,7 @@ export class CadastrarServicoComponent implements OnDestroy {
       }
     }
 
-    this.form.controls.clientCpfCnpj.setValue(formatado, { emitEvent: false });
+    this.form.controls.clientCpfCnpj.setValue(formatado, {emitEvent: false});
     input.value = formatado;
   }
 
@@ -410,13 +410,17 @@ export class CadastrarServicoComponent implements OnDestroy {
       .subscribe({
         next: () => {
           this.enviando.set(false);
-          this.router.navigate(['/funcionario/servicos']);
+          this.router.navigate([this.voltarPara()]);
         },
         error: (e: HttpErrorResponse) => {
           this.enviando.set(false);
           this.tratarErro(e);
         }
       });
+  }
+
+  voltarPara(): string {
+    return this.router.url.startsWith('/administrador') ? '/administrador/servicos' : '/funcionario/servicos';
   }
 
   private tratarErro(e: HttpErrorResponse): void {

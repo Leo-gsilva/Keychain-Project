@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {Injectable, inject} from '@angular/core';
+import {Observable} from 'rxjs';
 
-import { environment } from '../../environments/environment';
+import {environment} from '../../environments/environment';
 
 export type TipoServico =
   | 'KEY_COPY'
@@ -32,6 +32,7 @@ export interface ServicoRequest {
   serviceValue: number;
   paidValue: number;
   paymentMethod: FormaPagamentoServico;
+  scheduledAt?: string | null;
 }
 
 export interface Servico {
@@ -48,6 +49,7 @@ export interface Servico {
   serviceValue: number;
   paidValue: number;
   paymentMethod: FormaPagamentoServico;
+  scheduledAt: string | null;
 }
 
 export interface AnexoServico {
@@ -83,7 +85,7 @@ export class ServicoService {
   }
 
   alterarStatus(id: number, status: StatusServico): Observable<Servico> {
-    return this.http.patch<Servico>(`${this.url}/${id}/status`, { status });
+    return this.http.patch<Servico>(`${this.url}/${id}/status`, {status});
   }
 
   excluir(id: number): Observable<void> {
