@@ -23,6 +23,12 @@
   --cor-texto-claro-1: #f6f4ef; /* títulos sobre fundo escuro */
   --cor-texto-claro-2: #b9bfbc; /* textos de apoio sobre fundo escuro */
 
+  /* Cores de estado (feedback de validação e avisos) */
+  --cor-sucesso: #15803d; /* verde: sucesso */
+  --cor-sucesso-suave: #f0fdf4;
+  --cor-erro: #dc2626; /* vermelho: erro e validação inválida */
+  --cor-erro-suave: #fef2f2;
+
   /* Cores de borda / divisores */
   --cor-borda-1: #d8dad5; /* bordas sobre fundo claro */
   --cor-borda-2: #555a58; /* bordas sobre fundo escuro */
