@@ -49,8 +49,4 @@ export class FuncionarioService {
   listar(): Observable<Funcionario[]> {
     return this.http.get<Funcionario[]>(this.url);
   }
-
-  excluir(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.url}/${id}`);
-  }
 }

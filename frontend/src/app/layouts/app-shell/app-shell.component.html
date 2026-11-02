@@ -1,18 +1,17 @@
 <div class="area">
   <aside class="menu">
     <a class="brand brand--light menu__marca" routerLink="/" aria-label="Miguel, chaveiro e oficina">
-      <span class="menu__emblema"><img src="assets/icons/brand-emblem.svg" alt="" /></span>
-      <span class="menu__identidade">
-        <span class="brand__name">Miguel</span>
-        <span class="brand__tagline">CHAVEIRO &amp; OFICINA</span>
-      </span>
+      <span class="brand__emblem"><img src="assets/icons/key-round-sm.svg" alt="" /></span>
+      <span class="brand__name">Miguel</span>
+      <span class="brand__tagline">CHAVEIRO<br />&amp; OFICINA</span>
     </a>
 
+    <!-- Agora com parênteses, pois é um Signal -->
     <p class="menu__grupo">{{ rotuloMenu() }}</p>
 
     <nav aria-label="Menu principal">
       <ul class="menu__lista">
-        <!-- O ícone vem do ICONE_MENU e é pintado pelo CSS (.menu__icone) -->
+        <!-- O menu também leva parênteses -->
         @for (item of menu(); track item.id) {
           <li>
             <a
@@ -20,7 +19,6 @@
               routerLinkActive="menu__link--ativo"
               [routerLink]="item.path"
             >
-              <span [class]="'menu__icone menu__icone--' + item.id" aria-hidden="true"></span>
               {{ item.label }}
             </a>
           </li>
@@ -29,14 +27,12 @@
     </nav>
 
     <div class="menu__rodape">
-      <p class="menu__aviso">
-        <img class="menu__aviso-icone" src="assets/icons/team.svg" alt="" aria-hidden="true" />
-        Uso interno da equipe
-      </p>
+      <p class="menu__aviso">Uso interno da equipe</p>
       <div class="menu__usuario">
         <span class="menu__avatar" aria-hidden="true">{{ iniciais() }}</span>
-        <span class="menu__dados">
+        <span>
           <strong class="menu__nome">{{ user()?.name }}</strong>
+          <!-- Verifica dinamicamente o perfil em memória -->
           <span class="menu__perfil">{{ ehAdministrador() ? 'Administrador' : 'Funcionário' }}</span>
         </span>
       </div>
@@ -46,17 +42,14 @@
   <div class="principal">
     <header class="topo">
       <nav class="topo__trilha" aria-label="Você está em">
+        <!-- Agora com parênteses -->
         <span>{{ rotuloArea() }}</span>
-        @for (item of trilha(); track item.rotulo) {
-          <img class="topo__seta" src="assets/icons/chevron-right-sm.svg" alt="" aria-hidden="true" />
-          <span [class.topo__atual]="item.destaque">{{ item.rotulo }}</span>
-        }
+        
+        <span aria-hidden="true">›</span>
+        <span class="topo__atual" aria-current="page">{{ currentLabel() }}</span>
       </nav>
-
-      <p class="topo__data">
-        <img class="topo__data-icone" src="assets/icons/calendar-sm.svg" alt="" aria-hidden="true" />
-        {{ dataHoje }}
-      </p>
+      
+      <p class="topo__data">{{ dataHoje }}</p>
     </header>
 
     <main class="conteudo">
