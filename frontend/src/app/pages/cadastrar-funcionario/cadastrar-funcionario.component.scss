@@ -6,64 +6,6 @@
 }
 
 /* =====================================================================
-   BARRA DO PAINEL (topo)
-   ===================================================================== */
-.barra {
-  border-bottom: 1px solid var(--cor-borda-1);
-  background-color: var(--cor-fundo-4);
-
-  &__conteudo {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    min-height: 76px;
-  }
-
-  &__trilha {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    font-size: 12px;
-    color: var(--cor-texto-2);
-  }
-
-  &__link {
-    color: var(--cor-texto-2);
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: var(--cor-principal-1-hover);
-    }
-  }
-
-  &__atual {
-    font-weight: 600;
-    color: var(--cor-texto-1);
-  }
-
-  &__seta {
-    width: 13px;
-    height: 13px;
-  }
-
-  &__data {
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    font-size: 12px;
-    color: var(--cor-texto-2);
-    white-space: nowrap;
-  }
-
-  &__icone {
-    width: 16px;
-    height: 16px;
-  }
-}
-
-/* =====================================================================
    CONTEÚDO
    ===================================================================== */
 .conteudo {
@@ -120,10 +62,8 @@
 }
 
 /* =====================================================================
-   ERROS
+   AVISOS (sucesso / erro)
    ===================================================================== */
-
-/* Aviso geral (sucesso/erro) */
 .aviso {
   padding: 12px 16px;
   border: 1px solid;
@@ -138,9 +78,9 @@
   }
 
   &--erro {
-    border-color: #dc2626 !important;
-    background-color: #fef2f2 !important;
-    color: #dc2626 !important;
+    border-color: var(--cor-erro);
+    background-color: var(--cor-erro-suave);
+    color: var(--cor-erro);
     font-weight: 500;
   }
 }
@@ -207,87 +147,48 @@
 }
 
 /* =====================================================================
-   CAMPOS
+   CAMPOS (reutiliza .form-field, .form-label e .form-input do sistema)
    ===================================================================== */
-.campo {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
+.form__obrigatorio {
+  color: var(--cor-principal-1);
+}
 
-  &__rotulo {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--cor-texto-1);
+.form-input.form-input--invalido {
+  border-color: var(--cor-erro);
+  background-color: var(--cor-erro-suave);
+
+  &:focus {
+    border-color: var(--cor-erro);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+    outline: none;
   }
+}
 
-  &__obrigatorio {
-    color: var(--cor-principal-1);
+/* Seta desenhada no próprio <select> nativo */
+.form-input.form-input--selecao {
+  padding-right: 36px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23666B6C' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  cursor: pointer;
+}
+
+.form-input.form-input--data {
+  color-scheme: light;
+
+  &::-webkit-calendar-picker-indicator {
+    opacity: 0.6;
+    cursor: pointer;
   }
+}
 
-  &__controle {
-    width: 100%;
-    height: 44px;
-    padding-inline: 12px;
-    border: 1px solid var(--cor-borda-1);
-    border-radius: var(--raio-pequeno);
-    background-color: var(--cor-fundo-4);
-    font-family: var(--fonte-principal);
-    font-size: 13px;
-    color: var(--cor-texto-1);
-    transition:
-      border-color 0.2s ease,
-      box-shadow 0.2s ease;
-
-    &::placeholder {
-      color: var(--cor-texto-2);
-      opacity: 0.65;
-    }
-
-    &:focus {
-      outline: none;
-      border-color: var(--cor-principal-1);
-      box-shadow: 0 0 0 3px rgba(180, 145, 80, 0.18);
-    }
-
-    &--invalido {
-      border-color: #dc2626 !important;
-      background-color: #fef2f2 !important;
-
-      &:focus {
-        border-color: #dc2626 !important;
-        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
-        outline: none;
-      }
-    }
-
-    /* Seta desenhada no próprio campo (o <select> nativo é escondido) */
-    &--selecao {
-      padding-right: 36px;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23666B6C' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      cursor: pointer;
-    }
-
-    &--data {
-      color-scheme: light;
-
-      &::-webkit-calendar-picker-indicator {
-        opacity: 0.6;
-        cursor: pointer;
-      }
-    }
-  }
-
-  &__erro {
-    font-size: 11px;
-    line-height: 1.5;
-    color: #dc2626 !important;
-    font-weight: 500;
-    margin-top: 4px;
-  }
+.form__erro {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--cor-erro);
+  font-weight: 500;
+  margin-top: 4px;
 }
 
 /* Botão mais compacto que o padrão da landing (painel administrativo) */
@@ -299,37 +200,8 @@
 }
 
 /* =====================================================================
-   RODAPÉ
-   ===================================================================== */
-.rodape {
-  border-top: 1px solid transparent;
-
-  &__conteudo {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-    padding-block: 12px 24px;
-    font-size: 10px;
-    color: var(--cor-texto-2);
-  }
-
-  &__assinatura {
-    color: var(--cor-principal-1-hover);
-    letter-spacing: 0.11px;
-  }
-}
-
-/* =====================================================================
    RESPONSIVO
    ===================================================================== */
-@media (max-width: 1200px) {
-  .barra__conteudo {
-    min-height: 68px;
-  }
-}
-
 @media (max-width: 900px) {
   .cartao__campos {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -347,17 +219,6 @@
 }
 
 @media (max-width: 600px) {
-  .barra__conteudo {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-    padding-block: 12px;
-  }
-
-  .barra__data {
-    font-size: 11px;
-  }
-
   .conteudo {
     padding-block: 24px;
   }

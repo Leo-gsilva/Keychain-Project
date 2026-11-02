@@ -8,7 +8,28 @@ interface ItemMenu {
   id: string;
   label: string;
   path: string;
+  icone: string;
 }
+
+/** Um nível do breadcrumb do cabeçalho (declarado em data.breadcrumb da rota). */
+interface ItemTrilha {
+  rotulo: string;
+  /** Marca o nível em negrito: no design o destaque fica na seção, não na página atual. */
+  destaque?: boolean;
+}
+
+/**
+ * Cada item do menu tem um ícone em public/assets/icons. O SVG é aplicado como
+ * máscara em .menu__icone, então a cor vem do CSS: cinza no item inativo e
+ * grafite no item ativo, como no design.
+ */
+const ICONE_MENU: Record<string, string> = {
+  home: 'assets/icons/nav-home.svg',
+  estoque: 'assets/icons/nav-estoque.svg',
+  servicos: 'assets/icons/nav-servicos.svg',
+  vendas: 'assets/icons/nav-vendas.svg',
+  funcionarios: 'assets/icons/nav-funcionarios.svg'
+};
 
 @Component({
   selector: 'app-shell',
@@ -35,7 +56,7 @@ export class AppShellComponent {
     const admin = this.ehAdministrador();
     const basePath = admin ? 'administrador' : 'funcionario';
     
-    const itens: ItemMenu[] = [
+    const itens: Omit<ItemMenu, 'icone'>[] = [
       { id: 'home', label: 'Home', path: 'home' },
       { id: 'estoque', label: 'Estoque', path: 'estoque' },
       { id: 'servicos', label: 'Serviços', path: 'servicos' },
@@ -43,10 +64,14 @@ export class AppShellComponent {
     ];
 
     if (admin) {
-      itens.push({ id: 'funcionarios/novo', label: 'Funcionários', path: 'funcionarios/novo' });
+      itens.push({ id: 'funcionarios', label: 'Funcionários', path: 'funcionarios' });
     }
 
-    return itens.map(item => ({ ...item, path: `/${basePath}/${item.path}` }));
+    return itens.map(item => ({
+      ...item,
+      path: `/${basePath}/${item.path}`,
+      icone: ICONE_MENU[item.id]
+    }));
   });
 
   readonly iniciais = computed(() => {
@@ -66,16 +91,32 @@ export class AppShellComponent {
     { initialValue: this.router.url }
   );
 
-  // Monta o Breadcrumb (título no cabeçalho)
-  readonly currentLabel = computed(() => {
-    const partes = this.url().split('/');
-    const secao = partes[2]?.split(/[?#]/)[0] ?? 'home'; 
-    const itemMenu = this.menu().find(item => item.id === secao);
-    const label = itemMenu ? itemMenu.label : '';
-
-    const subRota = partes[3]?.split(/[?#]/)[0];
-    return subRota ? `${label} / Detalhes` : label;
+  // Breadcrumb do cabeçalho. A trilha vem de data.breadcrumb da rota ativa;
+  // quando a rota não declara nada, cai no rótulo do item de menu da seção.
+  readonly trilha = computed<ItemTrilha[]>(() => {
+    this.url(); // recalcula a cada navegação
+    const trilha = this.trilhaDaRota();
+    if (trilha?.length) {
+      return trilha;
+    }
+    const rotulo = this.rotuloDaSecao();
+    return rotulo ? [{ rotulo, destaque: true }] : [];
   });
+
+  private trilhaDaRota(): ItemTrilha[] | undefined {
+    let rota = this.router.routerState.snapshot.root;
+    while (rota.firstChild) {
+      rota = rota.firstChild;
+    }
+    return rota.data?.['breadcrumb'] as ItemTrilha[] | undefined;
+  }
+
+  private rotuloDaSecao(): string {
+    const partes = this.url().split('/');
+    const secao = partes[2]?.split(/[?#]/)[0] ?? 'home';
+    const itemMenu = this.menu().find(item => item.id === secao);
+    return itemMenu ? itemMenu.label : '';
+  }
 
   private formatarData(data: Date): string {
     const texto = data.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });

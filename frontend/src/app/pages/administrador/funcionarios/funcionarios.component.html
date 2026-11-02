@@ -1,0 +1,88 @@
+<header class="apresentacao">
+  <div class="apresentacao__texto">
+    <h1 class="apresentacao__titulo">Funcionários</h1>
+    <p class="apresentacao__descricao">Cadastre e mantenha os dados de acesso da equipe da oficina.</p>
+  </div>
+
+  <a class="btn btn-primary" routerLink="/administrador/funcionarios/novo">
+    <img src="assets/icons/plus-dark.svg" alt="" aria-hidden="true" />
+    + Cadastrar funcionário
+  </a>
+</header>
+
+<section class="cartao" aria-labelledby="titulo-equipe">
+  <header class="cartao__topo">
+    <div class="cartao__linha">
+      <h2 class="cartao__titulo" id="titulo-equipe">Equipe da oficina</h2>
+      <p class="cartao__contagem">{{ contagem() }}</p>
+    </div>
+
+    <div class="busca">
+      <img class="busca__icone" src="assets/icons/search-sm.svg" alt="" aria-hidden="true" />
+      <input
+        class="form-input"
+        type="search"
+        placeholder="Pesquisar por nome, email ou CPF"
+        aria-label="Pesquisar funcionários por nome, email ou CPF"
+        [value]="busca()"
+        (input)="aoBuscar($event)"
+      />
+    </div>
+  </header>
+
+  @if (erro()) {
+    <p class="aviso-erro" role="alert">{{ erro() }}</p>
+  }
+
+  <div class="tabela-rolagem">
+    <table class="tabela">
+      <thead>
+        <tr>
+          <th scope="col">Nome</th>
+          <th scope="col" class="col-email">Email</th>
+          <th scope="col" class="col-cpf">CPF</th>
+          <th scope="col" class="col-nascimento">Data de nascimento</th>
+          <th scope="col" class="col-genero">Gênero</th>
+          <th scope="col" class="col-acoes">Ações</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (funcionario of filtrados(); track funcionario.id) {
+          <tr>
+            <td class="tabela__nome">{{ funcionario.name }}</td>
+            <td>{{ funcionario.email }}</td>
+            <td>{{ cpf(funcionario.cpf) }}</td>
+            <td>{{ data(funcionario.birthDate) }}</td>
+            <td>{{ rotuloGenero(funcionario.gender) }}</td>
+            <td>
+              <div class="acoes">
+                <!-- Editar fica desativado até a tela de edição existir -->
+                <button type="button" class="acao" disabled title="Disponível em breve">
+                  <img src="assets/icons/pencil-sm.svg" alt="" aria-hidden="true" />
+                  Editar
+                </button>
+                <button type="button" class="acao acao--excluir" (click)="excluir(funcionario)">
+                  <img src="assets/icons/trash-sm.svg" alt="" aria-hidden="true" />
+                  Excluir
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td class="tabela__vazio" colspan="6">{{ mensagemVazia() }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <footer class="cartao__rodape">
+    <p class="cartao__registros">{{ registros() }}</p>
+  </footer>
+</section>
+
+<p class="orientacao">
+  Funcionários acessam somente Home, Estoque e Serviços. A gestão da equipe é exclusiva do administrador.
+</p>

@@ -5,10 +5,12 @@ import {EditarServicoComponent} from './pages/servicos/editar-servicos/editar-se
 import {LandingComponent} from './pages/landing/landing.component';
 import {AppShellComponent} from './layouts/app-shell/app-shell.component';
 import {Role} from './services/account.service';
+import {roleGuard} from './guards/role.guard';
 import {FuncionarioEstoqueComponent} from './pages/funcionario/funcionario-estoque/funcionario-estoque.component';
 import {
   FuncionarioCadastroItemComponent
 } from './pages/funcionario/funcionario-cadastro-item/funcionario-cadastro-item.component';
+import {FuncionariosComponent} from './pages/administrador/funcionarios/funcionarios.component';
 import {CadastrarFuncionarioComponent} from './pages/cadastrar-funcionario/cadastrar-funcionario.component';
 import {ServicosComponent} from './pages/servicos/servicos.component';
 import {CadastrarServicoComponent} from './pages/funcionario/funcionario-cadastrar-servico/cadastrar-servico.component';
@@ -21,6 +23,7 @@ function area(path: string, role: Role, children: Routes): Routes[0] {
     path,
     component: AppShellComponent,
     data: {role},
+    canActivate: [roleGuard],
     children
   };
 }
@@ -64,6 +67,12 @@ export const routes: Routes = [
     {path: 'vendas', title: 'Vendas | Miguel', component: VendasComponent},
     {path: 'vendas/nova', title: 'Nova venda | Miguel', component: NovaVendaComponent},
 
+    {
+      path: 'funcionarios',
+      title: 'Funcionários | Miguel',
+      component: FuncionariosComponent,
+      data: { breadcrumb: [{ rotulo: 'Funcionários', destaque: true }] }
+    },
     {path: 'funcionarios/novo', title: 'Cadastrar funcionário | Miguel', component: CadastrarFuncionarioComponent}
   ]),
 
