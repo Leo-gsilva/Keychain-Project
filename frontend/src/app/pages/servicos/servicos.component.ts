@@ -81,7 +81,7 @@ export class ServicosComponent implements OnInit {
     return this.servicos().filter((s) => {
       if (status && s.status !== status) return false;
       if (!termo) return true;
-      const texto = normalizar(`${s.clientName} ${this.nomeTipo(s.serviceType)} ${this.numeroOrdem(s)} ${s.id}`);
+      const texto = normalizar(`${s.clientName} ${this.nomeTipo(s.serviceType)} ${this.numeroServico(s)} ${s.id}`);
       return texto.includes(termo);
     });
   });
@@ -122,7 +122,7 @@ export class ServicosComponent implements OnInit {
   private carregar(): void {
     this.servico.listar().subscribe({
       next: (lista) => {
-        // Mais recentes primeiro (data de contratação e, no empate, número da ordem)
+        // Mais recentes primeiro (data de contratação e, no empate, número do serviço)
         const ordenada = [...lista].sort(
           (a, b) => b.hiringDate.localeCompare(a.hiringDate) || b.id - a.id
         );
@@ -168,7 +168,7 @@ export class ServicosComponent implements OnInit {
   }
 
   excluir(servico: Servico): void {
-    const mensagem = `Excluir a ordem ${this.numeroOrdem(servico)} de ${servico.clientName}? Essa ação não pode ser desfeita.`;
+    const mensagem = `Excluir o serviço ${this.numeroServico(servico)} de ${servico.clientName}? Essa ação não pode ser desfeita.`;
     if (!confirm(mensagem)) return;
 
     this.servico.excluir(servico.id).subscribe({
@@ -183,7 +183,7 @@ export class ServicosComponent implements OnInit {
   }
 
   // ---------- Regras de exibição ----------
-  numeroOrdem(servico: Servico): string {
+  numeroServico(servico: Servico): string {
     return `#${String(servico.id).padStart(3, '0')}`;
   }
 

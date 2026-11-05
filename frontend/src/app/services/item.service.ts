@@ -24,14 +24,15 @@ export interface Item extends ItemRequest {
   category?: string;
 }
 
-/** Item com estoque baixo (LOW_STOCK: no mínimo ou abaixo) ou zerado (OUT_OF_STOCK). */
+export type NivelAlertaEstoque = 'LOW_STOCK' | 'OUT_OF_STOCK';
+
 export interface AlertaEstoque {
   id: number;
   idCode: string;
   name: string;
   stock: number;
   minStock: number;
-  level: 'LOW_STOCK' | 'OUT_OF_STOCK';
+  level: NivelAlertaEstoque;
   message: string;
 }
 
@@ -48,8 +49,7 @@ export class ItemService {
     return this.http.get<Item[]>(this.url);
   }
 
-  /** Só os itens com problema, do menor estoque para o maior. */
-  alertas(): Observable<AlertaEstoque[]> {
+  alertas(): Observable<AlertaEstoque[]>{
     return this.http.get<AlertaEstoque[]>(`${this.url}/alerts`);
   }
 

@@ -1,7 +1,7 @@
 <div class="cabecalho">
   <div>
     <h1 class="titulo">Serviços</h1>
-    <p class="subtitulo">Acompanhe os serviços contratados e mantenha cada ordem em dia.</p>
+    <p class="subtitulo">Acompanhe os serviços contratados e mantenha cada serviço em dia.</p>
   </div>
 
   <!-- Caminho relativo: funciona tanto em /funcionario quanto em /administrador -->
@@ -17,15 +17,15 @@
 @if (ehAdministrador() && resumo(); as r) {
 <section class="resumo" aria-label="Resumo do dia">
   <article class="indicador">
-    <p class="indicador__rotulo">Ordens de hoje</p>
+    <p class="indicador__rotulo">Serviços de hoje</p>
     <p class="indicador__valor">{{ r.total }}</p>
-    <p class="indicador__texto">Contratadas em {{ hoje }}</p>
+    <p class="indicador__texto">Contratados em {{ hoje }}</p>
   </article>
 
   <article class="indicador">
-    <p class="indicador__rotulo">Concluídas</p>
+    <p class="indicador__rotulo">Concluídos</p>
     <p class="indicador__valor">{{ r.completed }}</p>
-    <p class="indicador__texto">{{ percentualConcluidas() }}% das ordens do dia</p>
+    <p class="indicador__texto">{{ percentualConcluidas() }}% dos serviços do dia</p>
   </article>
 
   <article class="indicador">
@@ -38,7 +38,7 @@
     <p class="indicador__rotulo">Recebido hoje</p>
     <p class="indicador__valor">{{ moeda(r.received) }}</p>
     <p class="indicador__texto">
-      {{ r.completed }} {{ r.completed === 1 ? 'serviço' : 'serviços' }} · ticket médio {{ moeda(ticketMedio()) }}
+      {{ r.completed }} {{ r.completed === 1? 'serviço' : 'serviços' }} · ticket médio {{ moeda(ticketMedio()) }}
     </p>
   </article>
 </section>
@@ -59,7 +59,7 @@
       <input
         class="form-input busca__campo"
         type="search"
-        placeholder="Pesquisar por cliente, serviço ou número da ordem"
+        placeholder="Pesquisar por cliente, serviço ou número do serviço"
         aria-label="Pesquisar serviços"
         [value]="busca()"
         (input)="aoBuscar($event)"
@@ -96,7 +96,7 @@
       <tr>
         <td>
           <span class="tabela__nome">{{ s.clientName }}</span>
-          <span class="tabela__ordem">Ordem {{ numeroOrdem(s) }}</span>
+          <span class="tabela__servico">Serviço {{ numeroServico(s) }}</span>
         </td>
         <td>{{ nomeTipo(s.serviceType) }}</td>
         <td>{{ data(s.hiringDate) }}</td>

@@ -1,0 +1,145 @@
+<header>
+  <h1 class="titulo">Olá, {{ nome() }}. Vamos ao trabalho.</h1>
+  <p class="subtitulo">Acesse os materiais e acompanhe os atendimentos da oficina.</p>
+</header>
+
+<!-- Atalhos. Caminhos relativos: funcionam em /funcionario e em /administrador -->
+<nav class="atalhos" aria-label="Atalhos">
+  <a class="atalho" routerLink="../estoque">
+    <span class="atalho__icone"><app-icone nome="caixa" [tamanho]="26" /></span>
+    <span class="atalho__texto">
+      <strong class="atalho__titulo">Estoque</strong>
+      <span class="atalho__descricao">Consulte itens, registre materiais e confira a reposição.</span>
+      <span class="atalho__link"><app-icone nome="seta" [tamanho]="14" /> Acessar estoque</span>
+    </span>
+  </a>
+
+  <a class="atalho" routerLink="../servicos">
+    <span class="atalho__icone"><app-icone nome="ferramenta" [tamanho]="26" /></span>
+    <span class="atalho__texto">
+      <strong class="atalho__titulo">Serviços</strong>
+      <span class="atalho__descricao">Cadastre um atendimento ou atualize um serviço.</span>
+      <span class="atalho__link"><app-icone nome="seta" [tamanho]="14" /> Acessar serviços</span>
+    </span>
+  </a>
+</nav>
+
+<div class="grade">
+  <!-- Serviços para trabalhar -->
+  <section class="cartao" aria-labelledby="titulo-servicos">
+    <header class="cartao__topo">
+      <div>
+        <h2 class="cartao__titulo" id="titulo-servicos">Serviços para trabalhar</h2>
+        <p class="cartao__texto">Atendimentos em aberto · {{ hoje }}</p>
+      </div>
+      <a class="cartao__link" routerLink="../servicos">Ver serviços</a>
+    </header>
+
+    @if (erroServicos(); as mensagem) {
+    <p class="aviso-erro" role="alert">{{ mensagem }}</p>
+    }
+
+    <div class="tabela-rolagem">
+      <table class="tabela">
+        <thead>
+        <tr>
+          <th scope="col">Serviço</th>
+          <th scope="col">Cliente / Serviço</th>
+          <th scope="col">Status</th>
+          <th scope="col">Previsão</th>
+          <th scope="col"><span class="so-leitor">Ação</span></th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (s of servicosVisiveis(); track s.id) {
+        <tr>
+          <td class="tabela__servico">{{ numero(s.id) }}</td>
+          <td>
+            <span class="tabela__nome">{{ s.clientName }}</span>
+            <span class="tabela__sub">{{ nomeTipo(s.serviceType) }}</span>
+          </td>
+          <td><span class="status" [attr.data-status]="s.status">{{ nomeStatus(s.status) }}</span></td>
+          <td class="tabela__previsao">{{ previsao(s.scheduledAt) }}</td>
+          <td>
+            <a class="acao-abrir" [routerLink]="['../servicos', s.id]" [attr.aria-label]="'Abrir o serviço ' + numero(s.id)">Abrir</a>
+          </td>
+        </tr>
+        } @empty {
+        <tr>
+          <td class="tabela__vazio" colspan="5">
+            {{ carregandoServicos() ? 'Carregando serviços' : erroServicos() ? '—' : 'Nenhum serviço em aberto. Use Serviços para cadastrar um novo atendimento.' }}
+          </td>
+        </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="cartao__rodape">
+      <app-icone nome="relogio" [tamanho]="16" />
+      <span>Confira o endereço e os anexos antes do atendimento externo.</span>
+      @if (servicosOcultos() > 0){
+      <a routerLink="../servicos">+{{ servicosOcultos() }} {{ servicosOcultos() === 1? 'Serviço' : 'Serviços' }} em Serviços</a>
+      }
+    </footer>
+  </section>
+
+  <div class="lateral">
+    <!-- Atenção ao estoque -->
+    <section class="cartao" aria-labelledby="titulo-estoque">
+      <header class="cartao__topo">
+        <h2 class="cartao__titulo" id="titulo-estoque">Atenção ao estoque</h2>
+        <app-icone class="cartao__icone" nome="alerta" [tamanho]="20" />
+      </header>
+
+      @if (erroAlertas(); as mensagem) {
+      <p class="aviso-erro" role="alert">{{ mensagem }}</p>
+      } @else if (carregandoAlertas()) {
+      <p class="vazio">Carregando avisos…</p>
+      } @else if (alertas().length === 0) {
+      <p class="vazio">Nenhum material abaixo do mínimo. Estoque em dia.</p>
+      } @else {
+      <p class="cartao__texto cartao__texto--lateral">
+        Confira os materiais abaixo do mínimo antes de separar as peças do atendimento.
+      </p>
+
+      <ul class="alertas">
+        @for (a of alertasVisiveis(); track a.id) {
+        <li class="alerta">
+              <span>
+                <span class="alerta__nome alerta__nome--forte">{{ a.name }}</span>
+                <span class="alerta__detalhe">Repor {{ repor(a) }} un.</span>
+              </span>
+          <span class="alerta__qtd" [attr.data-nivel]="a.level">{{ a.stock }} / {{ a.minStock }} un.</span>
+        </li>
+        }
+      </ul>
+
+      @if (alertasOcultos() > 0) {
+      <p class="cartao__nota cartao__nota--seguida">
+        + {{ alertasOcultos() }} {{ alertasOcultos() === 1 ? 'outro material' : 'outros materiais' }} no estoque
+      </p>
+      }
+
+      <p class="cartao__nota">Quantidade atual / mínimo de aviso</p>
+      }
+
+      <div class="cartao__acao">
+        <a class="btn btn-secondary btn-consultar" routerLink="../estoque">Consultar estoque</a>
+      </div>
+    </section>
+
+    <!-- Próximo atendimento fora da oficina -->
+    @if (proximoExterno(); as externo) {
+    <aside class="externo" aria-labelledby="titulo-externo">
+      <h2 class="externo__titulo" id="titulo-externo">Atendimento externo · {{ numero(externo.id) }}</h2>
+      <p class="externo__linha">{{ externo.clientName }} · {{ nomeTipo(externo.serviceType) }}</p>
+      <p class="externo__linha">{{ externo.address || 'Endereço não informado' }}</p>
+      <p class="externo__linha">Previsão: {{ previsaoExtensa(externo.scheduledAt) }}</p>
+      <a class="externo__link" [routerLink]="['../servicos', externo.id]">
+        <app-icone nome="seta" [tamanho]="14" /> Abrir atendimento
+      </a>
+    </aside>
+    }
+  </div>
+</div>

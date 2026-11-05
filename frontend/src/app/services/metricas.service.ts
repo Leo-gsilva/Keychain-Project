@@ -5,7 +5,7 @@ import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
 
 export interface MetricasServicos {
-  total: number; // ordens do período, sem as canceladas
+  total: number; // Serviços do período, sem as canceladas
   completed: number;
   inProgress: number;
   pending: number;
@@ -30,21 +30,18 @@ export interface MetricasResumo {
   totals: { revenue: number; partsCost: number; estimatedProfit: number };
 }
 
+// NOVO (de "TipoAtividade" até o fim da interface Atividade)
 export type TipoAtividade = 'SERVICE_CREATED' | 'SERVICE_STATUS_CHANGED' | 'SALE_CREATED' | 'SALE_CANCELED';
 
-/** Um acontecimento do card "Últimas movimentações". O front monta o texto. */
+/** Um acontecimento de "Últimas movimentações" (GET /metrics/activity). O texto é montado na tela. */
 export interface Atividade {
   type: TipoAtividade;
-  at: string;
-  referenceId: number;
-  /** Status atual do serviço ou da venda */
-  status: string;
-  /** Nulo em venda de balcão */
-  clientName: string | null;
-  /** Tipo do serviço (já em português) ou quantidade de itens da venda ("3 un.") */
-  detail: string;
-  /** Valor pago do serviço ou total da venda */
-  amount: number;
+  at: string; // data e hora local, ex.: 2026-10-08T14:20:00
+  referenceId: number; // id do serviço ou da venda
+  status: string; // status atual do serviço ou da venda
+  clientName: string | null; // nulo em venda de balcão
+  detail: string; // tipo do serviço ou "N un." da venda
+  amount: number; // valor pago do serviço ou total da venda
 }
 
 /** Indicadores (rotas /metrics do backend). Só ADMINISTRATOR tem acesso. */
@@ -60,9 +57,8 @@ export class MetricasService {
     if (fim) params = params.set('end', fim);
     return this.http.get<MetricasResumo>(this.url, {params});
   }
-
-  // Últimos acontecimentos de serviços e vendas, do mais recente para o mais antigo (1 a 50)
+  // NOVO: últimos acontecimentos (serviços e vendas), do mais recente para o mais antigo. Limite de 1 a 50
   atividade(limite = 10): Observable<Atividade[]> {
-    return this.http.get<Atividade[]>(`${this.url}/activity`, {params: {limit: limite}});
+    return this.http.get<Atividade[]>(`${this.url}/activity`, {params: new HttpParams().set('limit', limite)});
   }
 }

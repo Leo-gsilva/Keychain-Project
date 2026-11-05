@@ -21,7 +21,8 @@ import {CadastrarServicoComponent} from './pages/funcionario/funcionario-cadastr
 import {VendasComponent} from './pages/vendas/vendas/vendas.component';
 import {NovaVendaComponent} from './pages/vendas/nova-venda/nova-venda.component';
 import {LoginComponent} from './pages/login/login.component';
-import {HomeAdministradorComponent} from './pages/administrador/home/home.component';
+import {TelaHomeAdministradorComponent} from './pages/administrador/tela-home-administrador/tela-home-administrador.component';
+import {TelaHomeFuncionarioComponent} from './pages/funcionario/tela-home-funcionario/tela-home-funcionario.component';
 
 function area(path: string, role: Role, children: Routes): Routes[0] {
   return {
@@ -39,8 +40,9 @@ export const routes: Routes = [
 
   // ÁREA DO FUNCIONÁRIO
   area('funcionario', 'EMPLOYEE', [
-    // TODO: trocar para a home quando existir
-    {path: '', pathMatch: 'full', redirectTo: 'estoque'},
+
+    {path: '', pathMatch: 'full', redirectTo: 'home'},
+    {path: 'home', title: 'Home | Miguel', component: TelaHomeFuncionarioComponent},
 
     {path: 'estoque', title: 'Estoque | Miguel', component: FuncionarioEstoqueComponent},
     {path: 'estoque/novo', title: 'Cadastrar item | Miguel', component: FuncionarioCadastroItemComponent},
@@ -59,8 +61,15 @@ export const routes: Routes = [
 
   // ÁREA DO ADMINISTRADOR
   area('administrador', 'ADMINISTRATOR', [
+
     {path: '', pathMatch: 'full', redirectTo: 'home'},
-    {path: 'home', title: 'Home | Miguel', component: HomeAdministradorComponent},
+
+    {                                                                                               // NOVO (bloco inteiro)
+      path: 'home',
+      title: 'Home | Miguel',
+      component: TelaHomeAdministradorComponent,
+      data: { breadcrumb: [{ rotulo: 'Home · Administrador', destaque: true }] }
+    },
 
     {path: 'estoque', title: 'Estoque | Miguel', component: FuncionarioEstoqueComponent},
     {path: 'estoque/novo', title: 'Cadastrar item | Miguel', component: FuncionarioCadastroItemComponent},
@@ -87,5 +96,5 @@ export const routes: Routes = [
     {path: 'funcionarios/:id', title: 'Visualizar funcionário | Miguel', component: VisualizarFuncionarioComponent}
   ]),
 
-  {path: '**', redirectTo: 'funcionario/estoque'}
+  {path: '**', redirectTo: 'funcionario/home'}
 ];
