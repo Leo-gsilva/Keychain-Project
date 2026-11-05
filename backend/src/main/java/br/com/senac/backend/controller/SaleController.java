@@ -64,8 +64,24 @@ public class SaleController {
         return service.findById(id);
     }
 
+    @Operation(summary = "Editar venda",
+            description = "Mesmo corpo do cadastro. Só vale para venda concluída. O que tinha sido vendido volta ao estoque "
+                    + "e os itens enviados são baixados de novo. Itens que já estavam na venda mantêm o preço da venda; "
+                    + "itens novos usam o `sellPrice` atual. Data e vendedor não mudam.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Venda editada e estoque ajustado"),
+            @ApiResponse(responseCode = "400", description = "Sem itens, quantidade < 1, sem forma de pagamento, ou desconto maior que o subtotal", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Usuário não está logado", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Venda ou algum item não existe", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Venda cancelada ou estoque insuficiente para algum item", content = @Content)
+    })
+    @PutMapping("/{id}")
+    public Sale update(@PathVariable Long id, @Valid @RequestBody SaleRequest req) {
+        return service.update(id, req);
+    }
+
     @Operation(summary = "Cancelar venda",
-            description = "Venda concluída não é editada, só cancelada. Os itens voltam para o estoque.")
+            description = "Os itens voltam para o estoque. A venda continua no histórico como cancelada.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Venda cancelada e estoque devolvido"),
             @ApiResponse(responseCode = "401", description = "Usuário não está logado", content = @Content),

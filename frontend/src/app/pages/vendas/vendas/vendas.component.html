@@ -102,14 +102,14 @@
         </td>
         <td>
           <div class="acoes">
-            <button type="button" class="acao" (click)="visualizar(v)">
+            <a class="acao" [routerLink]="[v.id]">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" stroke="currentColor" stroke-width="1.6"
                       stroke-linejoin="round"/>
                 <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/>
               </svg>
               Visualizar
-            </button>
+            </a>
             <!-- Venda cancelada não pode ser cancelada de novo -->
             @if (v.status === 'COMPLETED') {
             <button type="button" class="acao acao--cancelar" (click)="cancelar(v)">
@@ -163,67 +163,3 @@
     </nav>
   </footer>
 </section>
-
-<!-- Detalhes da venda (botão Visualizar) -->
-@if (selecionada(); as v) {
-<div class="detalhes-fundo" (click)="fecharDetalhes()"></div>
-<aside class="detalhes" role="dialog" aria-modal="true" aria-labelledby="titulo-detalhes">
-  <header class="detalhes__topo">
-    <div>
-      <h2 class="detalhes__titulo" id="titulo-detalhes">Venda {{ numero(v) }}</h2>
-      <p class="detalhes__data">{{ dataHoraCompleta(v.createdAt) }} · por {{ v.sellerName }}</p>
-    </div>
-    <button type="button" class="detalhes__fechar" aria-label="Fechar detalhes" (click)="fecharDetalhes()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-      </svg>
-    </button>
-  </header>
-
-  <span class="status" [attr.data-status]="v.status">{{ nomeStatus(v.status) }}</span>
-  @if (v.canceledAt) {
-  <p class="detalhes__nota">Cancelada em {{ dataHoraCompleta(v.canceledAt) }}. Os itens voltaram para o estoque.</p>
-  }
-
-  <dl class="detalhes__dados">
-    <div><dt>Cliente</dt><dd>{{ cliente(v) }}</dd></div>
-    @if (v.clientPhone) {
-    <div><dt>Telefone</dt><dd>{{ v.clientPhone }}</dd></div>
-    }
-    @if (v.clientCpf) {
-    <div><dt>CPF</dt><dd>{{ v.clientCpf }}</dd></div>
-    }
-    <div><dt>Pagamento</dt><dd>{{ pagamentoTexto(v) }}</dd></div>
-  </dl>
-
-  <h3 class="detalhes__subtitulo">Itens</h3>
-  <ul class="detalhes__itens">
-    @for (i of v.items; track i.id) {
-    <li>
-      <span>
-        <strong>{{ i.itemName }}</strong>
-        <small>{{ i.itemCode }} · {{ i.quantity }} × {{ moeda(i.unitPrice) }}</small>
-      </span>
-      <span>{{ moeda(i.subtotal) }}</span>
-    </li>
-    }
-  </ul>
-
-  <dl class="detalhes__totais">
-    <div><dt>Subtotal</dt><dd>{{ moeda(v.subtotal) }}</dd></div>
-    @if (v.discount > 0) {
-    <div><dt>Desconto</dt><dd>− {{ moeda(v.discount) }}</dd></div>
-    }
-    <div class="detalhes__total"><dt>Total</dt><dd>{{ moeda(v.total) }}</dd></div>
-  </dl>
-
-  @if (v.observations) {
-  <h3 class="detalhes__subtitulo">Observações</h3>
-  <p class="detalhes__observacoes">{{ v.observations }}</p>
-  }
-
-  @if (v.status === 'COMPLETED') {
-  <button type="button" class="btn btn-secondary detalhes__cancelar" (click)="cancelar(v)">Cancelar venda</button>
-  }
-</aside>
-}

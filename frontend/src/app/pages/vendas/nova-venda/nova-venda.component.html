@@ -1,7 +1,12 @@
 <a class="voltar" [routerLink]="voltarPara()">← Voltar para vendas</a>
 
-<h1 class="titulo">Nova venda</h1>
-<p class="subtitulo">Informe o pagamento, adicione os itens vendidos e finalize. O estoque é baixado automaticamente.</p>
+<div class="titulo-linha">
+  <h1 class="titulo">{{ titulo }}</h1>
+  @if (venda(); as v) {
+    <span class="status" [attr.data-status]="v.status">{{ v.status === 'CANCELED' ? 'Cancelada' : 'Concluída' }}</span>
+  }
+</div>
+<p class="subtitulo">{{ subtitulo }}</p>
 
 <form class="cartao" [formGroup]="form" (ngSubmit)="finalizar()" novalidate>
   <!-- ===== Cliente e pagamento ===== -->
@@ -26,6 +31,7 @@
         <span class="form-label" id="rotulo-pagamento">Forma de pagamento *</span>
         <div class="dropdown">
           <button type="button" class="form-input dropdown__gatilho"
+                  [disabled]="bloqueado"
                   [class.form-input--erro]="invalido('paymentMethod')"
                   [class.dropdown__gatilho--aberto]="pagamentoAberto()"
                   role="combobox" aria-haspopup="listbox" aria-controls="lista-pagamento"
@@ -68,7 +74,7 @@
         @if (invalido('clientCpf')) { <span class="erro-campo" role="alert">{{ mensagem('clientCpf') }}</span> }
       </label>
 
-      @if (ehCredito) {
+      @if (!ehDinheiro || bloqueado) {
         <label class="form-field">
           <span class="form-label">Parcelas</span>
           <select class="form-input form-select" formControlName="installments">
@@ -79,7 +85,7 @@
         </label>
       }
 
-      @if (ehDinheiro) {
+      @if (ehDinheiro && !bloqueado) {
         <label class="form-field">
           <span class="form-label">Valor recebido</span>
           <input class="form-input" type="text" inputmode="decimal" formControlName="received" placeholder="R$ 0,00"
@@ -91,7 +97,7 @@
 
       <label class="form-field">
         <span class="form-label">Vendedor</span>
-        <input class="form-input form-input--leitura" type="text" value="Você (usuário logado)" readonly tabindex="-1" />
+        <input class="form-input form-input--leitura" type="text" [value]="nomeVendedor" readonly tabindex="-1" />
       </label>
     </div>
   </section>
@@ -119,7 +125,7 @@
           <input #campoBusca id="campo-busca" class="form-input busca__campo" type="text" autocomplete="off"
                  [class.form-input--erro]="semItens()"
                  [placeholder]="carregandoEstoque() ? 'Carregando estoque...' : 'Buscar por nome ou código (ex.: Blank Yale, BL-Y01)'"
-                 [disabled]="carregandoEstoque()"
+                 [disabled]="carregandoEstoque() || bloqueado"
                  [value]="busca()"
                  role="combobox" aria-autocomplete="list" aria-controls="lista-busca"
                  [attr.aria-expanded]="buscaAberta()"
@@ -154,7 +160,7 @@
                     <span class="painel__dica">{{ item.idCode }}{{ item.brand ? ' · ' + item.brand : '' }}</span>
                   </span>
 
-                  @if (item.stock <= 0) {
+                  @if (limite(item) <= 0) {
                     <span class="selo selo--erro">Sem estoque</span>
                   } @else if (quantidadeNaVenda(item) > 0) {
                     <span class="selo">{{ disponivel(item) <= 0 ? 'Todo o estoque já adicionado' : 'Já adicionado (' + quantidadeNaVenda(item) + ' un.)' }}</span>
@@ -178,6 +184,7 @@
       <label class="form-field adicionar__qtd">
         <span class="form-label">Quantidade *</span>
         <input #campoQuantidade class="form-input" type="number" min="1" step="1" inputmode="numeric"
+               [disabled]="bloqueado"
                [value]="quantidade()"
                (input)="aoMudarQuantidade($any($event.target).value)"
                (keydown.enter)="$event.preventDefault(); adicionar()" />
@@ -189,7 +196,7 @@
                [value]="dinheiro(itemSelecionado()?.sellPrice ?? 0)" />
       </label>
 
-      <button type="button" class="btn btn-primary adicionar__botao" (click)="adicionar()">
+      <button type="button" class="btn btn-primary adicionar__botao" [disabled]="bloqueado" (click)="adicionar()">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
           <path d="M3.75 9h10.5M9 3.75v10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
         </svg>
@@ -218,17 +225,17 @@
             <span role="cell" class="tabela__codigo">{{ linha.item.idCode }}</span>
             <span role="cell">
               <span class="passo">
-                <button type="button" aria-label="Diminuir quantidade" [disabled]="linha.quantidade <= 1"
+                <button type="button" aria-label="Diminuir quantidade" [disabled]="bloqueado || linha.quantidade <= 1"
                         (click)="alterarQuantidade(linha, -1)">−</button>
                 <span aria-live="polite">{{ linha.quantidade }}</span>
-                <button type="button" aria-label="Aumentar quantidade" [disabled]="linha.quantidade >= linha.item.stock"
+                <button type="button" aria-label="Aumentar quantidade" [disabled]="bloqueado || linha.quantidade >= limite(linha.item)"
                         (click)="alterarQuantidade(linha, 1)">+</button>
               </span>
             </span>
-            <span role="cell" class="direita">{{ dinheiro(linha.item.sellPrice) }}</span>
-            <span role="cell" class="direita"><strong>{{ dinheiro(linha.item.sellPrice * linha.quantidade) }}</strong></span>
+            <span role="cell" class="direita">{{ dinheiro(linha.preco) }}</span>
+            <span role="cell" class="direita"><strong>{{ dinheiro(linha.preco * linha.quantidade) }}</strong></span>
             <span role="cell" class="direita">
-              <button type="button" class="remover" [attr.aria-label]="'Remover ' + linha.item.name" (click)="remover(linha)">
+              <button type="button" class="remover" [disabled]="bloqueado" [attr.aria-label]="'Remover ' + linha.item.name" (click)="remover(linha)">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -244,7 +251,7 @@
         </div>
       </div>
     } @else {
-      <p class="vazio" [class.vazio--erro]="semItens()">Nenhum item adicionado ainda.</p>
+      <p class="vazio" [class.vazio--erro]="semItens()">{{ carregandoVenda() ? 'Carregando itens da venda…' : 'Nenhum item adicionado ainda.' }}</p>
     }
   </section>
 
@@ -294,15 +301,35 @@
 
   <!-- ===== Ações ===== -->
   <footer class="acoes">
-    <span class="text-note">* Campos obrigatórios · adicione pelo menos 1 item para finalizar</span>
-    <div class="acoes__botoes">
-      <a class="btn btn-secondary" [routerLink]="voltarPara()">Cancelar</a>
-      <button class="btn btn-primary" type="submit" [disabled]="enviando()">
-        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-          <path d="M16.666 5 7.5 14.166 3.334 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        {{ enviando() ? 'Finalizando...' : 'Finalizar venda' }}
-      </button>
-    </div>
+    @if (bloqueado) {
+      <span class="text-note">Somente leitura · os campos não podem ser alterados nesta tela</span>
+      <div class="acoes__botoes">
+        <a class="btn btn-secondary" [routerLink]="voltarPara()">Voltar</a>
+        @if (venda()?.status === 'COMPLETED') {
+          <!-- Editar usa a mesma tela, com os campos habilitados -->
+          <a class="btn btn-primary" [routerLink]="[voltarPara(), venda()!.id, 'editar']">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+            </svg>
+            Editar venda
+          </a>
+        }
+      </div>
+    } @else {
+      <span class="text-note">* Campos obrigatórios · adicione pelo menos 1 item para {{ modo === 'editar' ? 'salvar' : 'finalizar' }}</span>
+      <div class="acoes__botoes">
+        <a class="btn btn-secondary" [routerLink]="modo === 'editar' ? [voltarPara(), vendaId] : [voltarPara()]">Cancelar</a>
+        <button class="btn btn-primary" type="submit" [disabled]="enviando() || carregandoVenda()">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M16.666 5 7.5 14.166 3.334 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          @if (modo === 'editar') {
+            {{ enviando() ? 'Salvando...' : 'Salvar alterações' }}
+          } @else {
+            {{ enviando() ? 'Finalizando...' : 'Finalizar venda' }}
+          }
+        </button>
+      </div>
+    }
   </footer>
 </form>

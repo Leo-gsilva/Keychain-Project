@@ -52,6 +52,8 @@ export const routes: Routes = [
 
     {path: 'vendas', title: 'Vendas | Miguel', component: VendasComponent},
     {path: 'vendas/nova', title: 'Nova venda | Miguel', component: NovaVendaComponent},
+    {path: 'vendas/:id', title: 'Visualizar venda | Miguel', component: NovaVendaComponent, data: {modo: 'visualizar'}},
+    {path: 'vendas/:id/editar', title: 'Editar venda | Miguel', component: NovaVendaComponent, data: {modo: 'editar'}},
   ]),
 
   // ÁREA DO ADMINISTRADOR
@@ -70,6 +72,8 @@ export const routes: Routes = [
 
     {path: 'vendas', title: 'Vendas | Miguel', component: VendasComponent},
     {path: 'vendas/nova', title: 'Nova venda | Miguel', component: NovaVendaComponent},
+    {path: 'vendas/:id', title: 'Visualizar venda | Miguel', component: NovaVendaComponent, data: {modo: 'visualizar'}},
+    {path: 'vendas/:id/editar', title: 'Editar venda | Miguel', component: NovaVendaComponent, data: {modo: 'editar'}},
 
     {
       path: 'funcionarios',

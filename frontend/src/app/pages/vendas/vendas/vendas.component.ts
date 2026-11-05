@@ -58,9 +58,6 @@ export class VendasComponent implements OnInit {
   readonly pagamento = signal<FormaPagamento | ''>('');
   readonly pagina = signal(1);
 
-  /** Venda aberta no painel de detalhes (botão Visualizar). */
-  readonly selecionada = signal<Venda | null>(null);
-
   // ---------- Resumo do dia (só administrador) ----------
   private readonly hojeIso = dataIso(new Date());
 
@@ -164,14 +161,6 @@ export class VendasComponent implements OnInit {
     this.pagina.set(Math.min(Math.max(1, pagina), this.totalPaginas()));
   }
 
-  visualizar(venda: Venda): void {
-    this.selecionada.set(venda);
-  }
-
-  fecharDetalhes(): void {
-    this.selecionada.set(null);
-  }
-
   cancelar(venda: Venda): void {
     const mensagem = `Cancelar a venda ${this.numero(venda)}? Os itens voltam para o estoque e a venda fica no histórico como cancelada.`;
     if (!confirm(mensagem)) return;
@@ -179,7 +168,6 @@ export class VendasComponent implements OnInit {
     this.vendaApi.cancelar(venda.id).subscribe({
       next: (atualizada) => {
         this.vendas.update((lista) => lista.map((v) => (v.id === atualizada.id ? atualizada : v)));
-        if (this.selecionada()?.id === atualizada.id) this.selecionada.set(atualizada);
         this.erro.set(null);
         if (this.ehAdministrador()) this.carregarResumo();
       },
@@ -208,14 +196,6 @@ export class VendasComponent implements OnInit {
     const hora = String(d.getHours()).padStart(2, '0');
     const minuto = String(d.getMinutes()).padStart(2, '0');
     return `${dia}/${mes} · ${hora}:${minuto}`;
-  }
-
-  /** "08/10/2026 às 16:12" (painel de detalhes) */
-  dataHoraCompleta(iso: string): string {
-    const d = new Date(iso);
-    const data = d.toLocaleDateString('pt-BR');
-    const hora = d.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
-    return `${data} às ${hora}`;
   }
 
   unidades(venda: Venda): number {

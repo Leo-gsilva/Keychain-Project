@@ -68,6 +68,15 @@ export class VendaService {
     return this.http.get<Venda[]>(this.url);
   }
 
+  buscar(id: number): Observable<Venda> {
+    return this.http.get<Venda>(`${this.url}/${id}`);
+  }
+
+  /** Mesmo corpo do cadastro. O backend devolve ao estoque o que tinha saído e baixa de novo. */
+  editar(id: number, venda: NovaVenda): Observable<Venda> {
+    return this.http.put<Venda>(`${this.url}/${id}`, venda);
+  }
+
   cancelar(id: number): Observable<Venda> {
     return this.http.patch<Venda>(`${this.url}/${id}/cancel`, {});
   }

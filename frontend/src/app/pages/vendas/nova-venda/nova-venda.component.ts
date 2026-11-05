@@ -1,11 +1,16 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, HostListener, OnInit, computed, inject, signal, viewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { catchError, forkJoin, of } from 'rxjs';
 
 import { Item, ItemService } from '../../../services/item.service';
-import { FormaPagamento, NovaVenda, VendaService } from '../../../services/venda.service';
+import { SessionService } from '../../../services/session.service';
+import { FormaPagamento, NovaVenda, Venda, VendaService } from '../../../services/venda.service';
 import { numeroParaTexto, textoParaNumero } from '../../../utils/dinheiro';
+
+/** A mesma tela serve para cadastrar, visualizar (tudo desabilitado) e editar uma venda. */
+export type ModoVenda = 'novo' | 'visualizar' | 'editar';
 
 function dinheiroValido(controle: AbstractControl): ValidationErrors | null {
   const texto = String(controle.value ?? '').trim();
@@ -41,6 +46,8 @@ interface OpcaoPagamento {
 interface LinhaVenda {
   item: Item;
   quantidade: number;
+  /** Preço unitário da linha: o do estoque na venda nova; o da venda original para itens que já estavam nela. */
+  preco: number;
 }
 
 @Component({
@@ -54,6 +61,20 @@ export class NovaVendaComponent implements OnInit {
   private readonly itensApi = inject(ItemService);
   private readonly vendas = inject(VendaService);
   private readonly router = inject(Router);
+  private readonly rota = inject(ActivatedRoute);
+  private readonly session = inject(SessionService);
+
+  // ---------- Modo da tela ----------
+  readonly modo: ModoVenda = this.rota.snapshot.data['modo'] ?? 'novo';
+  readonly somenteLeitura = this.modo === 'visualizar';
+  readonly vendaId = Number(this.rota.snapshot.paramMap.get('id'));
+
+  /** Venda carregada (visualizar e editar). */
+  readonly venda = signal<Venda | null>(null);
+  readonly carregandoVenda = signal(this.modo !== 'novo');
+
+  /** Quantidade de cada item na venda como estava salva: já saiu do estoque, então conta como disponível ao editar. */
+  private readonly quantidadeOriginal = signal(new Map<number, number>());
 
   private readonly campoQuantidade = viewChild<ElementRef<HTMLInputElement>>('campoQuantidade');
   private readonly campoBusca = viewChild<ElementRef<HTMLInputElement>>('campoBusca');
@@ -72,7 +93,8 @@ export class NovaVendaComponent implements OnInit {
     clientPhone: ['', [telefoneValido]],
     clientCpf: ['', [cpfValido]],
     paymentMethod: this.fb.nonNullable.control<FormaPagamento | ''>('', [Validators.required]),
-    installments: [1],
+    // Habilitado só no cartão de crédito (ver atualizarParcelas)
+    installments: [{ value: 1, disabled: true }],
     received: ['', [dinheiroValido]],
     discount: ['', [dinheiroValido]],
     observations: ['']
@@ -101,7 +123,7 @@ export class NovaVendaComponent implements OnInit {
   // ---------- Itens da venda ----------
   readonly linhas = signal<LinhaVenda[]>([]);
   readonly totalUnidades = computed(() => this.linhas().reduce((soma, l) => soma + l.quantidade, 0));
-  readonly subtotal = computed(() => this.linhas().reduce((soma, l) => soma + l.item.sellPrice * l.quantidade, 0));
+  readonly subtotal = computed(() => this.linhas().reduce((soma, l) => soma + l.preco * l.quantidade, 0));
   readonly semItens = signal(false);
 
   // ---------- Dropdown de pagamento ----------
@@ -112,7 +134,122 @@ export class NovaVendaComponent implements OnInit {
   readonly erro = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.carregarEstoque();
+    if (this.modo === 'novo') {
+      this.carregarEstoque();
+      return;
+    }
+    this.carregarVenda();
+  }
+
+  // ================= Visualizar / editar =================
+
+  /** Busca a venda e o estoque juntos, para montar as linhas com o estoque atual de cada item. */
+  private carregarVenda(): void {
+    if (this.somenteLeitura) this.form.disable();
+
+    forkJoin({
+      venda: this.vendas.buscar(this.vendaId),
+      // Sem o estoque a venda ainda pode ser exibida
+      itens: this.itensApi.listar().pipe(catchError(() => of(null)))
+    }).subscribe({
+      next: ({ venda, itens }) => {
+        this.carregandoVenda.set(false);
+        this.carregandoEstoque.set(false);
+        if (itens) this.estoque.set(itens);
+        else this.erroEstoque.set('Não foi possível carregar o estoque atual dos itens.');
+        this.preencher(venda, itens ?? []);
+      },
+      error: (e: HttpErrorResponse) => {
+        this.carregandoVenda.set(false);
+        this.carregandoEstoque.set(false);
+        this.form.disable();
+        this.erro.set(e.status === 404 ? 'Venda não encontrada.' : this.mensagemHttp(e, 'carregar a venda'));
+      }
+    });
+  }
+
+  private preencher(venda: Venda, itens: Item[]): void {
+    this.venda.set(venda);
+
+    this.form.patchValue({
+      clientName: venda.clientName ?? '',
+      clientPhone: venda.clientPhone ?? '',
+      clientCpf: venda.clientCpf ?? '',
+      paymentMethod: venda.paymentMethod,
+      installments: venda.installments,
+      discount: venda.discount > 0 ? numeroParaTexto(Number(venda.discount)) : '',
+      observations: venda.observations ?? ''
+    });
+
+    const originais = new Map<number, number>();
+    this.linhas.set(
+      venda.items.map((linha) => {
+        originais.set(linha.itemId, (originais.get(linha.itemId) ?? 0) + linha.quantity);
+        // Item excluído do estoque depois da venda: monta um item só com o que a venda guardou
+        const item: Item = itens.find((i) => i.id === linha.itemId) ?? {
+          id: linha.itemId,
+          idCode: linha.itemCode,
+          name: linha.itemName,
+          brand: '',
+          description: '',
+          costPrice: 0,
+          sellPrice: Number(linha.unitPrice),
+          stock: 0,
+          minStock: 0
+        };
+        return { item, quantidade: linha.quantity, preco: Number(linha.unitPrice) };
+      })
+    );
+    this.quantidadeOriginal.set(originais);
+
+    // Venda cancelada não pode ser editada: abre como visualização
+    if (this.modo === 'editar' && venda.status === 'CANCELED') {
+      this.form.disable();
+      this.erro.set('Esta venda foi cancelada e não pode ser editada.');
+      return;
+    }
+    if (!this.somenteLeitura) this.atualizarParcelas();
+  }
+
+  /** Visualizar desabilita tudo; editar uma venda cancelada também. */
+  get bloqueado(): boolean {
+    return this.somenteLeitura || (this.modo === 'editar' && this.venda()?.status === 'CANCELED');
+  }
+
+  get numeroVenda(): string {
+    return `V-${String(this.vendaId).padStart(4, '0')}`;
+  }
+
+  get titulo(): string {
+    if (this.modo === 'novo') return 'Nova venda';
+    return this.modo === 'editar' ? `Editar venda ${this.numeroVenda}` : `Venda ${this.numeroVenda}`;
+  }
+
+  get subtitulo(): string {
+    if (this.modo === 'novo') {
+      return 'Informe o pagamento, adicione os itens vendidos e finalize. O estoque é baixado automaticamente.';
+    }
+    const v = this.venda();
+    if (!v) return this.carregandoVenda() ? 'Carregando venda…' : '';
+    const registro = `Registrada em ${this.dataHora(v.createdAt)} por ${v.sellerName}.`;
+    if (v.status === 'CANCELED' && v.canceledAt) {
+      return `${registro} Cancelada em ${this.dataHora(v.canceledAt)}; os itens voltaram para o estoque.`;
+    }
+    return this.modo === 'editar'
+      ? `${registro} Ao salvar, o estoque é ajustado pela diferença dos itens.`
+      : registro;
+  }
+
+  get nomeVendedor(): string {
+    if (this.modo !== 'novo') return this.venda()?.sellerName ?? '';
+    const nome = this.session.user()?.name;
+    return nome ? `${nome} (você)` : 'Você (usuário logado)';
+  }
+
+  private dataHora(iso: string): string {
+    const d = new Date(iso);
+    const hora = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    return `${d.toLocaleDateString('pt-BR')} às ${hora}`;
   }
 
   carregarEstoque(): void {
@@ -139,7 +276,12 @@ export class NovaVendaComponent implements OnInit {
   }
 
   disponivel(item: Item): number {
-    return item.stock - this.quantidadeNaVenda(item);
+    return this.limite(item) - this.quantidadeNaVenda(item);
+  }
+
+  /** Máximo que a venda pode ter do item: o estoque atual + o que esta venda já tinha tirado dele (ao editar). */
+  limite(item: Item): number {
+    return item.stock + (this.quantidadeOriginal().get(item.id) ?? 0);
   }
 
   /** Separa o nome em partes para deixar em negrito o trecho que bate com a busca. */
@@ -227,7 +369,7 @@ export class NovaVendaComponent implements OnInit {
       const existente = ls.find((l) => l.item.id === item.id);
       return existente
         ? ls.map((l) => (l === existente ? { ...l, quantidade: l.quantidade + qtd } : l))
-        : [...ls, { item, quantidade: qtd }];
+        : [...ls, { item, quantidade: qtd, preco: item.sellPrice }];
     });
 
     this.semItens.set(false);
@@ -240,11 +382,12 @@ export class NovaVendaComponent implements OnInit {
 
   alterarQuantidade(linha: LinhaVenda, delta: number): void {
     const nova = linha.quantidade + delta;
-    if (nova < 1 || nova > linha.item.stock) return;
+    if (this.bloqueado || nova < 1 || nova > this.limite(linha.item)) return;
     this.linhas.update((ls) => ls.map((l) => (l === linha ? { ...l, quantidade: nova } : l)));
   }
 
   remover(linha: LinhaVenda): void {
+    if (this.bloqueado) return;
     this.linhas.update((ls) => ls.filter((l) => l !== linha));
   }
 
@@ -279,6 +422,7 @@ export class NovaVendaComponent implements OnInit {
   }
 
   alternarPagamento(): void {
+    if (this.bloqueado) return;
     if (this.pagamentoAberto()) {
       this.fecharPagamento();
       return;
@@ -316,9 +460,20 @@ export class NovaVendaComponent implements OnInit {
   escolherPagamento(opcao: OpcaoPagamento): void {
     this.form.controls.paymentMethod.setValue(opcao.valor);
     this.form.controls.paymentMethod.markAsTouched();
-    if (opcao.valor !== 'CREDIT_CARD') this.form.controls.installments.setValue(1);
     if (opcao.valor !== 'CASH') this.form.controls.received.setValue('');
+    this.atualizarParcelas();
     this.pagamentoAberto.set(false);
+  }
+
+  /** O campo Parcelas fica sempre na tela, mas só é habilitado no cartão de crédito. */
+  private atualizarParcelas(): void {
+    const parcelas = this.form.controls.installments;
+    if (this.ehCredito) {
+      parcelas.enable();
+    } else {
+      parcelas.setValue(1);
+      parcelas.disable();
+    }
   }
 
   private fecharPagamento(): void {
@@ -403,6 +558,7 @@ export class NovaVendaComponent implements OnInit {
   }
 
   finalizar(): void {
+    if (this.bloqueado) return;
     this.erro.set(null);
     const vazia = this.linhas().length === 0;
     this.semItens.set(vazia);
@@ -425,17 +581,19 @@ export class NovaVendaComponent implements OnInit {
       clientPhone: texto(v.clientPhone),
       clientCpf: texto(v.clientCpf.replace(/\D/g, '')),
       paymentMethod: v.paymentMethod as FormaPagamento,
-      installments: this.ehCredito ? Number(v.installments) : 1,
+      installments: this.ehCredito ? Number(v.installments) : 1, // getRawValue inclui o campo desabilitado
       discount: this.desconto,
       observations: texto(v.observations),
       items: this.linhas().map((l) => ({ itemId: l.item.id, quantity: l.quantidade }))
     };
 
     this.enviando.set(true);
-    this.vendas.registrar(corpo).subscribe({
-      next: () => {
+    const envio = this.modo === 'editar' ? this.vendas.editar(this.vendaId, corpo) : this.vendas.registrar(corpo);
+    envio.subscribe({
+      next: (salva) => {
         this.enviando.set(false);
-        this.router.navigate([this.voltarPara()]);
+        // Depois de editar, abre a venda salva; depois de cadastrar, volta para a lista
+        this.router.navigate(this.modo === 'editar' ? [this.voltarPara(), salva.id] : [this.voltarPara()]);
       },
       error: (e: HttpErrorResponse) => {
         this.enviando.set(false);
@@ -446,8 +604,10 @@ export class NovaVendaComponent implements OnInit {
 
   private tratarErro(e: HttpErrorResponse): void {
     if (e.status === 409) {
-      // Outro usuário vendeu o item enquanto esta venda era montada
-      this.erro.set('Algum item não tem mais estoque suficiente. O estoque foi atualizado; revise as quantidades.');
+      // Outro usuário vendeu o item enquanto esta venda era montada (ou, ao editar, a venda foi cancelada)
+      this.erro.set(this.modo === 'editar'
+        ? 'Não foi possível salvar: algum item não tem estoque suficiente ou a venda foi cancelada. Revise e tente de novo.'
+        : 'Algum item não tem mais estoque suficiente. O estoque foi atualizado; revise as quantidades.');
       this.carregarEstoque();
       return;
     }
