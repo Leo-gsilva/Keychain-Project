@@ -166,7 +166,7 @@
 
 .col-acoes {
   text-align: right;
-  width: 170px;
+  width: 250px;
 }
 
 .tabela__vazio {
@@ -217,6 +217,19 @@
   cursor: not-allowed;
 }
 
+.acoes .acao--visualizar {
+  border-color: transparent;
+  background-color: transparent;
+  color: var(--cor-texto-1);
+}
+
+.acoes .acao--visualizar:hover:not(:disabled) {
+  border-color: transparent;
+  background-color: transparent;
+  color: var(--cor-texto-1);
+  text-decoration: underline;
+}
+
 .acoes .acao--excluir {
   border-color: transparent;
   background-color: transparent;
@@ -224,15 +237,15 @@
 }
 
 .acoes .acao--editar {
-  border-color: var(--cor-editar);
-  background-color: var(--cor-fundo-4);
+  border-color: transparent;
+  background-color: transparent;
   color: var(--cor-editar);
 }
 
 .acoes .acao--editar:hover:not(:disabled) {
-  border-color: var(--cor-editar-hover);
-  background-color: var(--cor-editar-hover);
-  color: var(--cor-fundo-4);
+  border-color: transparent;
+  background-color: transparent;
+  color: var(--cor-editar-hover);
 }
 
 .acoes .acao--excluir:hover:not(:disabled) {

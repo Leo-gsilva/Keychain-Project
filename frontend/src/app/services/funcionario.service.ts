@@ -55,6 +55,6 @@ export class FuncionarioService {
   }
 
   atualizar(id: number, funcionario: Partial<NovoFuncionario>): Observable<Funcionario> {
-    return this.http.patch<Funcionario>(`${this.url}/${id}`, funcionario);
+    return this.http.put<Funcionario>(`${this.url}/${id}`, funcionario);
   }
 }

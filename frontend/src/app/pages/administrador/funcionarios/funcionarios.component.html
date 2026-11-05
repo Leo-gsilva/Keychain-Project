@@ -57,6 +57,14 @@
             <td>{{ rotuloGenero(funcionario.gender) }}</td>
             <td>
               <div class="acoes">
+                <button type="button" class="acao acao--visualizar" [routerLink]="['/administrador/funcionarios', funcionario.id]">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"
+                          stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6" />
+                  </svg>
+                  Visualizar
+                </button>
                 <button type="button" class="acao acao--editar" [routerLink]="['/administrador/funcionarios', funcionario.id, 'editar']">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path
