@@ -369,6 +369,11 @@ export class NovaVendaComponent implements OnInit {
       : `Pagamento: ${forma.nome} · à vista`;
   }
 
+  // Volta para a lista de vendas da área atual (funcionário ou administrador)
+  voltarPara(): string {
+    return this.router.url.startsWith('/administrador') ? '/administrador/vendas' : '/funcionario/vendas';
+  }
+
   dinheiro(valor: number): string {
     return numeroParaTexto(valor);
   }
@@ -430,7 +435,7 @@ export class NovaVendaComponent implements OnInit {
     this.vendas.registrar(corpo).subscribe({
       next: () => {
         this.enviando.set(false);
-        this.router.navigate(['/funcionario/vendas']);
+        this.router.navigate([this.voltarPara()]);
       },
       error: (e: HttpErrorResponse) => {
         this.enviando.set(false);
