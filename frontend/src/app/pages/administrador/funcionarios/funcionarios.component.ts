@@ -129,4 +129,5 @@ export class FuncionariosComponent implements OnInit {
     const [ano, mes, dia] = somenteData.split('-');
     return ano && mes && dia ? `${dia}/${mes}/${ano}` : '—';
   }
+  
 }

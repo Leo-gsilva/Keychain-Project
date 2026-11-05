@@ -12,6 +12,7 @@ import {
 } from './pages/funcionario/funcionario-cadastro-item/funcionario-cadastro-item.component';
 import {FuncionariosComponent} from './pages/administrador/funcionarios/funcionarios.component';
 import {CadastrarFuncionarioComponent} from './pages/cadastrar-funcionario/cadastrar-funcionario.component';
+import {EditarFuncionarioComponent} from './pages/administrador/funcionarios/editar-funcionario/editar-funcionario.component';
 import {ServicosComponent} from './pages/servicos/servicos.component';
 import {CadastrarServicoComponent} from './pages/funcionario/funcionario-cadastrar-servico/cadastrar-servico.component';
 import {VendasComponent} from './pages/vendas/vendas/vendas.component';
@@ -73,7 +74,8 @@ export const routes: Routes = [
       component: FuncionariosComponent,
       data: { breadcrumb: [{ rotulo: 'Funcionários', destaque: true }] }
     },
-    {path: 'funcionarios/novo', title: 'Cadastrar funcionário | Miguel', component: CadastrarFuncionarioComponent}
+    {path: 'funcionarios/novo', title: 'Cadastrar funcionário | Miguel', component: CadastrarFuncionarioComponent},
+    {path: 'funcionarios/:id/editar', title: 'Editar funcionário | Miguel', component: EditarFuncionarioComponent}
   ]),
 
   {path: '**', redirectTo: 'funcionario/estoque'}

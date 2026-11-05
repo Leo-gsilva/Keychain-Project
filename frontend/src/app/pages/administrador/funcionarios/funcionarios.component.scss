@@ -205,7 +205,8 @@
     color 0.2s ease;
 }
 
-.acoes button img {
+.acoes button img,
+.acoes button svg {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
@@ -217,15 +218,27 @@
 }
 
 .acoes .acao--excluir {
-  border-color: var(--cor-erro);
-  background-color: var(--cor-erro-suave);
-  color: var(--cor-erro);
+  border-color: transparent;
+  background-color: transparent;
+  color: var(--cor-excluir);
+}
+
+.acoes .acao--editar {
+  border-color: var(--cor-editar);
+  background-color: var(--cor-fundo-4);
+  color: var(--cor-editar);
+}
+
+.acoes .acao--editar:hover:not(:disabled) {
+  border-color: var(--cor-editar-hover);
+  background-color: var(--cor-editar-hover);
+  color: var(--cor-fundo-4);
 }
 
 .acoes .acao--excluir:hover:not(:disabled) {
-  border-color: var(--cor-erro);
-  background-color: var(--cor-erro);
-  color: var(--cor-fundo-4);
+  border-color: transparent;
+  background-color: transparent;
+  color: var(--cor-excluir-hover);
 }
 
 /* =====================================================================

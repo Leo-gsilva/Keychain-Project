@@ -43,7 +43,7 @@ export class AppShellComponent {
     ];
 
     if (admin) {
-      itens.push({ id: 'funcionarios/novo', label: 'Funcionários', path: 'funcionarios/novo' });
+      itens.push({ id: 'funcionarios', label: 'Funcionários', path: 'funcionarios' });
     }
 
     return itens.map(item => ({ ...item, path: `/${basePath}/${item.path}` }));

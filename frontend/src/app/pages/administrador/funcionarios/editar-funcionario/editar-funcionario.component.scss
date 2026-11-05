@@ -1,0 +1,238 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--cor-fundo-1);
+}
+
+/* =====================================================================
+   CONTEÚDO
+   ===================================================================== */
+.conteudo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 24px;
+  padding-block: 32px 24px;
+}
+
+.voltar {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cor-principal-1-hover);
+  transition: color 0.2s ease;
+
+  img {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    color: var(--cor-principal-1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--cor-principal-1);
+    outline-offset: 4px;
+  }
+}
+
+.cabecalho {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &__titulo {
+    font-size: clamp(28px, 3vw, 32px);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--cor-texto-1);
+  }
+
+  &__descricao {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--cor-texto-2);
+  }
+}
+
+/* =====================================================================
+   AVISOS (sucesso / erro)
+   ===================================================================== */
+.aviso {
+  padding: 12px 16px;
+  border: 1px solid;
+  border-radius: var(--raio-pequeno);
+  font-size: 13px;
+  line-height: 1.5;
+
+  &--sucesso {
+    border-color: var(--cor-sucesso);
+    background-color: var(--cor-sucesso-suave);
+    color: var(--cor-sucesso);
+  }
+
+  &--erro {
+    border-color: var(--cor-erro);
+    background-color: var(--cor-erro-suave);
+    color: var(--cor-erro);
+    font-weight: 500;
+  }
+}
+
+/* =====================================================================
+   CARD DO FORMULÁRIO
+   ===================================================================== */
+.cartao {
+  overflow: hidden;
+  border: 1px solid var(--cor-borda-1);
+  border-radius: var(--raio-medio);
+  background-color: var(--cor-fundo-4);
+
+  &__topo {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 24px;
+    border-bottom: 1px solid var(--cor-borda-1);
+  }
+
+  &__titulo {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--cor-texto-1);
+  }
+
+  &__descricao {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--cor-texto-2);
+  }
+
+  &__campos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    padding: 24px;
+  }
+
+  &__rodape {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+  }
+
+  &__obrigatorios {
+    font-size: 11px;
+    color: var(--cor-texto-2);
+  }
+
+  &__acoes {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .btn-secondary {
+      background-color: var(--cor-fundo-4);
+    }
+  }
+}
+
+/* =====================================================================
+   CAMPOS (mesmas classes do cadastro)
+   ===================================================================== */
+.form__obrigatorio {
+  color: var(--cor-principal-1);
+}
+
+.form-input.form-input--invalido {
+  border-color: var(--cor-erro);
+  background-color: var(--cor-erro-suave);
+
+  &:focus {
+    border-color: var(--cor-erro);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+    outline: none;
+  }
+}
+
+.form-input.form-input--selecao {
+  padding-right: 36px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23666B6C' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  cursor: pointer;
+}
+
+.form-input.form-input--data {
+  color-scheme: light;
+
+  &::-webkit-calendar-picker-indicator {
+    opacity: 0.6;
+    cursor: pointer;
+  }
+}
+
+.form__erro {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--cor-erro);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* Botão mais compacto que o padrão da landing (painel administrativo) */
+.btn--compacto {
+  gap: 8px;
+  height: 44px;
+  padding-inline: 18px;
+  font-size: 13px;
+}
+
+/* =====================================================================
+   RESPONSIVO
+   ===================================================================== */
+@media (max-width: 900px) {
+  .cartao__campos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cartao__rodape {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .cartao__acoes {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 600px) {
+  .conteudo {
+    padding-block: 24px;
+  }
+
+  .cartao__topo,
+  .cartao__campos,
+  .cartao__rodape {
+    padding-inline: 16px;
+  }
+
+  .cartao__campos {
+    grid-template-columns: 1fr;
+  }
+
+  .cartao__acoes {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

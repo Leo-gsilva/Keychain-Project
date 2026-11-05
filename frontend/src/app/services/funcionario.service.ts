@@ -53,4 +53,8 @@ export class FuncionarioService {
   excluir(id: number): Observable<void> {
     return this.http.delete<void>(`${this.url}/${id}`);
   }
+
+  atualizar(id: number, funcionario: Partial<NovoFuncionario>): Observable<Funcionario> {
+    return this.http.patch<Funcionario>(`${this.url}/${id}`, funcionario);
+  }
 }
