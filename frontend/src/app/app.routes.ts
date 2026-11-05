@@ -21,6 +21,7 @@ import {CadastrarServicoComponent} from './pages/funcionario/funcionario-cadastr
 import {VendasComponent} from './pages/vendas/vendas/vendas.component';
 import {NovaVendaComponent} from './pages/vendas/nova-venda/nova-venda.component';
 import {LoginComponent} from './pages/login/login.component';
+import {HomeAdministradorComponent} from './pages/administrador/home/home.component';
 
 function area(path: string, role: Role, children: Routes): Routes[0] {
   return {
@@ -58,8 +59,8 @@ export const routes: Routes = [
 
   // ÁREA DO ADMINISTRADOR
   area('administrador', 'ADMINISTRATOR', [
-    // TODO: trocar para a home quando existir
-    {path: '', pathMatch: 'full', redirectTo: 'estoque'},
+    {path: '', pathMatch: 'full', redirectTo: 'home'},
+    {path: 'home', title: 'Home | Miguel', component: HomeAdministradorComponent},
 
     {path: 'estoque', title: 'Estoque | Miguel', component: FuncionarioEstoqueComponent},
     {path: 'estoque/novo', title: 'Cadastrar item | Miguel', component: FuncionarioCadastroItemComponent},

@@ -1,0 +1,258 @@
+<!-- Ícones (traço 1.6, cor = currentColor) -->
+<ng-template #icone let-nome let-tamanho="tamanho">
+  <svg [attr.width]="tamanho ?? 18" [attr.height]="tamanho ?? 18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+       stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    @switch (nome) {
+      @case ('concluido') { <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/> }
+      @case ('aguardando') { <circle cx="12" cy="12" r="10"/><path d="M12 6v6h4.5"/> }
+      @case ('carteira') {
+        <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
+        <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>
+      }
+      @case ('pacote') {
+        <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/>
+        <path d="M12 22V12"/><path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7"/>
+      }
+      @case ('grafico') {
+        <path d="M12 16v5"/><path d="M16 14v7"/><path d="M20 10v11"/><path d="M4 18v3"/><path d="M8 14v7"/>
+        <path d="m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15"/>
+      }
+      @case ('execucao') {
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+      }
+      @case ('cadastro') {
+        <rect width="8" height="4" x="8" y="2" rx="1"/>
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+        <path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>
+      }
+      @case ('venda') {
+        <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
+        <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+      }
+      @case ('cancelado') { <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/> }
+      @case ('calendario') { <path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/> }
+    }
+  </svg>
+</ng-template>
+
+<!-- ===== Apresentação ===== -->
+<div class="cabecalho">
+  <div>
+    <h1 class="titulo">Olá{{ primeiroNome() ? ', ' + primeiroNome() : '' }}. Painel Administrador.</h1>
+    <p class="subtitulo">Visão operacional, financeira e de equipe para o administrador.</p>
+  </div>
+
+  <label class="periodo">
+    <span class="periodo__icone"><ng-container *ngTemplateOutlet="icone; context: {$implicit: 'calendario', tamanho: 16}"/></span>
+    <select class="periodo__campo" aria-label="Período dos indicadores" (change)="aoMudarPeriodo($event)">
+      @for (p of opcoesPeriodo; track p.valor) {
+        <option [value]="p.valor" [selected]="p.valor === periodo()">{{ p.nome }}</option>
+      }
+    </select>
+  </label>
+</div>
+
+<!-- ===== Métricas administrativas ===== -->
+@if (erroResumo()) {
+  <p class="aviso-erro" role="alert">{{ erroResumo() }}</p>
+}
+<section class="metricas" aria-label="Indicadores do período">
+  @let r = resumo();
+  <article class="metrica">
+    <header class="metrica__topo">
+      <p class="metrica__rotulo">Serviços realizados</p>
+      <ng-container *ngTemplateOutlet="icone; context: {$implicit: 'concluido'}"/>
+    </header>
+    <p class="metrica__valor">{{ r ? r.services.completed : '—' }}</p>
+    <p class="metrica__texto">
+      @if (r && ordensPeriodo() > 0) {
+        {{ percentualConcluidas() }}% das {{ ordensPeriodo() }} ordens {{ contexto() }}
+      } @else {
+        Nenhuma ordem {{ contexto() }}
+      }
+    </p>
+  </article>
+
+  <article class="metrica">
+    <header class="metrica__topo">
+      <p class="metrica__rotulo">Serviços pendentes</p>
+      <ng-container *ngTemplateOutlet="icone; context: {$implicit: 'aguardando'}"/>
+    </header>
+    <p class="metrica__valor">{{ r ? pendentes() : '—' }}</p>
+    <p class="metrica__texto">{{ r?.services?.inProgress ?? 0 }} em execução · {{ r?.services?.pending ?? 0 }} aguardando</p>
+  </article>
+
+  <article class="metrica">
+    <header class="metrica__topo">
+      <p class="metrica__rotulo">Faturamento total</p>
+      <ng-container *ngTemplateOutlet="icone; context: {$implicit: 'carteira'}"/>
+    </header>
+    <p class="metrica__valor">{{ r ? valor(r.totals.revenue) : '—' }}</p>
+    <!-- O backend soma serviços concluídos + vendas concluídas -->
+    <p class="metrica__texto">
+      {{ valor(r?.services?.revenue ?? 0) }} serviços + {{ valor(r?.sales?.revenue ?? 0) }} vendas
+    </p>
+  </article>
+
+  <article class="metrica metrica--destaque">
+    <header class="metrica__topo">
+      <p class="metrica__rotulo">Lucro estimado</p>
+      <ng-container *ngTemplateOutlet="icone; context: {$implicit: 'carteira'}"/>
+    </header>
+    <p class="metrica__valor">{{ r ? valor(r.totals.estimatedProfit) : '—' }}</p>
+    <p class="metrica__texto">
+      {{ valor(r?.totals?.revenue ?? 0) }} - {{ valor(r?.totals?.partsCost ?? 0) }} (peças e materiais)
+    </p>
+  </article>
+
+  <article class="metrica">
+    <header class="metrica__topo">
+      <p class="metrica__rotulo">Despesas com peças e materiais</p>
+      <ng-container *ngTemplateOutlet="icone; context: {$implicit: 'pacote'}"/>
+    </header>
+    <p class="metrica__valor">{{ r ? valor(r.totals.partsCost) : '—' }}</p>
+    <p class="metrica__texto">Base para cálculo do lucro estimado</p>
+  </article>
+</section>
+
+<!-- ===== Operação da oficina ===== -->
+<div class="operacao">
+  <section class="cartao ordens" aria-labelledby="titulo-ordens">
+    <header class="ordens__cabecalho">
+      <div class="linha-titulo">
+        <h2 class="cartao__titulo" id="titulo-ordens">Ordens em aberto</h2>
+        <span class="selo">{{ abertas().length }} {{ abertas().length === 1 ? 'ordem' : 'ordens' }}</span>
+      </div>
+      <p class="cartao__texto">
+        {{ emExecucao() }} em execução e {{ aguardando() }} aguardando.
+      </p>
+    </header>
+
+    <div class="tabela" role="table" aria-labelledby="titulo-ordens">
+      <div class="tabela__linha tabela__linha--cabecalho" role="row">
+        <span role="columnheader" class="col-ordem">Ordem</span>
+        <span role="columnheader" class="col-cliente">Cliente / serviço</span>
+        <span role="columnheader" class="col-status">Status</span>
+        <span role="columnheader" class="col-previsao">Previsão</span>
+      </div>
+
+      @for (s of ordensVisiveis(); track s.id) {
+        <a class="tabela__linha" role="row" [routerLink]="['../servicos', s.id]">
+          <span role="cell" class="col-ordem tabela__forte">{{ numeroOrdem(s.id) }}</span>
+          <span role="cell" class="col-cliente">
+            <span class="tabela__forte">{{ s.clientName }}</span>
+            <span class="tabela__apoio">{{ nomeTipo(s.serviceType) }}</span>
+          </span>
+          <span role="cell" class="col-status">
+            <span class="selo" [class.selo--bege]="s.status === 'PENDING'">{{ s.status === 'PENDING' ? 'Aguardando' : 'Em execução' }}</span>
+          </span>
+          <span role="cell" class="col-previsao" [class.atrasada]="atrasada(s)">{{ previsao(s) }}</span>
+        </a>
+      } @empty {
+        <p class="vazio">
+          {{ carregandoOrdens() ? 'Carregando ordens…' : erroOrdens() ?? 'Nenhuma ordem em aberto.' }}
+        </p>
+      }
+    </div>
+
+    <footer class="ordens__nota">
+      <ng-container *ngTemplateOutlet="icone; context: {$implicit: 'aguardando', tamanho: 14}"/>
+      <span>
+        Previsão = data agendada do atendimento.
+        @if (abertas().length > ordensVisiveis().length) {
+          Mostrando {{ ordensVisiveis().length }} de {{ abertas().length }} ·
+        }
+        <a routerLink="../servicos">Ver todos os serviços</a>
+      </span>
+    </footer>
+  </section>
+
+  <div class="resumos">
+    <!-- Ritmo da oficina: mesmas ordens do período dos cards -->
+    <section class="cartao bloco" aria-labelledby="titulo-ritmo">
+      <header class="linha-titulo">
+        <h2 class="bloco__titulo" id="titulo-ritmo">Ritmo da oficina</h2>
+        <span class="icone-ouro"><ng-container *ngTemplateOutlet="icone; context: {$implicit: 'grafico'}"/></span>
+      </header>
+
+      <div class="ritmo__progresso">
+        <strong>{{ percentualConcluidas() }}%</strong>
+        <span>das ordens {{ contexto() }} concluídas</span>
+      </div>
+
+      @let partes = partesRitmo();
+      <div class="ritmo__barra" role="img"
+           [attr.aria-label]="partes.concluidas + ' concluídas, ' + partes.execucao + ' em execução, ' + partes.aguardando + ' aguardando'">
+        @if (ordensPeriodo() === 0) {
+          <span class="ritmo__parte ritmo__parte--aguardando" style="flex-grow: 1"></span>
+        } @else {
+          @if (partes.concluidas) { <span class="ritmo__parte ritmo__parte--concluidas" [style.flex-grow]="partes.concluidas"></span> }
+          @if (partes.execucao) { <span class="ritmo__parte ritmo__parte--execucao" [style.flex-grow]="partes.execucao"></span> }
+          @if (partes.aguardando) { <span class="ritmo__parte ritmo__parte--aguardando" [style.flex-grow]="partes.aguardando"></span> }
+        }
+      </div>
+
+      <ul class="legenda">
+        <li><span class="marcador marcador--concluidas"></span><span>Concluídas</span><strong>{{ partes.concluidas }}</strong></li>
+        <li><span class="marcador marcador--execucao"></span><span>Em execução</span><strong>{{ partes.execucao }}</strong></li>
+        <li><span class="marcador marcador--aguardando"></span><span>Aguardando</span><strong>{{ partes.aguardando }}</strong></li>
+      </ul>
+    </section>
+
+    <section class="cartao bloco" aria-labelledby="titulo-estoque">
+      <header class="linha-titulo">
+        <h2 class="bloco__titulo" id="titulo-estoque">Atenção ao estoque</h2>
+        <span class="selo selo--bege">{{ alertas().length }} {{ alertas().length === 1 ? 'item' : 'itens' }}</span>
+      </header>
+      <p class="bloco__texto">Itens no estoque mínimo ou abaixo dele.</p>
+
+      @if (alertasVisiveis().length > 0) {
+        <ul class="alertas">
+          @for (a of alertasVisiveis(); track a.id) {
+            <li [class.alertas__zerado]="a.level === 'OUT_OF_STOCK'">
+              <span>{{ a.name }}</span>
+              <span class="alertas__qtd">
+                {{ a.level === 'OUT_OF_STOCK' ? 'Sem estoque · ' : '' }}{{ a.stock }} / {{ a.minStock }} un.
+              </span>
+            </li>
+          }
+        </ul>
+        <p class="bloco__rodape">
+          Quantidade atual / mínimo
+          @if (alertas().length > alertasVisiveis().length) { · <a routerLink="../estoque">ver todos</a> }
+        </p>
+      } @else {
+        <p class="bloco__texto">
+          {{ carregandoAlertas() ? 'Carregando…' : erroAlertas() ?? 'Nenhum item precisa de reposição.' }}
+        </p>
+      }
+    </section>
+  </div>
+</div>
+
+<!-- ===== Últimas movimentações ===== -->
+<section class="cartao atividade" aria-labelledby="titulo-atividade">
+  <header class="linha-titulo">
+    <h2 class="cartao__titulo" id="titulo-atividade">Últimas movimentações</h2>
+    <span class="atividade__nota">Atividade recente</span>
+  </header>
+
+  @if (movimentacoes().length > 0) {
+    <ul class="atividade__lista">
+      @for (m of movimentacoes(); track m.chave) {
+        <li class="atividade__item">
+          <span class="icone-ouro"><ng-container *ngTemplateOutlet="icone; context: {$implicit: m.icone}"/></span>
+          <span class="atividade__detalhes">
+            <span class="atividade__quando">{{ m.quando }}</span>
+            <strong>{{ m.titulo }}</strong>
+            <span class="atividade__texto">{{ m.texto }}</span>
+          </span>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="bloco__texto">
+      {{ carregandoAtividade() ? 'Carregando…' : erroAtividade() ?? 'Nenhuma movimentação ainda.' }}
+    </p>
+  }
+</section>
