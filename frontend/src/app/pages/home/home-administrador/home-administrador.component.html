@@ -1,0 +1,221 @@
+<header class="cabecalho">
+  <div>
+    <h1 class="titulo">Olá, {{ nome() }}.</h1>
+    <p class="subtitulo">Visão operacional, financeira e de equipe para o administrador.</p>
+  </div>
+
+  <!-- Escolhe o dia dos indicadores. O campo de data fica invisível e é aberto pelo botão -->
+  <div class="filtro-data">
+    <button
+      type="button"
+      class="filtro-data__botao"
+      aria-haspopup="dialog"
+      [attr.aria-label]="'Escolher o dia dos indicadores. Dia atual: ' + rotuloData()"
+      (click)="abrirCalendario(campoData)"
+    >
+      <app-icone nome="calendario" [tamanho]="18" />
+      <span>{{ rotuloData() }}</span>
+      <app-icone nome="seta-baixo" [tamanho]="16" />
+    </button>
+    <input
+      #campoData
+      class="filtro-data__campo"
+      type="date"
+      tabindex="-1"
+      aria-hidden="true"
+      [value]="dataSelecionada()"
+      [max]="hojeIso"
+      (change)="aoMudarData($event)"
+    />
+  </div>
+</header>
+
+<!-- Indicadores do dia -->
+<section class="indicadores" aria-label="Indicadores do dia">
+  @for (i of indicadores(); track i.id) {
+  <article class="indicador" [class.indicador--destaque]="i.destaque">
+    <div class="indicador__topo">
+      <p class="indicador__rotulo">{{ i.rotulo }}</p>
+      <app-icone class="indicador__icone" [nome]="i.icone" [tamanho]="20" />
+    </div>
+    <p class="indicador__valor">{{ i.valor }}</p>
+    <p class="indicador__texto">{{ i.texto }}</p>
+  </article>
+  }
+</section>
+
+@if (erroResumo(); as mensagem) {
+<p class="aviso-erro aviso-erro--solto" role="alert">{{ mensagem }}</p>
+}
+
+<div class="grade">
+  <!-- Serviços em aberto -->
+  <section class="cartao" aria-labelledby="titulo-servicos">
+    <header class="cartao__topo">
+      <div>
+        <h2 class="cartao__titulo" id="titulo-servicos">Serviços em aberto</h2>
+        <p class="cartao__texto">{{ textoServicos() }}</p>
+      </div>
+      @if (!carregandoServicos() && !erroServicos()){
+      <span class="selo">{{ servicos().length }} {{ servicos().length === 1? 'Serviço' : 'Serviços' }}</span>
+      }
+    </header>
+
+    @if (erroServicos(); as mensagem) {
+    <p class="aviso-erro" role="alert">{{ mensagem }}</p>
+    }
+
+    <div class="tabela-rolagem">
+      <table class="tabela">
+        <thead>
+        <tr>
+          <th scope="col">Serviço</th>
+          <th scope="col">Cliente / Serviço</th>
+          <th scope="col">Status</th>
+          <th scope="col">Previsão</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (s of servicosVisiveis(); track s.id) {
+        <tr>
+          <td class="tabela__servico">
+            <a [routerLink]="['../servicos', s.id]" [attr.aria-label]="'Abrir o serviço ' + numero(s.id)">{{ numero(s.id) }}</a>
+          </td>
+          <td>
+            <span class="tabela__nome">{{ s.clientName }}</span>
+            <span class="tabela__sub">{{ nomeTipo(s.serviceType) }}</span>
+          </td>
+          <td><span class="status" [attr.data-status]="s.status">{{ nomeStatus(s.status) }}</span></td>
+          <td class="tabela__previsao">{{ previsao(s.scheduledAt) }}</td>
+        </tr>
+        } @empty {
+        <tr>
+          <td class="tabela__vazio" colspan="4">
+            {{ carregandoServicos() ? 'Carregando serviços' : erroServicos() ? '—' : 'Nenhum serviço em aberto. Tudo em dia na oficina.' }}
+          </td>
+        </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="cartao__rodape">
+      <app-icone nome="relogio" [tamanho]="16" />
+      <span>Previsões para hoje, {{ diaHoje }}.</span>
+      @if (servicosOcultos() > 0){
+      <a routerLink="../servicos">+{{ servicosOcultos() }} {{ servicosOcultos() === 1? 'Serviço' : 'Serviços' }} em Serviços</a>
+      }
+    </footer>
+  </section>
+
+  <div class="lateral">
+    <!-- Ritmo da oficina -->
+    <section class="cartao" aria-labelledby="titulo-ritmo">
+      <header class="cartao__topo">
+        <h2 class="cartao__titulo" id="titulo-ritmo">Ritmo da oficina</h2>
+        <app-icone class="cartao__icone" nome="grafico" [tamanho]="20" />
+      </header>
+
+      <div class="ritmo">
+        <p class="ritmo__percentual">
+          {{ resumo() ? percentualConcluidas() + '%' : '—' }}
+          <span class="ritmo__legenda-topo">dos serviços concluídos</span>
+        </p>
+
+        <div
+          class="ritmo__barra"
+          role="img"
+          [attr.aria-label]="resumo() ? percentualConcluidas() + '% dos serviços do dia concluídos' : 'Sem dados'"
+        >
+          <span class="ritmo__trecho ritmo__trecho--concluidas" [style.width.%]="barra().concluidas"></span>
+          <span class="ritmo__trecho ritmo__trecho--execucao" [style.width.%]="barra().execucao"></span>
+          <span class="ritmo__trecho ritmo__trecho--aguardando" [style.width.%]="barra().aguardando"></span>
+        </div>
+
+        <ul class="ritmo__lista">
+          <li>
+            <span class="ritmo__marcador ritmo__marcador--concluidas"></span>
+            Concluídas
+            <strong>{{ contagens().concluidas }}</strong>
+          </li>
+          <li>
+            <span class="ritmo__marcador ritmo__marcador--execucao"></span>
+            Em execução
+            <strong>{{ contagens().execucao }}</strong>
+          </li>
+          <li>
+            <span class="ritmo__marcador ritmo__marcador--aguardando"></span>
+            Aguardando aprovação
+            <strong>{{ contagens().aguardando }}</strong>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Atenção ao estoque -->
+    <section class="cartao" aria-labelledby="titulo-estoque">
+      <header class="cartao__topo">
+        <h2 class="cartao__titulo" id="titulo-estoque">Atenção ao estoque</h2>
+        @if (alertas().length > 0) {
+        <span class="selo">{{ alertas().length }} {{ alertas().length === 1 ? 'item' : 'itens' }}</span>
+        }
+      </header>
+
+      @if (erroAlertas(); as mensagem) {
+      <p class="aviso-erro" role="alert">{{ mensagem }}</p>
+      } @else if (carregandoAlertas()) {
+      <p class="vazio">Carregando avisos…</p>
+      } @else if (alertas().length === 0) {
+      <p class="vazio">Nenhum item abaixo do mínimo. Estoque em dia.</p>
+      } @else {
+      <p class="cartao__texto cartao__texto--lateral">Itens abaixo do mínimo de reposição.</p>
+
+      <ul class="alertas">
+        @for (a of alertasVisiveis(); track a.id) {
+        <li class="alerta">
+          <span class="alerta__nome">{{ a.name }}</span>
+          <span class="alerta__qtd" [attr.data-nivel]="a.level">{{ a.stock }} / {{ a.minStock }} un.</span>
+        </li>
+        }
+      </ul>
+
+      @if (alertasOcultos() > 0) {
+      <p class="cartao__nota cartao__nota--seguida">
+        + {{ alertasOcultos() }} {{ alertasOcultos() === 1 ? 'outro item' : 'outros itens' }} no <a class="link-discreto" routerLink="../estoque">Estoque</a>
+      </p>
+      }
+
+      <p class="cartao__nota">Quantidade atual / mínimo</p>
+      }
+    </section>
+  </div>
+</div>
+
+<!-- Últimas movimentações -->
+<section class="cartao movimentacoes" aria-labelledby="titulo-movimentacoes">
+  <header class="cartao__topo">
+    <h2 class="cartao__titulo" id="titulo-movimentacoes">Últimas movimentações</h2>
+    <span class="movimentacoes__periodo">{{ rotuloMovimentos() }}</span>
+  </header>
+
+  @if (erroMovimentos(); as mensagem) {
+  <p class="aviso-erro" role="alert">{{ mensagem }}</p>
+  } @else if (carregandoMovimentos()) {
+  <p class="vazio">Carregando movimentações…</p>
+  } @else if (movimentos().length === 0) {
+  <p class="vazio">Nenhuma movimentação registrada ainda.</p>
+  } @else {
+  <ul class="movimentacoes__lista">
+    @for (m of movimentos(); track m.id) {
+    <li class="movimento">
+      <app-icone class="movimento__icone" [nome]="m.icone" [tamanho]="20" />
+      <div class="movimento__texto">
+        <p class="movimento__hora">{{ m.hora }}</p>
+        <p class="movimento__titulo">{{ m.titulo }}</p>
+        <p class="movimento__detalhe">{{ m.detalhe }}</p>
+      </div>
+    </li>
+    }
+  </ul>
+  }
+</section>

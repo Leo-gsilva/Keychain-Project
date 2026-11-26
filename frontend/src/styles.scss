@@ -12,6 +12,7 @@
    6. _forms       .form-field, .form-label e .form-input
    7. _brand       logo "Miguel – Chaveiro & Oficina" (.brand)
    8. _animations  .reveal (diretiva appReveal)
+   9. _listagem    telas de listagem: cabeçalho, cards, tabela, status, paginação (.listagem)
 
    Breakpoints usados nos componentes (max-width):
    - 1200px  notebook pequeno
@@ -27,3 +28,4 @@
 @use 'styles/forms';
 @use 'styles/brand';
 @use 'styles/animations';
+@use 'styles/listagem';

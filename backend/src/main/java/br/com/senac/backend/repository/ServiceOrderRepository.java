@@ -2,6 +2,7 @@ package br.com.senac.backend.repository;
 import br.com.senac.backend.models.ServiceStatus;
 import br.com.senac.backend.models.entities.ServiceOrder;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +15,11 @@ import java.util.List;
 @Repository
 public interface ServiceOrderRepository extends JpaRepository<ServiceOrder, Long> {
     List<ServiceOrder> findByStatus(ServiceStatus status);
+
+    // Traz as peças na mesma consulta: sem isso cada serviço da lista fazia outra ida ao banco
+    @Override
+    @EntityGraph(attributePaths = "items")
+    List<ServiceOrder> findAll();
 
     // Métricas: período pela data de contratação, inclusivo nas duas pontas.
     // As somas devolvem null quando não há nenhum serviço no período

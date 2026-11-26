@@ -30,6 +30,29 @@ export interface MetricasResumo {
   totals: { revenue: number; partsCost: number; estimatedProfit: number };
 }
 
+export type MetricasVendas = MetricasResumo['sales'];
+
+// Resumos zerados: o que os cards mostram (com pontinhos no lugar dos números) até o backend responder
+export const SERVICOS_ZERADOS: MetricasServicos = {
+  total: 0,
+  completed: 0,
+  inProgress: 0,
+  pending: 0,
+  canceled: 0,
+  revenue: 0,
+  received: 0,
+  partsCost: 0
+};
+
+export const VENDAS_ZERADAS: MetricasVendas = {
+  total: 0,
+  completed: 0,
+  canceled: 0,
+  revenue: 0,
+  itemsSold: 0,
+  partsCost: 0
+};
+
 // NOVO (de "TipoAtividade" até o fim da interface Atividade)
 export type TipoAtividade = 'SERVICE_CREATED' | 'SERVICE_STATUS_CHANGED' | 'SALE_CREATED' | 'SALE_CANCELED';
 

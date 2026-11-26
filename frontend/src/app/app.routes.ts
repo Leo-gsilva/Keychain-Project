@@ -1,28 +1,26 @@
 import {Routes} from '@angular/router';
 
-import {VisualizarServicoComponent} from './pages/servicos/visualizar-servicos/visualizar-servico.component';
-import {EditarServicoComponent} from './pages/servicos/editar-servicos/editar-servico.component';
-import {LandingComponent} from './pages/landing/landing.component';
+import {roleGuard} from './guards/role.guard';
 import {AppShellComponent} from './layouts/app-shell/app-shell.component';
 import {Role} from './services/account.service';
-import {roleGuard} from './guards/role.guard';
-import {FuncionarioEstoqueComponent} from './pages/funcionario/funcionario-estoque/funcionario-estoque.component';
-import {
-  FuncionarioCadastroItemComponent
-} from './pages/funcionario/funcionario-cadastro-item/funcionario-cadastro-item.component';
-import {FuncionariosComponent} from './pages/administrador/funcionarios/funcionarios.component';
-import {CadastrarFuncionarioComponent} from './pages/cadastrar-funcionario/cadastrar-funcionario.component';
-import {EditarFuncionarioComponent} from './pages/administrador/funcionarios/editar-funcionario/editar-funcionario.component';
-import {
-  VisualizarFuncionarioComponent
-} from './pages/administrador/funcionarios/visualizar-funcionario/visualizar-funcionario.component';
-import {ServicosComponent} from './pages/servicos/servicos.component';
-import {CadastrarServicoComponent} from './pages/funcionario/funcionario-cadastrar-servico/cadastrar-servico.component';
+
+// Páginas organizadas por funcionalidade: pages/<funcionalidade>/<tela>/
+import {LandingComponent} from './pages/landing/landing.component';
+import {LoginComponent} from './pages/login/login.component';
+import {HomeAdministradorComponent} from './pages/home/home-administrador/home-administrador.component';
+import {HomeFuncionarioComponent} from './pages/home/home-funcionario/home-funcionario.component';
+import {EstoqueComponent} from './pages/estoque/estoque/estoque.component';
+import {CadastrarItemComponent} from './pages/estoque/cadastrar-item/cadastrar-item.component';
+import {ServicosComponent} from './pages/servicos/servicos/servicos.component';
+import {CadastrarServicoComponent} from './pages/servicos/cadastrar-servico/cadastrar-servico.component';
+import {EditarServicoComponent} from './pages/servicos/editar-servico/editar-servico.component';
+import {VisualizarServicoComponent} from './pages/servicos/visualizar-servico/visualizar-servico.component';
 import {VendasComponent} from './pages/vendas/vendas/vendas.component';
 import {NovaVendaComponent} from './pages/vendas/nova-venda/nova-venda.component';
-import {LoginComponent} from './pages/login/login.component';
-import {TelaHomeAdministradorComponent} from './pages/administrador/tela-home-administrador/tela-home-administrador.component';
-import {TelaHomeFuncionarioComponent} from './pages/funcionario/tela-home-funcionario/tela-home-funcionario.component';
+import {FuncionariosComponent} from './pages/funcionarios/funcionarios/funcionarios.component';
+import {CadastrarFuncionarioComponent} from './pages/funcionarios/cadastrar-funcionario/cadastrar-funcionario.component';
+import {EditarFuncionarioComponent} from './pages/funcionarios/editar-funcionario/editar-funcionario.component';
+import {VisualizarFuncionarioComponent} from './pages/funcionarios/visualizar-funcionario/visualizar-funcionario.component';
 
 function area(path: string, role: Role, children: Routes): Routes[0] {
   return {
@@ -42,10 +40,10 @@ export const routes: Routes = [
   area('funcionario', 'EMPLOYEE', [
 
     {path: '', pathMatch: 'full', redirectTo: 'home'},
-    {path: 'home', title: 'Home | Miguel', component: TelaHomeFuncionarioComponent},
+    {path: 'home', title: 'Home | Miguel', component: HomeFuncionarioComponent},
 
-    {path: 'estoque', title: 'Estoque | Miguel', component: FuncionarioEstoqueComponent},
-    {path: 'estoque/novo', title: 'Cadastrar item | Miguel', component: FuncionarioCadastroItemComponent},
+    {path: 'estoque', title: 'Estoque | Miguel', component: EstoqueComponent},
+    {path: 'estoque/novo', title: 'Cadastrar item | Miguel', component: CadastrarItemComponent},
 
     {path: 'servicos', title: 'Serviços | Miguel', component: ServicosComponent},
     {path: 'servicos/novo', title: 'Cadastrar serviço | Miguel', component: CadastrarServicoComponent},
@@ -67,12 +65,12 @@ export const routes: Routes = [
     {                                                                                               // NOVO (bloco inteiro)
       path: 'home',
       title: 'Home | Miguel',
-      component: TelaHomeAdministradorComponent,
+      component: HomeAdministradorComponent,
       data: { breadcrumb: [{ rotulo: 'Home · Administrador', destaque: true }] }
     },
 
-    {path: 'estoque', title: 'Estoque | Miguel', component: FuncionarioEstoqueComponent},
-    {path: 'estoque/novo', title: 'Cadastrar item | Miguel', component: FuncionarioCadastroItemComponent},
+    {path: 'estoque', title: 'Estoque | Miguel', component: EstoqueComponent},
+    {path: 'estoque/novo', title: 'Cadastrar item | Miguel', component: CadastrarItemComponent},
 
     {path: 'servicos', title: 'Serviços | Miguel', component: ServicosComponent},
     {path: 'servicos/novo', title: 'Cadastrar serviço | Miguel', component: CadastrarServicoComponent},

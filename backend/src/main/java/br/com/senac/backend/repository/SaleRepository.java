@@ -3,6 +3,7 @@ package br.com.senac.backend.repository;
 import br.com.senac.backend.models.SaleStatus;
 import br.com.senac.backend.models.entities.Sale;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +15,8 @@ import java.util.List;
 
 @Repository
 public interface SaleRepository extends JpaRepository<Sale, Long> {
-    // Mais recentes primeiro
+    // Mais recentes primeiro. Traz itens e vendedor na mesma consulta: sem isso cada venda fazia outra ida ao banco
+    @EntityGraph(attributePaths = {"items", "seller"})
     List<Sale> findAllByOrderByCreatedAtDesc();
 
     // Métricas: intervalo [from, to). As somas devolvem null quando não há vendas no período

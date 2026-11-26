@@ -2,7 +2,8 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {Component, OnInit, computed, inject, signal} from '@angular/core';
 import {RouterLink} from '@angular/router';
 
-import {MetricasResumo, MetricasService} from '../../../services/metricas.service';
+import {PontosCarregandoComponent} from '../../../components/pontos-carregando/pontos-carregando.component';
+import {MetricasService, MetricasVendas, VENDAS_ZERADAS} from '../../../services/metricas.service';
 import {SessionService} from '../../../services/session.service';
 import {FormaPagamento, StatusVenda, Venda, VendaService} from '../../../services/venda.service';
 import {numeroParaTexto} from '../../../utils/dinheiro';
@@ -39,7 +40,8 @@ function dataIso(data: Date): string {
 
 @Component({
   selector: 'app-vendas',
-  imports: [RouterLink],
+  host: {class: 'listagem'}, // estilos comuns das listagens: src/styles/_listagem.scss
+  imports: [RouterLink, PontosCarregandoComponent],
   templateUrl: './vendas.component.html',
   styleUrl: './vendas.component.scss'
 })
@@ -62,7 +64,12 @@ export class VendasComponent implements OnInit {
   private readonly hojeIso = dataIso(new Date());
 
   readonly ehAdministrador = computed(() => this.session.user()?.role === 'ADMINISTRATOR');
-  readonly resumo = signal<MetricasResumo['sales'] | null>(null);
+  readonly resumo = signal<MetricasVendas | null>(null);
+  // Os cards aparecem já no primeiro quadro, zerados e com pontinhos no lugar dos números, até o resumo chegar.
+  // Num recarregamento (depois de cancelar) o carregamento não volta: os números antigos ficam até os novos chegarem
+  readonly carregandoResumo = signal(true);
+  readonly resumoIndisponivel = signal(false);
+  readonly dados = computed(() => this.resumo() ?? VENDAS_ZERADAS);
 
   /** Quantidade de vendas registradas hoje (inclui canceladas), usada no selo do histórico. */
   readonly vendasHoje = computed(
@@ -139,8 +146,17 @@ export class VendasComponent implements OnInit {
       next: (conta) => {
         if (conta.role !== 'ADMINISTRATOR') return;
         this.metricas.resumo(this.hojeIso, this.hojeIso).subscribe({
-          next: (r) => this.resumo.set(r.sales),
-          error: () => this.resumo.set(null) // sem o resumo a lista continua funcionando
+          next: (r) => {
+            this.resumo.set(r.sales);
+            this.resumoIndisponivel.set(false);
+            this.carregandoResumo.set(false);
+          },
+          // sem o resumo os cards somem e a lista continua funcionando
+          error: () => {
+            this.resumo.set(null);
+            this.resumoIndisponivel.set(true);
+            this.carregandoResumo.set(false);
+          }
         });
       }
     });

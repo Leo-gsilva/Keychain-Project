@@ -1,0 +1,9 @@
+/* Layout, tabela, ações e rodapé vêm de src/styles/_listagem.scss (classe .listagem no host).
+   Aqui fica só o que é exclusivo da tela de Funcionários. */
+
+.orientacao {
+  margin-top: 20px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--cor-texto-2);
+}

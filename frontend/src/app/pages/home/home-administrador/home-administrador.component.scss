@@ -1,0 +1,316 @@
+@use '../home-comum';
+
+/* ---------- Escolha do dia ---------- */
+.filtro-data {
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 4px;
+
+  &__botao {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    height: 44px;
+    padding-inline: 16px;
+    border: 1px solid var(--cor-borda-1);
+    border-radius: var(--raio-pequeno);
+    background-color: var(--cor-fundo-4);
+    font-family: var(--fonte-principal);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--cor-texto-1);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+
+    &:hover {
+      border-color: var(--cor-texto-2);
+    }
+  }
+
+  /* Invisível, mas ancorado embaixo do botão para o calendário abrir ali */
+  &__campo {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* ---------- Indicadores ---------- */
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.indicador {
+  min-width: 0;
+  padding: 20px 24px;
+  border: 1px solid var(--cor-borda-1);
+  border-radius: var(--raio-medio);
+  background-color: var(--cor-fundo-4);
+
+  &__topo {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__rotulo {
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--cor-texto-2);
+  }
+
+  &__icone {
+    margin-top: 1px;
+    color: var(--cor-texto-2);
+  }
+
+  &__valor {
+    margin: 10px 0 8px;
+    font-size: clamp(24px, 2.4vw, 32px);
+    font-weight: 600;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+  }
+
+  &__texto {
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--cor-texto-2);
+  }
+
+  /* Card "Lucro estimado": fundo escuro */
+  &--destaque {
+    border-color: var(--cor-fundo-escuro);
+    background-color: var(--cor-fundo-escuro);
+
+    .indicador__rotulo,
+    .indicador__texto {
+      color: var(--cor-texto-claro-2);
+    }
+
+    .indicador__valor {
+      color: var(--cor-texto-claro-1);
+    }
+
+    .indicador__icone {
+      color: var(--cor-principal-1);
+    }
+  }
+}
+
+.aviso-erro--solto {
+  margin: -8px 0 24px;
+}
+
+/* ---------- Links discretos ---------- */
+.link-discreto {
+  font-weight: 600;
+  color: var(--cor-principal-1-hover);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* ---------- Ritmo da oficina ---------- */
+.ritmo {
+  padding: 8px 24px 24px;
+
+  &__percentual {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  &__legenda-topo {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--cor-texto-2);
+  }
+
+  &__barra {
+    display: flex;
+    gap: 2px;
+    height: 8px;
+    margin: 14px 0 18px;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: var(--cor-fundo-2);
+  }
+
+  &__trecho {
+    display: block;
+    height: 100%;
+    transition: width 0.4s ease;
+
+    &--concluidas {
+      background-color: var(--cor-principal-2);
+    }
+
+    &--execucao {
+      background-color: var(--cor-principal-1);
+    }
+
+    &--aguardando {
+      background-color: var(--cor-borda-1);
+    }
+  }
+
+  &__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--cor-texto-2);
+    }
+
+    strong {
+      margin-left: auto;
+      font-weight: 600;
+      color: var(--cor-texto-1);
+    }
+  }
+
+  &__marcador {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+
+    &--concluidas {
+      background-color: var(--cor-principal-2);
+    }
+
+    &--execucao {
+      background-color: var(--cor-principal-1);
+    }
+
+    &--aguardando {
+      background-color: var(--cor-borda-1);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ritmo__trecho {
+    transition: none;
+  }
+}
+
+/* ---------- Últimas movimentações ---------- */
+.movimentacoes {
+  &__periodo {
+    font-size: 12px;
+    color: var(--cor-texto-2);
+  }
+
+  &__lista {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 20px 24px 24px;
+  }
+}
+
+.movimento {
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+  padding-inline: 24px;
+  border-left: 1px solid var(--cor-borda-1);
+
+  &:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  &__icone {
+    margin-top: 2px;
+    color: var(--cor-texto-2);
+  }
+
+  &__texto {
+    min-width: 0;
+  }
+
+  &__hora {
+    font-size: 11px;
+    color: var(--cor-texto-2);
+  }
+
+  &__titulo {
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  &__detalhe {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--cor-texto-2);
+  }
+}
+
+/* ---------- Telas menores ---------- */
+@media (max-width: 1200px) {
+  .indicadores {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .movimentacoes__lista {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .movimento {
+    padding: 20px 0 0;
+    border-top: 1px solid var(--cor-borda-1);
+    border-left: 0;
+
+    &:first-child {
+      padding-top: 0;
+      border-top: 0;
+    }
+  }
+}
+
+@media (max-width: 800px) {
+  .indicadores {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .indicadores {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .filtro-data {
+    width: 100%;
+
+    &__botao {
+      width: 100%;
+    }
+  }
+}

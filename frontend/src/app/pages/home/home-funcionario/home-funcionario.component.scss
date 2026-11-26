@@ -1,0 +1,149 @@
+@use '../home-comum';
+
+/* ---------- Atalhos ---------- */
+.atalhos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.atalho {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--cor-borda-1);
+  border-radius: var(--raio-medio);
+  background-color: var(--cor-fundo-4);
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--cor-principal-1);
+  }
+
+  &__icone {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--raio-medio);
+    background-color: var(--cor-fundo-3);
+    color: var(--cor-alerta);
+  }
+
+  &__texto {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  &__titulo {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  &__descricao {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--cor-texto-2);
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--cor-alerta);
+  }
+
+  &:hover &__link {
+    text-decoration: underline;
+  }
+}
+
+/* ---------- Serviços para trabalhar ---------- */
+.cartao__link {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cor-principal-1-hover);
+  white-space: nowrap;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Atenção ao estoque ---------- */
+.alerta__nome--forte {
+  font-weight: 600;
+}
+
+.cartao__acao {
+  padding: 0 24px 24px;
+}
+
+.btn-consultar {
+  height: 40px;
+  padding-inline: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ---------- Atendimento externo ---------- */
+.externo {
+  padding: 24px;
+  border-radius: var(--raio-medio);
+  background-color: var(--cor-fundo-3);
+  color: var(--cor-alerta);
+
+  &__titulo {
+    margin-bottom: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--cor-texto-1);
+  }
+
+  &__linha {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    font-size: 12px;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  .atalhos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .atalho {
+    padding: 20px;
+  }
+}

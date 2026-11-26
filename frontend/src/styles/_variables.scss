@@ -13,9 +13,9 @@
   --cor-editar: #8f7343;
   --cor-editar-hover: #7a6239;
 
-  /* Ação "Excluir" (vermelho acastanhado, sem caixa) */
-  --cor-excluir: #a34a3c;
-  --cor-excluir-hover: #8a3d31;
+  /* Ação "Excluir": mesmo vermelho dos avisos de erro e do status "Cancelado" */
+  --cor-excluir: var(--cor-perigo);
+  --cor-excluir-hover: var(--cor-perigo-hover);
 
   /* Cores de fundo */
   --cor-fundo-1: #f6f4ef; /* creme: fundo padrão das páginas */
@@ -36,6 +36,18 @@
   --cor-sucesso-suave: #f0fdf4;
   --cor-erro: #dc2626; /* vermelho: erro e validação inválida */
   --cor-erro-suave: #fef2f2;
+
+  /* Cores de status do sistema (selos das tabelas, avisos, ações destrutivas).
+     Use estas em vez de hex direto no componente */
+  --cor-perigo: #b3261e; /* cancelado, excluir, mensagens de erro */
+  --cor-perigo-hover: #8c1d18;
+  --cor-perigo-suave: #fbeeed; /* fundo de selo/aviso de erro */
+  --cor-perigo-borda: #e3b5b1;
+  --cor-alerta: #785c2b; /* pendente, abaixo do mínimo, selos dourados */
+  --cor-alerta-suave: #faf2e1;
+  --cor-concluido: #4e6656; /* concluído */
+  --cor-concluido-suave: #eaf0e9;
+  --cor-fundo-campo: #faf9f5; /* campos somente leitura e áreas internas dos formulários */
 
   /* Cores de borda / divisores */
   --cor-borda-1: #d8dad5; /* bordas sobre fundo claro */

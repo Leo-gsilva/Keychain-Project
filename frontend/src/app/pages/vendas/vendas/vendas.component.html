@@ -14,11 +14,15 @@
 </div>
 
 <!-- Resumo do dia: exclusivo do administrador (o funcionário não vê o faturamento do dia) -->
-@if (ehAdministrador() && resumo(); as r) {
-<section class="resumo" aria-label="Resumo do dia">
+@if (ehAdministrador() && !resumoIndisponivel()) {
+@let r = dados();
+<!-- Os cards aparecem zerados, com pontinhos no lugar dos números, até o resumo chegar -->
+<section class="resumo resumo--3" aria-label="Resumo do dia" [attr.aria-busy]="carregandoResumo()">
   <article class="indicador">
     <p class="indicador__rotulo">Vendas hoje</p>
-    <p class="indicador__valor">{{ r.total }}</p>
+    <p class="indicador__valor">
+      @if (carregandoResumo()) { <app-pontos-carregando /> } @else { {{ r.total }} }
+    </p>
     <p class="indicador__texto">
       {{ r.completed }} {{ r.completed === 1 ? 'concluída' : 'concluídas' }} ·
       {{ r.canceled }} {{ r.canceled === 1 ? 'cancelada' : 'canceladas' }}
@@ -27,13 +31,17 @@
 
   <article class="indicador">
     <p class="indicador__rotulo">Total vendido hoje</p>
-    <p class="indicador__valor">{{ moeda(r.revenue) }}</p>
+    <p class="indicador__valor">
+      @if (carregandoResumo()) { <app-pontos-carregando /> } @else { {{ moeda(r.revenue) }} }
+    </p>
     <p class="indicador__texto">Somente vendas concluídas</p>
   </article>
 
   <article class="indicador">
     <p class="indicador__rotulo">Itens vendidos hoje</p>
-    <p class="indicador__valor">{{ r.itemsSold }}</p>
+    <p class="indicador__valor">
+      @if (carregandoResumo()) { <app-pontos-carregando /> } @else { {{ r.itemsSold }} }
+    </p>
     <p class="indicador__texto">Baixa automática no estoque</p>
   </article>
 </section>
@@ -61,7 +69,7 @@
       />
     </label>
 
-    <select class="form-input form-select filtro-pagamento" aria-label="Filtrar por forma de pagamento"
+    <select class="form-input form-select filtro" aria-label="Filtrar por forma de pagamento"
             (change)="aoMudarPagamento($event)">
       <option value="">Todas as formas de pagamento</option>
       @for (f of formasPagamento; track f.valor) {
