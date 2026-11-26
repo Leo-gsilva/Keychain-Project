@@ -1,0 +1,21 @@
+services:
+  backend:
+    build: ../backend
+    container_name: keychain-backend
+    restart: unless-stopped
+    # banco/JWT/admin vêm do backend/.env; portas e CORS do deploy/.env
+    env_file:
+      - ../backend/.env
+      - .env
+    ports:
+      - "${BACKEND_PORT:-5432}:5432"
+  frontend:
+    build: ../frontend
+    container_name: keychain-frontend
+    restart: unless-stopped
+    environment:
+      API_URL: ${API_URL}
+    ports:
+      - "${FRONTEND_PORT:-4200}:80"
+    depends_on:
+      - backend
